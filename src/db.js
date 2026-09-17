@@ -203,55 +203,157 @@ const defaultEvents = [
     id: 'e18c6501-c852-47e2-8951-b844f2d3d991',
     ship_id: 'a26084cb-626a-4638-b769-d4ff5a772da0',
     hall_id: 'a1b2c3d4-e5f6-7890-abcd-1234567890ef',
-    name: 'Вечерний Рок-Круиз (Столы + Танцпол)',
-    description: 'Хиты мирового рока на Неве под разводные мосты. Столики с панорамой и танцевальная зона у сцены.',
-    date: new Date().toISOString().split('T')[0],
-    time: '20:00:00',
+    name: 'Громыка',
+    full_title: 'Концерт коллектива «Громыка» — Презентация альбома',
+    slug: 'gromyka',
+    tags: ['Хит', '18+', '⏱ 120 мин'],
+    duration: '120 мин',
+    age_limit: '18+',
+    is_hit: true,
+    location: 'Санкт-Петербург, ст. м. Спортивная, причал Набережная Макарова, 34',
+    description: 'Музыкальная прогулка по Неве с видом на разводные мосты и живым концертом',
+    full_info: 'Легендарный коллектив «Громыка» на борту теплохода «Рок Хит Нева». Неповторимый стиль «тяжёлый психоделический твист», фирменное звучание электрооргана «Фаэми», живой звук, панорамные виды вечернего Петербурга и разводные мосты.',
+    date: '2026-05-15',
+    time: '19:00:00',
     price_standard: 1500,
     price_vip: 2500,
+    categories: ['all', 'season_hits', 'bridges'],
+    slots: [
+      { id: 'grom-1', date: '2026-05-15', dayStr: '15 май (Пт)', time: '19:00', price: 1500 },
+      { id: 'grom-2', date: '2026-05-15', dayStr: '15 май (Пт)', time: '21:30', price: 1500 },
+      { id: 'grom-3', date: '2026-05-16', dayStr: '16 май (Сб)', time: '19:00', price: 1500 },
+      { id: 'grom-4', date: '2026-05-16', dayStr: '16 май (Сб)', time: '21:30', price: 1500 },
+      { id: 'grom-5', date: '2026-05-22', dayStr: '22 май (Пт)', time: '19:00', price: 1500 },
+      { id: 'grom-6', date: '2026-05-23', dayStr: '23 май (Сб)', time: '21:30', price: 1500 }
+    ],
     status: 'active'
   },
   {
     id: 'e18c6501-c852-47e2-8951-b844f2d3d992',
     ship_id: 'a26084cb-626a-4638-b769-d4ff5a772da0',
-    hall_id: 'entry-only-hall-id',
-    name: 'Ночной Рок-Рейв (Только входные билеты)',
-    description: 'Драйвовая вечеринка без фиксированных столов: весь теплоход — единый танцпол и открытая палуба.',
-    date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
-    time: '23:30:00',
-    price_standard: 1200,
-    price_vip: 2200,
+    hall_id: 'a1b2c3d4-e5f6-7890-abcd-1234567890ef',
+    name: 'Концерт «Легенда Жива: Ностальгический Круиз в Ленинград 80-х»',
+    full_title: 'Виктор Цой & группа «Кино» — Живой трибьют-концерт на Неве',
+    slug: 'viktortsoy',
+    tags: ['Хит', '18+', '⏱ 120 мин'],
+    duration: '120 мин',
+    age_limit: '18+',
+    is_hit: true,
+    location: 'Санкт-Петербург, ст. м. Спортивная, причал Набережная Макарова, 34',
+    description: 'Музыкальная прогулка по Неве с видом на разводные мосты и живым концертом',
+    full_info: 'Главные рок-гимны группы «Кино» и Виктора Цоя в живом исполнении рок-коллектива. Атмосфера ленинградского рок-клуба 80-х годов, шум волн Невы, ночные гранитные набережные и разведение главных мостов Петербурга.',
+    date: '2026-05-15',
+    time: '19:00:00',
+    price_standard: 1500,
+    price_vip: 2500,
+    categories: ['all', 'season_hits', 'bridges'],
+    slots: [
+      { id: 'tsoy-1', date: '2026-05-15', dayStr: '15 май (Пт)', time: '19:00', price: 1500 },
+      { id: 'tsoy-2', date: '2026-05-15', dayStr: '15 май (Пт)', time: '21:30', price: 1500 },
+      { id: 'tsoy-3', date: '2026-05-16', dayStr: '16 май (Сб)', time: '19:00', price: 1500 },
+      { id: 'tsoy-4', date: '2026-05-16', dayStr: '16 май (Сб)', time: '21:30', price: 1500 },
+      { id: 'tsoy-5', date: '2026-05-22', dayStr: '22 май (Пт)', time: '21:30', price: 1500 },
+      { id: 'tsoy-6', date: '2026-05-23', dayStr: '23 май (Сб)', time: '21:30', price: 1500 }
+    ],
     status: 'active'
   },
   {
     id: 'e18c6501-c852-47e2-8951-b844f2d3d993',
-    ship_id: 'b51b3f7f-e7cb-4b36-9a29-b632fa5a7751',
+    ship_id: 'a26084cb-626a-4638-b769-d4ff5a772da0',
     hall_id: 'a1b2c3d4-e5f6-7890-abcd-1234567890ef',
-    name: 'Гастрономический круиз "Панорама"',
-    description: 'Изысканный ужин от шеф-повара во время прогулки по Неве.',
-    date: new Date().toISOString().split('T')[0],
-    time: '18:00:00',
-    price_standard: 2000,
-    price_vip: 4500,
+    name: 'Концерт «RHCP Tribute Show — Рок-Драйв на Неве»',
+    full_title: 'Red Hot Chili Peppers Tribute Show на борту теплохода',
+    slug: 'rhcp',
+    tags: ['Хит', '18+', '⏱ 120 мин'],
+    duration: '120 мин',
+    age_limit: '18+',
+    is_hit: true,
+    location: 'Санкт-Петербург, ст. м. Спортивная, причал Набережная Макарова, 34',
+    description: 'Музыкальная прогулка по Неве с видом на разводные мосты и живым концертом',
+    full_info: 'Взрывной калифорнийский фанк-рок и главные хиты Red Hot Chili Peppers (Californication, Can\'t Stop, Give It Away, Under the Bridge). Драйв, живой звук и разводные мосты.',
+    date: '2026-05-15',
+    time: '19:00:00',
+    price_standard: 1500,
+    price_vip: 2500,
+    categories: ['all', 'season_hits', 'bridges'],
+    slots: [
+      { id: 'rhcp-1', date: '2026-05-15', dayStr: '15 май (Пт)', time: '19:00', price: 1500 },
+      { id: 'rhcp-2', date: '2026-05-15', dayStr: '15 май (Пт)', time: '21:30', price: 1500 },
+      { id: 'rhcp-3', date: '2026-05-16', dayStr: '16 май (Сб)', time: '19:00', price: 1500 },
+      { id: 'rhcp-4', date: '2026-05-16', dayStr: '16 май (Сб)', time: '21:30', price: 1500 },
+      { id: 'rhcp-5', date: '2026-05-29', dayStr: '29 май (Пт)', time: '20:00', price: 1500 },
+      { id: 'rhcp-6', date: '2026-05-30', dayStr: '30 май (Сб)', time: '21:30', price: 1500 }
+    ],
+    status: 'active'
+  },
+  {
+    id: 'e18c6501-c852-47e2-8951-b844f2d3d994',
+    ship_id: 'a26084cb-626a-4638-b769-d4ff5a772da0',
+    hall_id: 'a1b2c3d4-e5f6-7890-abcd-1234567890ef',
+    name: 'Концерт «Брат: Саундтреки к фильму»',
+    full_title: 'Культовые песни из фильмов «Брат» и «Брат 2» на Неве',
+    slug: 'brother',
+    tags: ['Хит', '18+', '⏱ 120 мин'],
+    duration: '120 мин',
+    age_limit: '18+',
+    is_hit: true,
+    location: 'Санкт-Петербург, ст. м. Спортивная, причал Набережная Макарова, 34',
+    description: 'Музыкальная прогулка по Неве с видом на разводные мосты и живым концертом',
+    full_info: 'Песни Nautilus Pompilius, Смысловых Галлюцинаций, Би-2, Агаты Кристи, Сплина и других рок-легенд в живом исполнении.',
+    date: '2026-05-17',
+    time: '20:00:00',
+    price_standard: 1500,
+    price_vip: 2500,
+    categories: ['all', 'season_hits', 'bridges'],
+    slots: [
+      { id: 'br-1', date: '2026-05-17', dayStr: '17 май (Вс)', time: '20:00', price: 1500 },
+      { id: 'br-2', date: '2026-05-24', dayStr: '24 май (Вс)', time: '20:00', price: 1500 }
+    ],
+    status: 'active'
+  },
+  {
+    id: 'e18c6501-c852-47e2-8951-b844f2d3d995',
+    ship_id: 'a26084cb-626a-4638-b769-d4ff5a772da0',
+    hall_id: 'a1b2c3d4-e5f6-7890-abcd-1234567890ef',
+    name: 'Рок под разводными мостами',
+    full_title: 'Хиты мирового и отечественного рока под разводные мосты',
+    slug: 'rock-bridges',
+    tags: ['Хит', '18+', '⏱ 120 мин'],
+    duration: '120 мин',
+    age_limit: '18+',
+    is_hit: true,
+    location: 'Санкт-Петербург, ст. м. Спортивная, причал Набережная Макарова, 34',
+    description: 'Музыкальная прогулка по Неве с видом на разводные мосты и живым концертом',
+    full_info: 'Классика рок-музыки во время кульминационного разведения петербургских мостов.',
+    date: '2026-05-18',
+    time: '23:30:00',
+    price_standard: 1500,
+    price_vip: 2500,
+    categories: ['all', 'bridges'],
+    slots: [
+      { id: 'rb-1', date: '2026-05-18', dayStr: '18 май (Пн)', time: '23:30', price: 1500 },
+      { id: 'rb-2', date: '2026-05-25', dayStr: '25 май (Пн)', time: '23:30', price: 1500 }
+    ],
     status: 'active'
   }
 ];
 
 // LocalStorage initialization
+const DB_VERSION = 'v3_concert_poster';
 function initLocalStorage() {
+  if (typeof localStorage === 'undefined') return;
+
+  if (localStorage.getItem('db_version') !== DB_VERSION) {
+    localStorage.setItem('events', JSON.stringify(defaultEvents));
+    localStorage.setItem('ships', JSON.stringify(defaultShips));
+    localStorage.setItem('halls', JSON.stringify(defaultHalls));
+    localStorage.setItem('db_version', DB_VERSION);
+  }
+
   if (!localStorage.getItem('ships')) localStorage.setItem('ships', JSON.stringify(defaultShips));
   if (!localStorage.getItem('agents')) localStorage.setItem('agents', JSON.stringify(defaultAgents));
-  
-  const existingHalls = localStorage.getItem('halls');
-  if (!existingHalls || !existingHalls.includes('zones') || !existingHalls.includes('only_entry')) {
-    localStorage.setItem('halls', JSON.stringify(defaultHalls));
-  }
-  
-  const existingEvents = localStorage.getItem('events');
-  if (!existingEvents || !existingEvents.includes('entry-only-hall-id')) {
-    localStorage.setItem('events', JSON.stringify(defaultEvents));
-  }
-  
+  if (!localStorage.getItem('halls')) localStorage.setItem('halls', JSON.stringify(defaultHalls));
+  if (!localStorage.getItem('events')) localStorage.setItem('events', JSON.stringify(defaultEvents));
   if (!localStorage.getItem('bookings')) localStorage.setItem('bookings', JSON.stringify([]));
 }
 initLocalStorage();

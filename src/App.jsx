@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Anchor, Calendar, Shield, Percent, Ticket, QrCode, Layout, Globe, HelpCircle } from 'lucide-react';
+import { Anchor, Calendar, Shield, Percent, Ticket, QrCode, Layout, Globe, HelpCircle, Music, Sparkles } from 'lucide-react';
 import Afisha from './components/Afisha';
 import BookingDetails from './components/BookingDetails';
 import AdminPanel from './components/AdminPanel';
@@ -12,7 +12,7 @@ import SitesAdmin from './components/SitesAdmin';
 import HelpModal from './components/HelpModal';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState('afisha'); // 'afisha', 'booking', 'admin', 'agent', 'seller', 'widget', 'scanner', 'builder', 'sites'
+  const [currentView, setCurrentView] = useState('events'); // 'events', 'sessions', 'builder', 'sites', 'afisha', 'booking', 'admin', 'agent', 'seller', 'widget', 'scanner'
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
@@ -28,6 +28,12 @@ export default function App() {
         setCurrentView('builder');
       } else if (hash === '#sites') {
         setCurrentView('sites');
+      } else if (hash === '#events') {
+        setCurrentView('events');
+      } else if (hash === '#sessions') {
+        setCurrentView('sessions');
+      } else if (hash === '#afisha') {
+        setCurrentView('afisha');
       }
     };
     window.addEventListener('hashchange', handleHashChange);
@@ -49,20 +55,24 @@ export default function App() {
 
   const handleBackToAfisha = () => {
     setSelectedEvent(null);
-    navigateTo('afisha', '');
+    navigateTo('afisha', '#afisha');
   };
 
   // Render based on view
   const renderMain = () => {
     switch (currentView) {
+      case 'events':
+        return <SitesAdmin initialTab="events" />;
+      case 'sessions':
+        return <SitesAdmin initialTab="sessions" />;
+      case 'sites':
+        return <SitesAdmin initialTab="pages" />;
+      case 'builder':
+        return <DeckBuilder />;
       case 'widget':
         return <SeatWidget />;
       case 'scanner':
         return <ScannerApp />;
-      case 'builder':
-        return <DeckBuilder />;
-      case 'sites':
-        return <SitesAdmin />;
       case 'afisha':
         return <Afisha onSelectEvent={handleSelectEvent} />;
       case 'booking':
@@ -76,7 +86,7 @@ export default function App() {
       case 'seller':
         return <SellerPanel onBack={handleBackToAfisha} />;
       default:
-        return null;
+        return <SitesAdmin initialTab="events" />;
     }
   };
 
@@ -87,59 +97,91 @@ export default function App() {
       {showChrome && (
         <header className="main-content" style={{ paddingBottom: 0 }}>
           <nav className="navbar glass">
-            <div className="nav-brand" onClick={handleBackToAfisha}>
+            <div className="nav-brand" onClick={() => navigateTo('events', '#events')} style={{ cursor: 'pointer' }}>
               <Anchor size={28} style={{ color: 'var(--color-primary)' }} />
               <span>ПЛАТФОРМА</span>
             </div>
             <div className="nav-links">
+              {/* Core Manager Tools */}
               <button
-                className={`nav-link ${currentView === 'afisha' || currentView === 'booking' ? 'active' : ''}`}
-                onClick={handleBackToAfisha}
+                className={`nav-link ${currentView === 'events' ? 'active' : ''}`}
+                onClick={() => navigateTo('events', '#events')}
+                title="Репертуар программ, концертов и цены"
+              >
+                <Music size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
+                Программы
+              </button>
+
+              <button
+                className={`nav-link ${currentView === 'sessions' ? 'active' : ''}`}
+                onClick={() => navigateTo('sessions', '#sessions')}
+                title="Расписание рейсов и Массовый генератор"
               >
                 <Calendar size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
-                Афиша рейсов
+                Расписание & Рейсы
               </button>
+
               <button
                 className={`nav-link ${currentView === 'builder' ? 'active' : ''}`}
                 onClick={() => navigateTo('builder', '#builder')}
+                title="Визуальный конструктор схем рассадки"
               >
                 <Layout size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
                 Конструктор схем
               </button>
+
               <button
                 className={`nav-link ${currentView === 'sites' ? 'active' : ''}`}
                 onClick={() => navigateTo('sites', '#sites')}
+                title="Управление сайтами, страницами и кассовыми шлюзами"
               >
                 <Globe size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
-                Сайты (CMS)
+                Сайты & CMS
               </button>
+
               <button
                 className={`nav-link ${currentView === 'seller' ? 'active' : ''}`}
                 onClick={() => navigateTo('seller', '')}
+                title="Терминал кассира на причале"
               >
                 <Ticket size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
                 Касса Причала
               </button>
+
               <button
                 className={`nav-link ${currentView === 'agent' ? 'active' : ''}`}
                 onClick={() => navigateTo('agent', '')}
+                title="Кабинет агента и реферальные ссылки"
               >
                 <Percent size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
-                Кабинет Партнера
+                Партнеры
               </button>
+
               <button
                 className={`nav-link ${currentView === 'admin' ? 'active' : ''}`}
                 onClick={() => navigateTo('admin', '')}
+                title="Панель администратора"
               >
                 <Shield size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
                 Админка
               </button>
+
+              <button
+                className={`nav-link ${currentView === 'afisha' || currentView === 'booking' ? 'active' : ''}`}
+                onClick={() => navigateTo('afisha', '#afisha')}
+                title="Клиентская афиша рейсов"
+              >
+                <Sparkles size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
+                Афиша
+              </button>
+
               <button
                 className={`nav-link ${currentView === 'scanner' ? 'active' : ''}`}
                 onClick={() => navigateTo('scanner', '#scanner')}
+                title="Сканер QR-кодов билетов"
               >
                 <QrCode size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
-                Сканер (PWA)
+                Сканер
               </button>
 
               {/* Contextual Help Trigger Button */}
@@ -207,8 +249,8 @@ export default function App() {
 
       {showChrome && (
         <footer className="glass" style={{ margin: '40px 16px 24px', padding: '24px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '13px' }}>
-          <p>© 2026 Платформа теплоходных прогулок Санкт-Петербурга. Все права защищены.</p>
-          <p style={{ marginTop: '4px', fontSize: '11px' }}>Развернуто в российской инфраструктуре Yandex Cloud (152-ФЗ)</p>
+          <p>© 2026 Единая платформа теплоходных прогулок Санкт-Петербурга. Все права защищены.</p>
+          <p style={{ marginTop: '4px', fontSize: '11px' }}>Инфраструктура Yandex Cloud (152-ФЗ) • Доступ без паролей для менеджеров</p>
         </footer>
       )}
     </div>
