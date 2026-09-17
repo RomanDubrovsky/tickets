@@ -44,6 +44,7 @@ for domain in ['rockhitneva.ru', 'aquasound.club']:
             elif 'text' in content_type:
                 content_type += '; charset=utf-8'
 
+            cache_control = 'no-cache, no-store, must-revalidate' if file.endswith('.html') else 'public, max-age=31536000, immutable'
             print(f"Uploading {s3_key} ({content_type})")
             with open(full_path, 'rb') as data:
                 s3.put_object(
@@ -51,6 +52,7 @@ for domain in ['rockhitneva.ru', 'aquasound.club']:
                     Key=s3_key,
                     Body=data,
                     ContentType=content_type,
+                    CacheControl=cache_control,
                     ACL='public-read'
                 )
             uploaded += 1

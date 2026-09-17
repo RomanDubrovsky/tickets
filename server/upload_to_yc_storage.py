@@ -34,13 +34,15 @@ for root, dirs, files in os.walk(dist_dir):
             else:
                 content_type = 'application/octet-stream'
 
-        print(f"Uploading {rel_path} -> s3://{bucket_name}/{rel_path} ({content_type})")
+        cache_control = 'no-cache, no-store, must-revalidate' if file.endswith('.html') else 'public, max-age=31536000, immutable'
+        print(f"Uploading {rel_path} -> s3://{bucket_name}/{rel_path} ({content_type}, CacheControl={cache_control})")
         with open(full_path, 'rb') as data:
             s3.put_object(
                 Bucket=bucket_name,
                 Key=rel_path,
                 Body=data,
                 ContentType=content_type,
+                CacheControl=cache_control,
                 ACL='public-read'
             )
 
