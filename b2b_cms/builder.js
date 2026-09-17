@@ -226,12 +226,8 @@ async function buildPage(page) {
 
     const primaryColor = domain.primary_color || (domain.name.includes('rockhit') ? '#e55f2e' : '#446084');
 
-    // Если это главная страница — генерируем динамическую афишу
-    let contentToInject = page.iframe_code;
-    if (isHomePage) {
-        const afishaHtml = await generateAfishaHtml(domain.id, primaryColor);
-        contentToInject = (page.iframe_code ? page.iframe_code + '\n' : '') + afishaHtml;
-    }
+    // Вставляем код фрейма/виджета (например, Ticketland)
+    let contentToInject = page.iframe_code || '';
 
     // Подставляем данные
     html = html.replace(/{{TITLE}}/g, page.title);
