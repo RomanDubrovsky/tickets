@@ -9,10 +9,11 @@ import SeatWidget from './components/SeatWidget';
 import ScannerApp from './components/ScannerApp';
 import DeckBuilder from './components/DeckBuilder';
 import SitesAdmin from './components/SitesAdmin';
+import ProgramsManager from './components/ProgramsManager';
 import HelpModal from './components/HelpModal';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState('events'); // 'events', 'sessions', 'builder', 'sites', 'afisha', 'booking', 'admin', 'agent', 'seller', 'widget', 'scanner'
+  const [currentView, setCurrentView] = useState('programs'); // 'programs', 'sessions', 'venues', 'sites', 'builder', 'afisha', 'booking', 'admin', 'agent', 'seller', 'widget', 'scanner'
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
@@ -28,10 +29,12 @@ export default function App() {
         setCurrentView('builder');
       } else if (hash === '#sites') {
         setCurrentView('sites');
-      } else if (hash === '#events') {
-        setCurrentView('events');
+      } else if (hash === '#programs' || hash === '#events') {
+        setCurrentView('programs');
       } else if (hash === '#sessions') {
         setCurrentView('sessions');
+      } else if (hash === '#venues') {
+        setCurrentView('venues');
       } else if (hash === '#afisha') {
         setCurrentView('afisha');
       }
@@ -61,12 +64,14 @@ export default function App() {
   // Render based on view
   const renderMain = () => {
     switch (currentView) {
-      case 'events':
-        return <SitesAdmin initialTab="events" />;
+      case 'programs':
+        return <ProgramsManager defaultSection="events" />;
       case 'sessions':
-        return <SitesAdmin initialTab="sessions" />;
+        return <ProgramsManager defaultSection="sessions" />;
+      case 'venues':
+        return <ProgramsManager defaultSection="venues" />;
       case 'sites':
-        return <SitesAdmin initialTab="pages" />;
+        return <SitesAdmin />;
       case 'builder':
         return <DeckBuilder />;
       case 'widget':
@@ -86,7 +91,7 @@ export default function App() {
       case 'seller':
         return <SellerPanel onBack={handleBackToAfisha} />;
       default:
-        return <SitesAdmin initialTab="events" />;
+        return <ProgramsManager defaultSection="events" />;
     }
   };
 
@@ -97,30 +102,32 @@ export default function App() {
       {showChrome && (
         <header className="main-content" style={{ paddingBottom: 0 }}>
           <nav className="navbar glass">
-            <div className="nav-brand" onClick={() => navigateTo('events', '#events')} style={{ cursor: 'pointer' }}>
+            <div className="nav-brand" onClick={() => navigateTo('programs', '#programs')} style={{ cursor: 'pointer' }}>
               <Anchor size={28} style={{ color: 'var(--color-primary)' }} />
               <span>ПЛАТФОРМА</span>
             </div>
             <div className="nav-links">
-              {/* Core Manager Tools */}
+              {/* 1. Репертуар & Расписание & Площадки */}
               <button
-                className={`nav-link ${currentView === 'events' ? 'active' : ''}`}
-                onClick={() => navigateTo('events', '#events')}
-                title="Репертуар программ, концертов и цены"
+                className={`nav-link ${currentView === 'programs' || currentView === 'sessions' || currentView === 'venues' ? 'active' : ''}`}
+                onClick={() => navigateTo('programs', '#programs')}
+                title="Репертуар программ, расписание рейсов и площадки"
               >
                 <Music size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
-                Программы
+                Программы & Рейсы
               </button>
 
+              {/* 2. Сайты и лендинги */}
               <button
-                className={`nav-link ${currentView === 'sessions' ? 'active' : ''}`}
-                onClick={() => navigateTo('sessions', '#sessions')}
-                title="Расписание рейсов и Массовый генератор"
+                className={`nav-link ${currentView === 'sites' ? 'active' : ''}`}
+                onClick={() => navigateTo('sites', '#sites')}
+                title="Управление сайтами, посадочными страницами и кассами"
               >
-                <Calendar size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
-                Расписание & Рейсы
+                <Globe size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
+                Сайты & CMS
               </button>
 
+              {/* 3. Конструктор палуб */}
               <button
                 className={`nav-link ${currentView === 'builder' ? 'active' : ''}`}
                 onClick={() => navigateTo('builder', '#builder')}
@@ -130,15 +137,7 @@ export default function App() {
                 Конструктор схем
               </button>
 
-              <button
-                className={`nav-link ${currentView === 'sites' ? 'active' : ''}`}
-                onClick={() => navigateTo('sites', '#sites')}
-                title="Управление сайтами, страницами и кассовыми шлюзами"
-              >
-                <Globe size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
-                Сайты & CMS
-              </button>
-
+              {/* 4. Касса Причала */}
               <button
                 className={`nav-link ${currentView === 'seller' ? 'active' : ''}`}
                 onClick={() => navigateTo('seller', '')}
@@ -148,6 +147,7 @@ export default function App() {
                 Касса Причала
               </button>
 
+              {/* 5. Партнеры & Агенты */}
               <button
                 className={`nav-link ${currentView === 'agent' ? 'active' : ''}`}
                 onClick={() => navigateTo('agent', '')}
@@ -157,6 +157,7 @@ export default function App() {
                 Партнеры
               </button>
 
+              {/* 6. Админка */}
               <button
                 className={`nav-link ${currentView === 'admin' ? 'active' : ''}`}
                 onClick={() => navigateTo('admin', '')}
@@ -166,6 +167,7 @@ export default function App() {
                 Админка
               </button>
 
+              {/* 7. Клиентская Афиша */}
               <button
                 className={`nav-link ${currentView === 'afisha' || currentView === 'booking' ? 'active' : ''}`}
                 onClick={() => navigateTo('afisha', '#afisha')}
@@ -175,6 +177,7 @@ export default function App() {
                 Афиша
               </button>
 
+              {/* 8. Сканер билетов */}
               <button
                 className={`nav-link ${currentView === 'scanner' ? 'active' : ''}`}
                 onClick={() => navigateTo('scanner', '#scanner')}
@@ -211,7 +214,7 @@ export default function App() {
         </header>
       )}
 
-      {/* Floating Help Button for Widget and Scanner views where header is hidden */}
+      {/* Floating Help Button for Widget and Scanner views */}
       {!showChrome && (
         <button
           onClick={() => setIsHelpOpen(true)}
