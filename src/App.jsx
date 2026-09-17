@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Anchor, Calendar, Shield, Percent, Ticket, QrCode, Layout } from 'lucide-react';
+import { Anchor, Calendar, Shield, Percent, Ticket, QrCode, Layout, Globe, HelpCircle } from 'lucide-react';
 import Afisha from './components/Afisha';
 import BookingDetails from './components/BookingDetails';
 import AdminPanel from './components/AdminPanel';
@@ -8,29 +8,39 @@ import SellerPanel from './components/SellerPanel';
 import SeatWidget from './components/SeatWidget';
 import ScannerApp from './components/ScannerApp';
 import DeckBuilder from './components/DeckBuilder';
+import SitesAdmin from './components/SitesAdmin';
+import HelpModal from './components/HelpModal';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState('afisha'); // 'afisha', 'booking', 'admin', 'agent', 'seller', 'widget', 'scanner', 'builder'
+  const [currentView, setCurrentView] = useState('afisha'); // 'afisha', 'booking', 'admin', 'agent', 'seller', 'widget', 'scanner', 'builder', 'sites'
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
 
-  // Simple hash‑based routing for widget and scanner modes
+  // Hash-based view sync
   useEffect(() => {
     const handleHashChange = () => {
-      if (window.location.hash === '#widget') {
+      const hash = window.location.hash.split('?')[0];
+      if (hash === '#widget') {
         setCurrentView('widget');
-      } else if (window.location.hash === '#scanner') {
+      } else if (hash === '#scanner') {
         setCurrentView('scanner');
-      } else if (window.location.hash === '#builder') {
+      } else if (hash === '#builder') {
         setCurrentView('builder');
-      } else if (currentView === 'widget' || currentView === 'scanner' || currentView === 'builder') {
-        setCurrentView('afisha');
+      } else if (hash === '#sites') {
+        setCurrentView('sites');
       }
     };
     window.addEventListener('hashchange', handleHashChange);
-    // initial check
     handleHashChange();
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, [currentView]);
+  }, []);
+
+  const navigateTo = (view, hash = '') => {
+    setCurrentView(view);
+    if (window.location.hash !== hash) {
+      window.history.pushState(null, '', hash || window.location.pathname + window.location.search);
+    }
+  };
 
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
@@ -39,7 +49,7 @@ export default function App() {
 
   const handleBackToAfisha = () => {
     setSelectedEvent(null);
-    setCurrentView('afisha');
+    navigateTo('afisha', '');
   };
 
   // Render based on view
@@ -51,6 +61,8 @@ export default function App() {
         return <ScannerApp />;
       case 'builder':
         return <DeckBuilder />;
+      case 'sites':
+        return <SitesAdmin />;
       case 'afisha':
         return <Afisha onSelectEvent={handleSelectEvent} />;
       case 'booking':
@@ -89,51 +101,114 @@ export default function App() {
               </button>
               <button
                 className={`nav-link ${currentView === 'builder' ? 'active' : ''}`}
-                onClick={() => setCurrentView('builder')}
+                onClick={() => navigateTo('builder', '#builder')}
               >
                 <Layout size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
                 Конструктор схем
               </button>
               <button
+                className={`nav-link ${currentView === 'sites' ? 'active' : ''}`}
+                onClick={() => navigateTo('sites', '#sites')}
+              >
+                <Globe size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
+                Сайты (CMS)
+              </button>
+              <button
                 className={`nav-link ${currentView === 'seller' ? 'active' : ''}`}
-                onClick={() => setCurrentView('seller')}
+                onClick={() => navigateTo('seller', '')}
               >
                 <Ticket size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
                 Касса Причала
               </button>
               <button
                 className={`nav-link ${currentView === 'agent' ? 'active' : ''}`}
-                onClick={() => setCurrentView('agent')}
+                onClick={() => navigateTo('agent', '')}
               >
                 <Percent size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
                 Кабинет Партнера
               </button>
               <button
                 className={`nav-link ${currentView === 'admin' ? 'active' : ''}`}
-                onClick={() => setCurrentView('admin')}
+                onClick={() => navigateTo('admin', '')}
               >
                 <Shield size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
                 Админка
               </button>
               <button
-                className={`nav-link`}
-                onClick={() => window.location.hash = '#scanner'}
+                className={`nav-link ${currentView === 'scanner' ? 'active' : ''}`}
+                onClick={() => navigateTo('scanner', '#scanner')}
               >
                 <QrCode size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
                 Сканер (PWA)
+              </button>
+
+              {/* Contextual Help Trigger Button */}
+              <button
+                className="nav-link help-btn"
+                onClick={() => setIsHelpOpen(true)}
+                title="Справка и инструкция по этой странице"
+                style={{
+                  background: 'rgba(59, 130, 246, 0.15)',
+                  border: '1px solid rgba(59, 130, 246, 0.4)',
+                  color: '#93c5fd',
+                  borderRadius: '20px',
+                  padding: '6px 14px',
+                  fontWeight: 'bold',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  cursor: 'pointer',
+                  marginLeft: '8px'
+                }}
+              >
+                <HelpCircle size={18} color="#60a5fa" />
+                <span>Справка</span>
               </button>
             </div>
           </nav>
         </header>
       )}
 
+      {/* Floating Help Button for Widget and Scanner views where header is hidden */}
+      {!showChrome && (
+        <button
+          onClick={() => setIsHelpOpen(true)}
+          style={{
+            position: 'fixed',
+            bottom: '20px',
+            right: '20px',
+            zIndex: 9000,
+            background: '#2563eb',
+            color: 'white',
+            border: 'none',
+            borderRadius: '50px',
+            padding: '10px 18px',
+            fontWeight: 'bold',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.5)',
+            cursor: 'pointer'
+          }}
+        >
+          <HelpCircle size={20} />
+          <span>Инструкция</span>
+        </button>
+      )}
 
       <main className="main-content">{renderMain()}</main>
 
+      {/* Contextual Help Modal */}
+      <HelpModal 
+        currentView={currentView}
+        isOpen={isHelpOpen}
+        onClose={() => setIsHelpOpen(false)}
+      />
+
       {showChrome && (
         <footer className="glass" style={{ margin: '40px 16px 24px', padding: '24px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '13px' }}>
-          <p>© 2026 Платформа теплоходных прогулок. Все права защищены.</p>
-          <p style={{ marginTop: '4px', fontSize: '11px' }}>Разработано для демонстрации MVP с поддержкой СУБД Supabase</p>
+          <p>© 2026 Платформа теплоходных прогулок Санкт-Петербурга. Все права защищены.</p>
+          <p style={{ marginTop: '4px', fontSize: '11px' }}>Развернуто в российской инфраструктуре Yandex Cloud (152-ФЗ)</p>
         </footer>
       )}
     </div>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет партнера — <%= agent.name %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            background-color: #f1f5f9;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .partner-hero {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: #ffffff;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .stat-card {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/">
+                <i class="bi bi-percent text-warning"></i>
+                Портал Партнерской Сети
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-light text-dark">Партнер: <%= agent.name %></span>
+                <a href="/" class="btn btn-outline-light btn-sm">В админ-панель</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pb-5">
+        <!-- Hero Banner -->
+        <div class="partner-hero">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                <div>
+                    <div class="badge bg-warning text-dark mb-2 px-3 py-1 fw-bold"><%= agent.role || 'Партнер' %></div>
+                    <h2 class="fw-bold mb-1"><%= agent.name %></h2>
+                    <p class="text-slate-300 mb-0 opacity-75">Персональный кабинет распространения билетов на музыкальные теплоходы Санкт-Петербурга</p>
+                </div>
+                <div class="bg-white bg-opacity-10 p-3 rounded-3 text-end">
+                    <div class="small text-white-50">Ваш промокод:</div>
+                    <div class="h3 fw-bold text-warning font-monospace mb-0"><%= agent.promo_code %></div>
+                    <div class="small text-white-50 mt-1">Скидка для гостей: <strong><%= Math.round((agent.discount_rate || 0.05) * 100) %>%</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="text-muted small text-uppercase fw-semibold mb-1">Ваша комиссия</div>
+                    <div class="stat-value text-primary"><%= Math.round(agent.commission_rate * 100) %>%</div>
+                    <div class="small text-muted mt-1">от каждого проданного билета</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="text-muted small text-uppercase fw-semibold mb-1">Общий оборот продаж</div>
+                    <div class="stat-value"><%= totalRevenue.toLocaleString('ru-RU') %> ₽</div>
+                    <div class="small text-muted mt-1">билетов продано: <strong><%= sales.length %> шт.</strong></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="text-muted small text-uppercase fw-semibold mb-1">Заработано вознаграждения</div>
+                    <div class="stat-value text-success"><%= totalCommission.toLocaleString('ru-RU') %> ₽</div>
+                    <div class="small text-success mt-1 fw-semibold"><i class="bi bi-check-circle me-1"></i>Начислено к выплате</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Left: Referral Links & QR -->
+            <div class="col-lg-5">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white py-3 border-bottom">
+                        <h5 class="fw-bold mb-0"><i class="bi bi-link-45deg me-1 text-primary"></i> Ваша главная партнерская ссылка</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small">Отправляйте эту ссылку туристам в мессенджерах или размещайте на сайте. Промокод применится автоматически.</p>
+                        <% const mainRefUrl = 'http://' + domainName + '/?promo=' + agent.promo_code; %>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control font-monospace small" id="mainRefInput" value="<%= mainRefUrl %>" readonly>
+                            <button class="btn btn-primary" onclick="copyRef('mainRefInput', this)">
+                                <i class="bi bi-copy"></i>
+                            </button>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h6 class="fw-bold mb-2"><i class="bi bi-qr-code me-1 text-primary"></i> QR-код для печати на стойке ресепшен</h6>
+                        <p class="text-muted small">Распечатайте и разместите на ресепшене или в буклетах. При сканировании камерой телефона гость сразу переходит на покупку с вашим промокодом.</p>
+                        
+                        <div class="text-center p-3 bg-light rounded border">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=<%= encodeURIComponent(mainRefUrl) %>" alt="QR Code" class="img-fluid rounded shadow-sm mb-2" style="max-width: 160px;">
+                            <div class="small text-muted font-monospace"><%= agent.promo_code %></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Support -->
+                <div class="card shadow-sm border-0 p-3 bg-light">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="bi bi-headset fs-1 text-secondary"></i>
+                        <div>
+                            <div class="fw-bold">Поддержка партнеров</div>
+                            <div class="small text-muted">По вопросам выплат и спецбронирований:</div>
+                            <div class="small fw-semibold text-primary">+7 (812) 980-09-43 / partner@rockhitneva.ru</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Event-specific links & Sales History -->
+            <div class="col-lg-7">
+                <!-- Event Links -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white py-3 border-bottom">
+                        <h5 class="fw-bold mb-0"><i class="bi bi-ticket-detailed me-1 text-primary"></i> Ссылки на конкретные концерты</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
+                            <table class="table table-hover align-middle mb-0">
+                                <tbody>
+                                    <% (events || []).forEach(function(ev) { %>
+                                        <% const evRefUrl = 'http://' + domainName + '/' + ev.slug + '/?promo=' + agent.promo_code; %>
+                                        <tr>
+                                            <td class="ps-3">
+                                                <div class="fw-semibold text-dark"><%= ev.title %></div>
+                                                <small class="text-muted">от <%= ev.min_price || 1500 %> ₽</small>
+                                            </td>
+                                            <td class="text-end pe-3" style="width: 140px;">
+                                                <button class="btn btn-outline-primary btn-sm" onclick="copyText('<%= evRefUrl %>', this)">
+                                                    <i class="bi bi-copy me-1"></i> Ссылка
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sales History Table -->
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0"><i class="bi bi-clock-history me-1 text-primary"></i> История ваших продаж</h5>
+                        <span class="badge bg-secondary"><%= sales.length %> заказов</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <% if (sales.length === 0) { %>
+                            <div class="p-4 text-center text-muted">
+                                Покупок по вашему промокоду пока не зафиксировано.
+                            </div>
+                        <% } else { %>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="ps-3">Программа / Гость</th>
+                                            <th>Сумма заказа</th>
+                                            <th>Комиссия</th>
+                                            <th class="pe-3 text-end">Дата</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% sales.forEach(function(sale) { %>
+                                            <tr>
+                                                <td class="ps-3">
+                                                    <div class="fw-semibold text-dark"><%= sale.event_title || 'Билеты на рейс' %></div>
+                                                    <small class="text-muted">Гость: <%= sale.customer_name || 'Покупатель' %></small>
+                                                </td>
+                                                <td>
+                                                    <strong><%= sale.amount %> ₽</strong>
+                                                </td>
+                                                <td>
+                                                    <strong class="text-success">+<%= sale.commission_amount %> ₽</strong>
+                                                </td>
+                                                <td class="pe-3 text-end text-muted small">
+                                                    <%= sale.created_at %>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function copyRef(inputId, btn) {
+            const input = document.getElementById(inputId);
+            input.select();
+            navigator.clipboard.writeText(input.value);
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check2"></i> Скопировано!';
+            btn.classList.replace('btn-primary', 'btn-success');
+            setTimeout(() => {
+                btn.innerHTML = orig;
+                btn.classList.replace('btn-success', 'btn-primary');
+            }, 2000);
+        }
+
+        function copyText(text, btn) {
+            navigator.clipboard.writeText(text);
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check2"></i> Скопировано!';
+            btn.classList.replace('btn-outline-primary', 'btn-success');
+            setTimeout(() => {
+                btn.innerHTML = orig;
+                btn.classList.replace('btn-success', 'btn-outline-primary');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

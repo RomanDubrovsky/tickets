@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DollarSign, Shield, Users, Ticket, ArrowLeft, Percent, Compass, Plus, Star } from 'lucide-react';
-import { getEvents, getBookings, createBooking } from '../db';
+import { getEvents, getBookings, createBooking, getHallById, getHalls } from '../db';
 import HallRenderer from './HallRenderer';
 
 export default function SellerPanel({ onBack }) {
@@ -15,23 +15,13 @@ export default function SellerPanel({ onBack }) {
   const [currentHall, setCurrentHall] = useState(null);
   const [activeTab, setActiveTab] = useState('sell'); // 'sell', 'history'
 
-  const mockHalls = {
-    'f2c1d6e2-1b2a-4c3c-9f7e-1234567890ab': {
-      id: 'f2c1d6e2-1b2a-4c3c-9f7e-1234567890ab',
-      name: 'Концертный зал',
-      type: 'grid',
-      rows: 6,
-      seats_per_row: 10
-    }
-  };
-
   const loadData = async () => {
     const fetchedEvents = await getEvents();
     const fetchedBookings = await getBookings();
     setEvents(fetchedEvents);
     setBookings(fetchedBookings);
     if (fetchedEvents.length > 0 && !selectedEvent) {
-      handleSelectEvent(fetchedEvents[0], fetchedBookings);
+      await handleSelectEvent(fetchedEvents[0], fetchedBookings);
     }
   };
 
@@ -39,23 +29,24 @@ export default function SellerPanel({ onBack }) {
     loadData();
   }, []);
 
-  const handleSelectEvent = (event, currentBookings = bookings) => {
+  const handleSelectEvent = async (event, currentBookings = bookings) => {
     setSelectedEvent(event);
     setSelectedSeat(null);
     
     // Load hall definition
-    const hall = mockHalls[event.hall_id] || {
-      id: event.hall_id,
-      name: 'Зал по умолчанию',
-      type: 'grid',
-      rows: 8,
-      seats_per_row: 12
-    };
+    let hall = null;
+    if (event.hall_id) {
+      hall = await getHallById(event.hall_id);
+    }
+    if (!hall) {
+      const allHalls = await getHalls();
+      hall = allHalls.find((h) => h.type === 'custom_svg') || allHalls[0];
+    }
     setCurrentHall(hall);
 
     // Calculate occupied seats for this event
     const occupied = currentBookings
-      .filter(b => b.event_id === event.id)
+      .filter(b => b.event_id === event.id && b.status !== 'cancelled')
       .map(b => b.seat_number);
     setOccupiedSeats(occupied);
   };
@@ -67,13 +58,13 @@ export default function SellerPanel({ onBack }) {
       return;
     }
 
-    const price = selectedSeat.type === 'vip' ? selectedEvent.price_vip : selectedEvent.price_standard;
+    const price = Number(selectedSeat.price) || (selectedSeat.type === 'vip' ? selectedEvent.price_vip : selectedEvent.price_standard);
 
     try {
       await createBooking({
         event_id: selectedEvent.id,
         seat_number: selectedSeat.id,
-        seat_category: selectedSeat.type,
+        seat_category: selectedSeat.categoryName || selectedSeat.type || 'standard',
         customer_name: customerName || 'Быстрая продажа (Касса)',
         customer_phone: customerPhone || 'Нет данных',
         customer_email: customerEmail || 'cashier@tickets.ru',

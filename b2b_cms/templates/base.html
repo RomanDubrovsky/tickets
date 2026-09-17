@@ -8,8 +8,8 @@
         <title>{{TITLE}}</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-        <link rel="stylesheet" href="/static/css/main.css" />
-        <noscript><link rel="stylesheet" href="/static/css/noscript.css" /></noscript>
+        <link rel="stylesheet" href="{{STATIC_PREFIX}}/css/main.css" />
+        <noscript><link rel="stylesheet" href="{{STATIC_PREFIX}}/css/noscript.css" /></noscript>
         <style>
             /* Кастомизация основного цвета */
             :root {
@@ -178,13 +178,13 @@
             </div>
 
         <!-- Scripts -->
-            <script src="/static/js/jquery.min.js"></script>
-            <script src="/static/js/jquery.scrollex.min.js"></script>
-            <script src="/static/js/jquery.scrolly.min.js"></script>
-            <script src="/static/js/browser.min.js"></script>
-            <script src="/static/js/breakpoints.min.js"></script>
-            <script src="/static/js/util.js"></script>
-            <script src="/static/js/main.js"></script>
+            <script src="{{STATIC_PREFIX}}/js/jquery.min.js"></script>
+            <script src="{{STATIC_PREFIX}}/js/jquery.scrollex.min.js"></script>
+            <script src="{{STATIC_PREFIX}}/js/jquery.scrolly.min.js"></script>
+            <script src="{{STATIC_PREFIX}}/js/browser.min.js"></script>
+            <script src="{{STATIC_PREFIX}}/js/breakpoints.min.js"></script>
+            <script src="{{STATIC_PREFIX}}/js/util.js"></script>
+            <script src="{{STATIC_PREFIX}}/js/main.js"></script>
 
         <!-- Скрипт билетов выбранного юр. лица (Ticketland) -->
         {{TICKET_SCRIPT}}

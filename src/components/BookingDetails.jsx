@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Anchor, CreditCard, ChevronLeft, CheckCircle, Percent } from 'lucide-react';
-import { createBooking, verifyPromoCode, getBookings } from '../db';
+import { createBooking, verifyPromoCode, getBookings, getHallById, getHalls } from '../db';
+import HallRenderer from './HallRenderer';
 
 export default function BookingDetails({ event, onBack }) {
   const [selectedSeat, setSelectedSeat] = useState(null);
@@ -14,6 +15,7 @@ export default function BookingDetails({ event, onBack }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isBooked, setIsBooked] = useState(false);
   const [occupiedSeats, setOccupiedSeats] = useState([]);
+  const [hall, setHall] = useState(null);
 
   // Check for referral code in URL on load (e.g. ?promo=ALEXROCK)
   useEffect(() => {
@@ -25,24 +27,36 @@ export default function BookingDetails({ event, onBack }) {
     }
   }, []);
 
-  // Fetch occupied seats for this event
+  // Fetch hall and occupied seats for this event
   useEffect(() => {
-    async function loadBookings() {
+    async function loadEventData() {
+      // 1. Load Hall
+      let h = null;
+      if (event.hall_id) {
+        h = await getHallById(event.hall_id);
+      }
+      if (!h) {
+        const halls = await getHalls();
+        h = halls.find((x) => x.type === 'custom_svg') || halls[0];
+      }
+      setHall(h);
+
+      // 2. Load Bookings
       const allBookings = await getBookings();
       const filtered = allBookings
-        .filter(b => b.event_id === event.id && b.status !== 'cancelled')
-        .map(b => b.seat_number);
+        .filter((b) => b.event_id === event.id && b.status !== 'cancelled')
+        .map((b) => b.seat_number);
       setOccupiedSeats(filtered);
     }
-    loadBookings();
-  }, [event.id]);
+    loadEventData();
+  }, [event.id, event.hall_id]);
 
   const handleApplyPromo = async (codeToVerify) => {
     const code = codeToVerify || promoCode;
     if (!code) return;
     setPromoError('');
     setPromoSuccess('');
-    
+
     try {
       const agent = await verifyPromoCode(code);
       if (agent) {
@@ -59,10 +73,10 @@ export default function BookingDetails({ event, onBack }) {
 
   const getPrice = () => {
     if (!selectedSeat) return 0;
-    const basePrice = selectedSeat.type === 'vip' ? event.price_vip : event.price_standard;
+    const basePrice = Number(selectedSeat.price) || (selectedSeat.type === 'vip' ? event.price_vip : event.price_standard);
     if (appliedAgent) {
       // 10% discount off base price for using agent promo code
-      return basePrice * 0.9;
+      return Math.round(basePrice * 0.9);
     }
     return basePrice;
   };
@@ -79,7 +93,7 @@ export default function BookingDetails({ event, onBack }) {
         customer_email: customerEmail,
         customer_phone: customerPhone,
         seat_number: selectedSeat.id,
-        seat_category: selectedSeat.type,
+        seat_category: selectedSeat.categoryName || selectedSeat.type || 'standard',
         price_paid: getPrice(),
         status: 'confirmed',
         agent_id: appliedAgent ? appliedAgent.id : null
@@ -94,10 +108,6 @@ export default function BookingDetails({ event, onBack }) {
     }
   };
 
-  // Generate seat layout (30 standard, 10 VIP)
-  const standardSeats = Array.from({ length: 30 }, (_, i) => `S${i + 1}`);
-  const vipSeats = Array.from({ length: 10 }, (_, i) => `V${i + 1}`);
-
   if (isBooked) {
     return (
       <div className="glass" style={{ padding: '40px', textAlign: 'center', maxWidth: '600px', margin: '40px auto' }}>
@@ -109,7 +119,9 @@ export default function BookingDetails({ event, onBack }) {
         <div className="glass" style={{ padding: '16px', marginBottom: '24px', textAlign: 'left', background: 'rgba(255,255,255,0.02)' }}>
           <div style={{ marginBottom: '8px' }}><strong>Рейс:</strong> {event.name}</div>
           <div style={{ marginBottom: '8px' }}><strong>Дата и время:</strong> {event.date} в {event.time.slice(0, 5)}</div>
-          <div style={{ marginBottom: '8px' }}><strong>Место:</strong> {selectedSeat.id} ({selectedSeat.type === 'vip' ? 'VIP Палуба' : 'Главная палуба'})</div>
+          <div style={{ marginBottom: '8px' }}>
+            <strong>Место:</strong> {selectedSeat.tableLabel ? `${selectedSeat.tableLabel}, Место ${selectedSeat.seatNumber}` : selectedSeat.id} ({selectedSeat.categoryName || 'Стандарт'})
+          </div>
           <div><strong>Оплачено:</strong> {getPrice()} ₽</div>
         </div>
         <button className="btn btn-primary" onClick={onBack}>Вернуться к афише</button>
@@ -123,75 +135,21 @@ export default function BookingDetails({ event, onBack }) {
         <ChevronLeft size={16} /> Назад к афише
       </button>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', alignItems: 'start' }}>
-        {/* Left Column: Seat Selector */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '28px', alignItems: 'start' }}>
+        {/* Left Column: Interactive Seat Selector */}
         <div className="glass" style={{ padding: '24px' }}>
-          <h2 style={{ fontFamily: 'var(--font-title)', marginBottom: '8px' }}>Выбор места на теплоходе</h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '20px' }}>
-            Нажмите на любое свободное место для выбора. Цены зависят от категории палубы.
+          <h2 style={{ fontFamily: 'var(--font-title)', marginBottom: '8px' }}>Выбор места на схеме теплохода</h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '16px' }}>
+            Выберите свободный столик и место. Стоимость билета зависит от выбранной категории.
           </p>
 
-          <div className="seat-map-container glass">
-            {/* VIP Deck */}
-            <div className="ship-deck">
-              <div className="deck-title">👑 VIP Палуба (с мягкими диванами) — {event.price_vip} ₽</div>
-              <div className="seats-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
-                {vipSeats.map(id => {
-                  const isOccupied = occupiedSeats.includes(id);
-                  const isSelected = selectedSeat?.id === id;
-                  return (
-                    <div 
-                      key={id}
-                      className={`seat vip ${isSelected ? 'selected' : ''} ${isOccupied ? 'occupied' : ''}`}
-                      onClick={() => !isOccupied && setSelectedSeat({ id, type: 'vip' })}
-                    >
-                      {id}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Standard Deck */}
-            <div className="ship-deck">
-              <div className="deck-title">🚢 Главная палуба — {event.price_standard} ₽</div>
-              <div className="seats-grid">
-                {standardSeats.map(id => {
-                  const isOccupied = occupiedSeats.includes(id);
-                  const isSelected = selectedSeat?.id === id;
-                  return (
-                    <div 
-                      key={id}
-                      className={`seat standard ${isSelected ? 'selected' : ''} ${isOccupied ? 'occupied' : ''}`}
-                      onClick={() => !isOccupied && setSelectedSeat({ id, type: 'standard' })}
-                    >
-                      {id}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Legend */}
-            <div className="legend">
-              <div className="legend-item">
-                <div className="legend-color standard"></div>
-                <span>Стандарт</span>
-              </div>
-              <div className="legend-item">
-                <div className="legend-color vip"></div>
-                <span>VIP Палуба</span>
-              </div>
-              <div className="legend-item">
-                <div className="legend-color success"></div>
-                <span>Выбрано</span>
-              </div>
-              <div className="legend-item">
-                <div className="legend-color occupied"></div>
-                <span>Занято</span>
-              </div>
-            </div>
-          </div>
+          <HallRenderer
+            hall={hall}
+            event={event}
+            selectedSeat={selectedSeat}
+            setSelectedSeat={setSelectedSeat}
+            occupiedSeats={occupiedSeats}
+          />
         </div>
 
         {/* Right Column: Checkout Info */}
@@ -199,17 +157,17 @@ export default function BookingDetails({ event, onBack }) {
           {/* Cruise brief */}
           <div className="glass" style={{ padding: '24px' }}>
             <h3 style={{ fontFamily: 'var(--font-title)', marginBottom: '16px' }}>Информация о рейсе</h3>
-            <h2 style={{ fontSize: '22px', marginBottom: '16px' }}>{event.name}</h2>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', color: 'var(--text-secondary)', fontSize: '14px' }}>
+            <h2 style={{ fontSize: '20px', marginBottom: '16px', color: '#0f172a' }}>{event.name}</h2>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', color: 'var(--text-secondary)', fontSize: '14px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Calendar size={16} /> <strong>Дата:</strong> {event.date}
+                <Calendar size={16} color="var(--color-primary)" /> <strong>Дата:</strong> {event.date}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Clock size={16} /> <strong>Время отправления:</strong> {event.time.slice(0, 5)}
+                <Clock size={16} color="var(--color-primary)" /> <strong>Время отправления:</strong> {event.time.slice(0, 5)}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Anchor size={16} /> <strong>Маршрут:</strong> Центральная акватория Невы
+                <Anchor size={16} color="var(--color-primary)" /> <strong>Маршрут:</strong> Центральная акватория Невы (под мосты)
               </div>
             </div>
           </div>
@@ -217,41 +175,41 @@ export default function BookingDetails({ event, onBack }) {
           {/* Form */}
           <div className="glass" style={{ padding: '24px' }}>
             <h3 style={{ fontFamily: 'var(--font-title)', marginBottom: '20px' }}>Оформление заказа</h3>
-            
+
             <form onSubmit={handleSubmitBooking}>
               <div className="form-group">
                 <label className="form-label">ФИО пассажира</label>
-                <input 
-                  type="text" 
-                  className="form-input" 
-                  placeholder="Иванов Иван Иванович" 
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="Иванов Иван Иванович"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  required 
+                  required
                 />
               </div>
 
               <div className="form-group">
                 <label className="form-label">Email для отправки билета</label>
-                <input 
-                  type="email" 
-                  className="form-input" 
-                  placeholder="ivan@example.com" 
+                <input
+                  type="email"
+                  className="form-input"
+                  placeholder="ivan@example.com"
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
-                  required 
+                  required
                 />
               </div>
 
               <div className="form-group">
                 <label className="form-label">Телефон для связи</label>
-                <input 
-                  type="tel" 
-                  className="form-input" 
-                  placeholder="+7 (999) 123-45-67" 
+                <input
+                  type="tel"
+                  className="form-input"
+                  placeholder="+7 (999) 123-45-67"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
-                  required 
+                  required
                 />
               </div>
 
@@ -259,19 +217,15 @@ export default function BookingDetails({ event, onBack }) {
               <div className="form-group">
                 <label className="form-label">Промокод (агента)</label>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <input 
-                    type="text" 
-                    className="form-input" 
-                    placeholder="Например, ALEXROCK" 
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="Например, ALEXROCK"
                     value={promoCode}
                     onChange={(e) => setPromoCode(e.target.value)}
                     style={{ flex: 1 }}
                   />
-                  <button 
-                    type="button" 
-                    className="btn btn-secondary"
-                    onClick={() => handleApplyPromo()}
-                  >
+                  <button type="button" className="btn btn-secondary" onClick={() => handleApplyPromo()}>
                     Применить
                   </button>
                 </div>
@@ -281,19 +235,27 @@ export default function BookingDetails({ event, onBack }) {
 
               {/* Total & Submit */}
               <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid var(--border-color)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                  <span style={{ color: 'var(--text-secondary)' }}>
-                    Выбранное место: {selectedSeat ? <strong>{selectedSeat.id}</strong> : 'Не выбрано'}
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', alignItems: 'center' }}>
+                  <span style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>
+                    Выбрано:{' '}
+                    {selectedSeat ? (
+                      <strong style={{ color: '#0f172a' }}>
+                        {selectedSeat.tableLabel ? `${selectedSeat.tableLabel}, Место ${selectedSeat.seatNumber}` : selectedSeat.id} (
+                        {selectedSeat.categoryName})
+                      </strong>
+                    ) : (
+                      'Не выбрано'
+                    )}
                   </span>
-                  <span style={{ fontSize: '20px', fontWeight: 'bold' }}>
-                    Итого: {getPrice()} ₽
+                  <span style={{ fontSize: '22px', fontWeight: 'bold', color: 'var(--color-primary)' }}>
+                    {getPrice()} ₽
                   </span>
                 </div>
 
-                <button 
-                  type="submit" 
-                  className="btn btn-primary" 
-                  style={{ width: '100%', padding: '14px' }}
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  style={{ width: '100%', padding: '14px', fontSize: '15px' }}
                   disabled={!selectedSeat || isSubmitting}
                 >
                   <CreditCard size={18} /> {isSubmitting ? 'Оформление...' : 'Оплатить и получить билет'}
@@ -306,3 +268,4 @@ export default function BookingDetails({ event, onBack }) {
     </div>
   );
 }
+

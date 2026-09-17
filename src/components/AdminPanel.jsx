@@ -1,28 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Shield, Calendar, Users, DollarSign } from 'lucide-react';
-import { getEvents, getShips, createEvent, getBookings } from '../db';
+import { getEvents, getShips, createEvent, getBookings, getHalls } from '../db';
 
 export default function AdminPanel() {
   const [events, setEvents] = useState([]);
   const [ships, setShips] = useState([]);
+  const [halls, setHalls] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('19:00');
-  const [priceStandard, setPriceStandard] = useState(1200);
+  const [priceStandard, setPriceStandard] = useState(1500);
   const [priceVip, setPriceVip] = useState(2500);
   const [shipId, setShipId] = useState('');
+  const [hallId, setHallId] = useState('');
   const [activeTab, setActiveTab] = useState('events');
 
   const loadData = async () => {
     const fetchedEvents = await getEvents();
     const fetchedShips = await getShips();
+    const fetchedHalls = await getHalls();
     const fetchedBookings = await getBookings();
     setEvents(fetchedEvents);
     setShips(fetchedShips);
+    setHalls(fetchedHalls);
     setBookings(fetchedBookings);
     if (fetchedShips.length > 0) setShipId(fetchedShips[0].id);
+    if (fetchedHalls.length > 0) setHallId(fetchedHalls[0].id);
   };
 
   useEffect(() => {
@@ -36,6 +41,7 @@ export default function AdminPanel() {
     try {
       await createEvent({
         ship_id: shipId,
+        hall_id: hallId || (halls[0]?.id),
         name,
         description,
         date,
@@ -234,7 +240,7 @@ export default function AdminPanel() {
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
               <div className="form-group">
                 <label className="form-label">Теплоход</label>
                 <select 
@@ -245,6 +251,20 @@ export default function AdminPanel() {
                 >
                   {ships.map(ship => (
                     <option key={ship.id} value={ship.id}>{ship.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Схема зала / палубы</label>
+                <select 
+                  className="form-input"
+                  value={hallId}
+                  onChange={(e) => setHallId(e.target.value)}
+                  required
+                >
+                  {halls.map(hall => (
+                    <option key={hall.id} value={hall.id}>{hall.name}</option>
                   ))}
                 </select>
               </div>

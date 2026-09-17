@@ -60,6 +60,8 @@ export default function SeatWidget() {
         return;
       }
 
+      const priceToPay = selectedSeat.price || (selectedSeat.type === 'vip' ? event.price_vip : event.price_standard);
+
       // 2. Book seat via API Gateway
       const bookRes = await fetch('http://localhost:3001/api/v1/tickets/book', {
         method: 'POST',
@@ -85,8 +87,8 @@ export default function SeatWidget() {
           customer_email: customer.email,
           customer_phone: customer.phone,
           seat_number: selectedSeat.id,
-          seat_category: selectedSeat.category || 'standard',
-          price_paid: event.price_standard,
+          seat_category: selectedSeat.categoryName || selectedSeat.type || 'standard',
+          price_paid: priceToPay,
           status: 'confirmed',
           agent_id: agentCode,
           created_at: new Date().toISOString()
@@ -114,6 +116,8 @@ export default function SeatWidget() {
     );
   }
 
+  const priceToPay = selectedSeat ? (selectedSeat.price || (selectedSeat.type === 'vip' ? event.price_vip : event.price_standard)) : 0;
+
   return (
     <div style={{ display: 'flex', gap: '20px', padding: '20px', maxWidth: '1200px', margin: '0 auto', flexWrap: 'wrap' }}>
       <div className="glass" style={{ flex: '1 1 600px', padding: '20px' }}>
@@ -136,38 +140,38 @@ export default function SeatWidget() {
           placeholder="Имя" 
           value={customer.name}
           onChange={e => setCustomer({...customer, name: e.target.value})}
-          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #444', background: '#222', color: 'white' }}
+          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #cbd5e1', background: '#ffffff', color: '#0f172a' }}
         />
         <input 
           type="tel" 
           placeholder="Телефон" 
           value={customer.phone}
           onChange={e => setCustomer({...customer, phone: e.target.value})}
-          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #444', background: '#222', color: 'white' }}
+          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #cbd5e1', background: '#ffffff', color: '#0f172a' }}
         />
         <input 
           type="email" 
           placeholder="Email" 
           value={customer.email}
           onChange={e => setCustomer({...customer, email: e.target.value})}
-          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #444', background: '#222', color: 'white' }}
+          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #cbd5e1', background: '#ffffff', color: '#0f172a' }}
         />
         
         <div style={{ marginTop: 'auto' }}>
-          <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between' }}>
-            <span>Выбрано место:</span>
-            <strong>{selectedSeat ? selectedSeat.id : '—'}</strong>
+          <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
+            <span>Выбрано:</span>
+            <strong>{selectedSeat ? `${selectedSeat.tableLabel ? selectedSeat.tableLabel + ', ' : ''}Место ${selectedSeat.seatNumber || selectedSeat.id}` : '—'}</strong>
           </div>
           <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between' }}>
             <span>К оплате:</span>
-            <strong style={{ color: 'var(--color-primary)' }}>
-              {selectedSeat ? event.price_standard + ' ₽' : '0 ₽'}
+            <strong style={{ color: 'var(--color-primary)', fontSize: '20px' }}>
+              {priceToPay} ₽
             </strong>
           </div>
           <button 
             disabled={!selectedSeat || !customer.name || !customer.phone || isBooking}
             onClick={handleBook}
-            style={{ width: '100%', padding: '12px', background: 'var(--color-primary)', color: 'black', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: (!selectedSeat || !customer.name || !customer.phone || isBooking) ? 'not-allowed' : 'pointer' }}
+            style={{ width: '100%', padding: '12px', background: 'var(--color-primary)', color: '#ffffff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: (!selectedSeat || !customer.name || !customer.phone || isBooking) ? 'not-allowed' : 'pointer' }}
           >
             {isBooking ? 'Обработка...' : 'Оплатить'}
           </button>
