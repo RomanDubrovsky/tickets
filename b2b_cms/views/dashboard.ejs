@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дашборд CMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">B2B Афиша CMS</a>
+            <div class="d-flex">
+                <a href="/logout" class="btn btn-outline-light btn-sm">Выйти</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar: Domains List -->
+            <div class="col-md-3 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Домены</h5>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <% domains.forEach(function(domain) { %>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <%= domain.name %>
+                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#domainModal<%= domain.id %>">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zM8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1"/></svg>
+                                </button>
+                            </li>
+                            
+                            <!-- Модалка редактирования скриптов домена -->
+                            <div class="modal fade" id="domainModal<%= domain.id %>" tabindex="-1">
+                              <div class="modal-dialog modal-lg">
+                                <form action="/domain/edit" method="POST" class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title">Настройки <%= domain.name %></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <input type="hidden" name="domain_id" value="<%= domain.id %>">
+                                    <div class="mb-3">
+                                        <label class="form-label">Глобальные скрипты (Analytics, Метрика)</label>
+                                        <textarea class="form-control" name="global_scripts" rows="3" placeholder="<script>...</script>"><%= domain.global_scripts %></textarea>
+                                    </div>
+                                    <h6 class="mt-4 mb-3">Оформление сайта (Дизайн)</h6>
+                                    <div class="mb-3">
+                                        <label class="form-label">Основной цвет (HEX)</label>
+                                        <input type="color" class="form-control form-control-color" name="primary_color" value="<%= domain.primary_color || '#0d6efd' %>" title="Выберите цвет">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">URL логотипа (оставьте пустым для текста)</label>
+                                        <input type="text" class="form-control" name="logo_url" value="<%= domain.logo_url || '' %>" placeholder="https://...">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">URL фонового изображения (оставьте пустым для заливки)</label>
+                                        <input type="text" class="form-control" name="bg_image_url" value="<%= domain.bg_image_url || '' %>" placeholder="https://...">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Текст в подвале (Юридическое лицо, реквизиты)</label>
+                                        <textarea class="form-control" name="footer_text" rows="3"><%= domain.footer_text || '' %></textarea>
+                                    </div>
+                                    
+                                    <h6 class="mt-4 mb-3">Скрипты билетов (Ticketland и др.)</h6>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Название юр. лица 1 (для менеджеров)</label>
+                                            <input type="text" class="form-control" name="script_1_name" value="<%= domain.script_1_name || 'Юрлицо 1' %>">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Код скрипта 1 (JS, TLConf)</label>
+                                            <textarea class="form-control" name="script_1_code" rows="4" placeholder="<script>...</script>"><%= domain.script_1_code || '' %></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Название юр. лица 2 (для менеджеров)</label>
+                                            <input type="text" class="form-control" name="script_2_name" value="<%= domain.script_2_name || 'Юрлицо 2' %>">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Код скрипта 2 (JS, TLConf)</label>
+                                            <textarea class="form-control" name="script_2_code" rows="4" placeholder="<script>...</script>"><%= domain.script_2_code || '' %></textarea>
+                                        </div>
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                        <% }); %>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content: Pages List -->
+            <div class="col-md-9">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Страницы мероприятий</h5>
+                        <a href="/page/add" class="btn btn-success btn-sm">+ Добавить страницу</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <% if (pages.length === 0) { %>
+                            <div class="p-4 text-center text-muted">
+                                Страниц пока нет. Создайте первую!
+                            </div>
+                        <% } else { %>
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Название</th>
+                                        <th>Домен / URL (Slug)</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% pages.forEach(function(page) { %>
+                                        <tr>
+                                            <td class="align-middle"><strong><%= page.title %></strong></td>
+                                            <td class="align-middle">
+                                                <span class="badge bg-secondary"><%= page.domain_name %></span>
+                                                <div class="small text-muted mt-1">/<%= page.slug === '/' ? '' : page.slug.replace(/^\/+|\/+$/g, '') %></div>
+                                            </td>
+                                            <td class="align-middle text-end">
+                                                <a href="/page/edit/<%= page.id %>" class="btn btn-sm btn-outline-primary">Изменить</a>
+                                                <form action="/page/delete/<%= page.id %>" method="POST" class="d-inline" onsubmit="return confirm('Точно удалить эту страницу?');">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">Удалить</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

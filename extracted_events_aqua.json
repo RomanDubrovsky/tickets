@@ -1,0 +1,30 @@
+[
+  {
+    "raw_url": "https://aquasound.club/",
+    "slug": "/",
+    "title": "Акватория Звука",
+    "widget_code": "<div id=\"tlFrameContainer\" data-start=\"https://spb.ticketland.ru/drugoe/akvatoriya-zvuka-angliyskaya-nab-28\"></div>",
+    "access_hash": "DH6tIrnYRIsz8Gc3kudLy8b6qM2Iwdm1"
+  },
+  {
+    "raw_url": "https://aquasound.club/joe-cocker-tribute/",
+    "slug": "joe-cocker-tribute",
+    "title": "JOE COCKER (tribute)",
+    "widget_code": "<div id=\"tlFrameContainer\" data-start=\"https://www.ticketland.ru/iframe-direct-sale/sCfvEQ3faerOUTvfWcTGZCD7cTtX3hM2/\"></div>",
+    "access_hash": "8c8d43b735f10cc868462481cd0b51d5"
+  },
+  {
+    "raw_url": "https://aquasound.club/bigring/",
+    "slug": "bigring",
+    "title": "Большое петербургское кольцо",
+    "widget_code": "<div id=\"tlFrameContainer\" data-start=\"https://www.ticketland.ru/iframe-direct-sale/IHyw2ULOuXrG2UYbHyIIVI0GtIfBDU_k/\"></div>",
+    "access_hash": "8c8d43b735f10cc868462481cd0b51d5"
+  },
+  {
+    "raw_url": "https://aquasound.club/bridges/",
+    "slug": "bridges",
+    "title": "Мегаполис и разводные мосты",
+    "widget_code": "<div id=\"tlFrameContainer\" data-start=\"https://www.ticketland.ru/iframe-direct-sale/EzdnsfJUfnMOMYi98uM5gKFVBGinK/\"></div>",
+    "access_hash": "8c8d43b735f10cc868462481cd0b51d5"
+  }
+]

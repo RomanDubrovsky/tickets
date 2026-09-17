@@ -1,0 +1,10 @@
+# Docker Compose for local production-like environment
+services:
+  api:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=postgresql://ships_user:ShipsProdSecurePass2026!@rc1a-l1lah4ej61972tgv.mdb.yandexcloud.net:6432/ships_prod?sslmode=require
+      - PORT=3001
+    restart: always

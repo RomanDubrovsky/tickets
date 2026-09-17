@@ -118,98 +118,43 @@ function initLocalStorage() {
 }
 initLocalStorage();
 
-// ---- Public API ----
+// ---- Public API (Connected to Yandex Cloud Gateway) ----
+const API_BASE = 'http://localhost:3001/api/v1';
+
 export async function getShips() {
-  if (useSupabase) {
-    const { data, error } = await supabase.from('ships').select('*');
-    if (!error) return data;
-  }
-  return JSON.parse(localStorage.getItem('ships'));
+  // In a full implementation, we would have a /ships endpoint
+  return JSON.parse(localStorage.getItem('ships')) || [];
 }
 
 export async function getAgents() {
-  if (useSupabase) {
-    const { data, error } = await supabase.from('agents').select('*');
-    if (!error) return data;
-  }
-  return JSON.parse(localStorage.getItem('agents'));
+  return JSON.parse(localStorage.getItem('agents')) || [];
 }
 
 export async function getHalls() {
-  if (useSupabase) {
-    const { data, error } = await supabase.from('halls').select('*');
-    if (!error) return data;
-  }
   return JSON.parse(localStorage.getItem('halls')) || [];
 }
 
 export async function getHallById(id) {
-  if (useSupabase) {
-    const { data, error } = await supabase.from('halls').select('*').eq('id', id).single();
-    if (!error) return data;
-  }
-  const halls = JSON.parse(localStorage.getItem('halls')) || [];
+  const halls = await getHalls();
   return halls.find(h => h.id === id) || null;
 }
 
 export async function getEvents() {
-  if (useSupabase) {
-    const { data, error } = await supabase.from('events').select('*');
-    if (!error) return data;
-  }
-  // localStorage version already contains hall_id column
-  return JSON.parse(localStorage.getItem('events'));
+  const res = await fetch(`${API_BASE}/events`);
+  const json = await res.json();
+  if (json.success) return json.data;
+  return [];
 }
 
 export async function getBookings() {
-  if (useSupabase) {
-    const { data, error } = await supabase.from('bookings').select('*, events(name)');
-    if (!error) return data;
-  }
-  return JSON.parse(localStorage.getItem('bookings'));
+  // For admin panel
+  return JSON.parse(localStorage.getItem('bookings')) || [];
 }
 
-export async function createBooking(bookingData) {
-  if (useSupabase) {
-    const { data, error } = await supabase.from('bookings').insert([bookingData]).select();
-    if (!error) return data[0];
-    throw error;
-  }
-  const bookings = JSON.parse(localStorage.getItem('bookings'));
-  const newBooking = {
-    id: crypto.randomUUID(),
-    created_at: new Date().toISOString(),
-    ...bookingData
-  };
-  bookings.push(newBooking);
-  localStorage.setItem('bookings', JSON.stringify(bookings));
-  return newBooking;
-}
-
-export async function createEvent(eventData) {
-  if (useSupabase) {
-    const { data, error } = await supabase.from('events').insert([eventData]).select();
-    if (!error) return data[0];
-    throw error;
-  }
-  const events = JSON.parse(localStorage.getItem('events'));
-  const newEvent = {
-    id: crypto.randomUUID(),
-    created_at: new Date().toISOString(),
-    ...eventData
-  };
-  events.push(newEvent);
-  localStorage.setItem('events', JSON.stringify(events));
-  return newEvent;
-}
+// createBooking is now handled directly inside SeatWidget via fetch to /book
 
 export async function verifyPromoCode(code) {
   const cleaned = code.trim().toUpperCase();
-  if (useSupabase) {
-    const { data, error } = await supabase.from('agents').select('*').eq('promo_code', cleaned).single();
-    if (!error) return data;
-    return null;
-  }
-  const agents = JSON.parse(localStorage.getItem('agents'));
+  const agents = await getAgents();
   return agents.find(a => a.promo_code === cleaned) || null;
 }

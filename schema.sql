@@ -1,8 +1,7 @@
 -- SQL Schema for Ship Cruise Ticket Platform ("Платформа")
 -- Run this script in the Supabase SQL Editor for your project
 
--- 1. Enable UUID generation if not enabled
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- 1. Built-in UUID generation is used (gen_random_uuid())
 
 -- 2. Ships table
 CREATE TABLE IF NOT EXISTS ships (
@@ -97,7 +96,6 @@ VALUES (
     '[
         {"id":"S1","x":120,"y":45,"category":"standard"},
         {"id":"V1","x":300,"y":90,"category":"vip"}
-        -- … add all seats here …
     ]'::jsonb
 );
 

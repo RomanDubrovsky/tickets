@@ -1,21 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { Anchor, Calendar, Shield, Percent } from 'lucide-react';
+import { Anchor, Calendar, Shield, Percent, Ticket, QrCode, Layout } from 'lucide-react';
 import Afisha from './components/Afisha';
 import BookingDetails from './components/BookingDetails';
 import AdminPanel from './components/AdminPanel';
 import AgentPanel from './components/AgentPanel';
+import SellerPanel from './components/SellerPanel';
 import SeatWidget from './components/SeatWidget';
+import ScannerApp from './components/ScannerApp';
+import DeckBuilder from './components/DeckBuilder';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState('afisha'); // 'afisha', 'booking', 'admin', 'agent', 'widget'
+  const [currentView, setCurrentView] = useState('afisha'); // 'afisha', 'booking', 'admin', 'agent', 'seller', 'widget', 'scanner', 'builder'
   const [selectedEvent, setSelectedEvent] = useState(null);
 
-  // Simple hash‑based routing for widget mode
+  // Simple hash‑based routing for widget and scanner modes
   useEffect(() => {
     const handleHashChange = () => {
       if (window.location.hash === '#widget') {
         setCurrentView('widget');
-      } else if (currentView === 'widget') {
+      } else if (window.location.hash === '#scanner') {
+        setCurrentView('scanner');
+      } else if (window.location.hash === '#builder') {
+        setCurrentView('builder');
+      } else if (currentView === 'widget' || currentView === 'scanner' || currentView === 'builder') {
         setCurrentView('afisha');
       }
     };
@@ -40,6 +47,10 @@ export default function App() {
     switch (currentView) {
       case 'widget':
         return <SeatWidget />;
+      case 'scanner':
+        return <ScannerApp />;
+      case 'builder':
+        return <DeckBuilder />;
       case 'afisha':
         return <Afisha onSelectEvent={handleSelectEvent} />;
       case 'booking':
@@ -50,12 +61,14 @@ export default function App() {
         return <AdminPanel />;
       case 'agent':
         return <AgentPanel />;
+      case 'seller':
+        return <SellerPanel onBack={handleBackToAfisha} />;
       default:
         return null;
     }
   };
 
-  const showChrome = currentView !== 'widget';
+  const showChrome = currentView !== 'widget' && currentView !== 'scanner';
 
   return (
     <div className="app-container">
@@ -75,6 +88,20 @@ export default function App() {
                 Афиша рейсов
               </button>
               <button
+                className={`nav-link ${currentView === 'builder' ? 'active' : ''}`}
+                onClick={() => setCurrentView('builder')}
+              >
+                <Layout size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
+                Конструктор схем
+              </button>
+              <button
+                className={`nav-link ${currentView === 'seller' ? 'active' : ''}`}
+                onClick={() => setCurrentView('seller')}
+              >
+                <Ticket size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
+                Касса Причала
+              </button>
+              <button
                 className={`nav-link ${currentView === 'agent' ? 'active' : ''}`}
                 onClick={() => setCurrentView('agent')}
               >
@@ -88,10 +115,18 @@ export default function App() {
                 <Shield size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
                 Админка
               </button>
+              <button
+                className={`nav-link`}
+                onClick={() => window.location.hash = '#scanner'}
+              >
+                <QrCode size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
+                Сканер (PWA)
+              </button>
             </div>
           </nav>
         </header>
       )}
+
 
       <main className="main-content">{renderMain()}</main>
 

@@ -1,0 +1,21 @@
+{
+  "events": [
+    {
+      "id": "e18c6501-c852-47e2-8951-b844f2d3d991",
+      "name": "Вечерний Рок-Круиз",
+      "date": "2026-08-12",
+      "time": "20:00:00",
+      "price_standard": 1200,
+      "price_vip": 2500,
+      "total_capacity": 80
+    }
+  ],
+  "bookings": [],
+  "agents": [
+    {
+      "id": "c38b2512-108b-4b13-88bc-4672e8111223",
+      "promo_code": "ALEXROCK",
+      "commission_rate": 0.15
+    }
+  ]
+}

@@ -1,0 +1,192 @@
+<!DOCTYPE HTML>
+<!--
+    Based on Spectral by HTML5 UP (html5up.net | @ajlkn)
+    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html lang="ru">
+    <head>
+        <title>{{TITLE}}</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <link rel="stylesheet" href="/static/css/main.css" />
+        <noscript><link rel="stylesheet" href="/static/css/noscript.css" /></noscript>
+        <style>
+            /* Кастомизация основного цвета */
+            :root {
+                --primary-color: {{PRIMARY_COLOR}};
+            }
+            #banner {
+                {{BG_STYLE}}
+            }
+            .button.primary, .button.primary:hover,
+            #one .icons .icon:before,
+            section.special .features li .icon:before {
+                background-color: var(--primary-color) !important;
+            }
+            a {
+                color: var(--primary-color);
+            }
+            a:hover {
+                color: var(--primary-color);
+                filter: brightness(1.3);
+            }
+
+            /* Стиль секции афиши — главный контент */
+            .afisha-section {
+                padding: 3em 0 2em 0;
+                background: #21232d;
+            }
+            .afisha-section .inner {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 2em;
+            }
+
+            /* Логотип в шапке */
+            #header h1 a img {
+                max-height: 60px;
+                vertical-align: middle;
+            }
+            
+            /* Преимущества — 4 в ряд */
+            .features-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 2em;
+                padding: 0;
+                list-style: none;
+                margin: 2em 0 0 0;
+            }
+            .features-grid li {
+                text-align: center;
+                padding: 1.5em;
+            }
+            .features-grid li h3 {
+                color: #fff;
+                margin-bottom: 0.5em;
+            }
+            .features-grid li p {
+                color: rgba(255,255,255,0.65);
+                font-size: 0.9em;
+            }
+
+            /* Футер — сетка блоков */
+            .footer-widgets {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 2em;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 3em 2em;
+                text-align: left;
+            }
+            .footer-widgets .widget h4 {
+                color: #fff;
+                text-transform: uppercase;
+                font-size: 0.85em;
+                letter-spacing: 0.15em;
+                margin-bottom: 1em;
+                border-bottom: 1px solid rgba(255,255,255,0.15);
+                padding-bottom: 0.5em;
+            }
+            .footer-widgets .widget p,
+            .footer-widgets .widget a {
+                color: rgba(255,255,255,0.55);
+                font-size: 0.9em;
+                line-height: 1.8;
+            }
+            .footer-widgets .widget a:hover {
+                color: #fff;
+            }
+        </style>
+
+        <!-- Глобальные скрипты домена (Метрика, Аналитика) -->
+        {{GLOBAL_SCRIPTS}}
+    </head>
+    <body class="landing is-preload">
+
+        <!-- Page Wrapper -->
+            <div id="page-wrapper">
+
+                <!-- Header -->
+                    <header id="header" class="alt">
+                        <h1><a href="/">{{LOGO_HTML}}</a></h1>
+                        <nav id="nav">
+                            <ul>
+                                <li class="special">
+                                    <a href="#menu" class="menuToggle"><span>Меню</span></a>
+                                    <div id="menu">
+                                        <ul>
+                                            <li><a href="/">Главная</a></li>
+                                            <li><a href="/schedule/">Рейсы</a></li>
+                                            <li><a href="/routes/">Маршруты</a></li>
+                                            <li><a href="/rent/">Группам</a></li>
+                                            <li><a href="/menu/">Меню</a></li>
+                                            <li><a href="/marshrutes/">Причалы</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </nav>
+                    </header>
+
+                <!-- Banner -->
+                    <section id="banner">
+                        <div class="inner">
+                            <h2>{{TITLE}}</h2>
+                            <ul class="actions special">
+                                <li><a href="#afisha" class="button primary scrolly">Афиша и билеты</a></li>
+                            </ul>
+                        </div>
+                        <a href="#afisha" class="more scrolly">Смотреть афишу</a>
+                    </section>
+
+                <!-- Афиша — главный блок -->
+                    <section id="afisha" class="afisha-section">
+                        <div class="inner">
+                            {{IFRAME_CODE}}
+                        </div>
+                    </section>
+
+                <!-- Footer -->
+                    <footer id="footer">
+                        <div class="footer-widgets">
+                            <div class="widget">
+                                <h4>Юридическое лицо</h4>
+                                <p style="white-space: pre-line;">{{FOOTER_TEXT}}</p>
+                            </div>
+                            <div class="widget">
+                                <h4>Контакты</h4>
+                                <p>
+                                    <a href="mailto:rockhitneva@gmail.com">rockhitneva@gmail.com</a><br>
+                                    ☎ <a href="tel:+78129275057">+7 (812) 927 50 57</a>
+                                </p>
+                            </div>
+                            <div class="widget">
+                                <h4>Документы</h4>
+                                <p>
+                                    <a href="/oferta">Договор. Условия возврата билетов</a><br>
+                                    <a href="/pr/">Политика конфиденциальности</a>
+                                </p>
+                            </div>
+                        </div>
+                        <ul class="copyright">
+                            <li>&copy; {{TITLE}}</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+                        </ul>
+                    </footer>
+
+            </div>
+
+        <!-- Scripts -->
+            <script src="/static/js/jquery.min.js"></script>
+            <script src="/static/js/jquery.scrollex.min.js"></script>
+            <script src="/static/js/jquery.scrolly.min.js"></script>
+            <script src="/static/js/browser.min.js"></script>
+            <script src="/static/js/breakpoints.min.js"></script>
+            <script src="/static/js/util.js"></script>
+            <script src="/static/js/main.js"></script>
+
+        <!-- Скрипт билетов выбранного юр. лица (Ticketland) -->
+        {{TICKET_SCRIPT}}
+    </body>
+</html>
