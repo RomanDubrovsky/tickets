@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { 
   Music, Calendar, Anchor, Plus, Edit3, Trash2, X, 
   Check, Sparkles, Filter, Clock, MapPin, Tag, Layers,
-  Users, Mic, Radio, CheckSquare, Square, ChevronRight, Layout, Copy
+  Users, Mic, Radio, CheckSquare, Square, ChevronRight, Layout, Copy, List, Grid, Globe
 } from 'lucide-react';
 import DeckBuilder from './DeckBuilder';
+import Afisha from './Afisha';
+import SitesAdmin from './SitesAdmin';
 
 const INITIAL_MUSICIANS = [
   {
@@ -67,6 +69,7 @@ const INITIAL_EVENTS = [
     age_restriction: '18+',
     min_price: 1800,
     is_featured: true,
+    event_type: 'Трибьют-концерт',
     default_musician_ids: [2],
     iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/brother/"></div>'
   },
@@ -79,6 +82,7 @@ const INITIAL_EVENTS = [
     age_restriction: '16+',
     min_price: 1700,
     is_featured: true,
+    event_type: 'Трибьют-концерт',
     default_musician_ids: [1],
     iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/viktortsoy/"></div>'
   },
@@ -91,6 +95,7 @@ const INITIAL_EVENTS = [
     age_restriction: '18+',
     min_price: 2200,
     is_featured: true,
+    event_type: 'Музыкальный круиз',
     default_musician_ids: [1, 2],
     iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/rock-bridges/"></div>'
   },
@@ -103,6 +108,7 @@ const INITIAL_EVENTS = [
     age_restriction: '18+',
     min_price: 1600,
     is_featured: false,
+    event_type: 'Трибьют-концерт',
     default_musician_ids: [3],
     iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/joe-cocker/"></div>'
   },
@@ -115,6 +121,7 @@ const INITIAL_EVENTS = [
     age_restriction: '18+',
     min_price: 1800,
     is_featured: false,
+    event_type: 'Трибьют-концерт',
     default_musician_ids: [4],
     iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/led-zeppelin/"></div>'
   }
@@ -184,8 +191,8 @@ const INITIAL_SESSIONS = [
   }
 ];
 
-export default function ProgramsManager({ defaultSection = 'events' }) {
-  const [currentSection, setCurrentSection] = useState(defaultSection); // 'events', 'sessions', 'musicians', 'venues'
+export default function ProgramsManager({ defaultSection = 'events', onSelectEvent, navigateTo }) {
+  const [currentSection, setCurrentSection] = useState(defaultSection); // 'events', 'sessions', 'musicians', 'venues', 'afisha'
   const [notification, setNotification] = useState('');
 
   // LocalStorage Persistence
@@ -244,7 +251,8 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
   const [editingEventId, setEditingEventId] = useState(null);
   const [eventForm, setEventForm] = useState({
     title: '', slug: '', short_desc: '', age_restriction: '18+',
-    duration_minutes: 120, min_price: 1800, is_featured: true, iframe_code: ''
+    duration_minutes: 120, min_price: 1500, is_featured: false, event_type: 'Музыкальный круиз',
+    iframe_code: ''
   });
 
   // 2. UNIFIED Event Session Creation Modal (Single Event OR Recurring Schedule + Musicians + Venue Creation)
@@ -279,6 +287,9 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
 
   // Filter in Schedule table
   const [scheduleProgramFilter, setScheduleProgramFilter] = useState('all');
+  const [scheduleTypeFilter, setScheduleTypeFilter] = useState('all');
+  const [scheduleViewMode, setScheduleViewMode] = useState('list'); // 'list' | 'calendar'
+  const [calendarMonth, setCalendarMonth] = useState(new Date(2026, 4, 1)); // Default to May 2026 for mock data
 
   // -------------------------------------------------------------
   // PROGRAM CRUD
@@ -619,9 +630,23 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
   };
 
   // Filtered schedule
-  const filteredSessions = scheduleProgramFilter === 'all'
-    ? sessions
-    : sessions.filter(s => s.event_id === Number(scheduleProgramFilter));
+  const filteredSessions = sessions
+    .filter(s => {
+      // Filter by program
+      if (scheduleProgramFilter !== 'all' && s.event_id.toString() !== scheduleProgramFilter.toString()) {
+        return false;
+      }
+      
+      // Filter by event type
+      if (scheduleTypeFilter !== 'all') {
+        const ev = events.find(e => e.id === s.event_id);
+        if (ev && ev.event_type !== scheduleTypeFilter) {
+          return false;
+        }
+      }
+      return true;
+    })
+    .sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
 
   const currentSelectedVenue = venues.find(v => v.id === Number(scheduleForm.venue_id)) || venues[0];
 
@@ -767,6 +792,53 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
               fontWeight: 'bold'
             }}>
               {venues.length}
+            </span>
+          </div>
+
+          {/* Section 5: Афиша (Виджет) */}
+          <div
+            onClick={() => setCurrentSection('afisha')}
+            style={{
+              padding: '14px 16px',
+              borderRadius: '10px',
+              background: currentSection === 'afisha' ? '#eff6ff' : '#f8fafc',
+              border: currentSection === 'afisha' ? '1px solid #3b82f6' : '1px solid #e2e8f0',
+              cursor: 'pointer',
+              transition: 'all 0.15s',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Sparkles size={18} color={currentSection === 'afisha' ? '#2563eb' : '#64748b'} />
+              <span style={{ fontWeight: currentSection === 'afisha' ? 'bold' : '600', color: currentSection === 'afisha' ? '#1d4ed8' : '#334155', fontSize: '14px' }}>
+                ✨ Афиша (Виджет)
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        {/* Section 6: Сайты & CMS */}
+        <div
+          onClick={() => setCurrentSection('sites')}
+          style={{
+            marginTop: '10px',
+            padding: '14px 16px',
+            borderRadius: '10px',
+            background: currentSection === 'sites' ? '#eff6ff' : '#f8fafc',
+            border: currentSection === 'sites' ? '1px solid #3b82f6' : '1px solid #e2e8f0',
+            cursor: 'pointer',
+            transition: 'all 0.15s',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Globe size={18} color={currentSection === 'sites' ? '#2563eb' : '#64748b'} />
+            <span style={{ fontWeight: currentSection === 'sites' ? 'bold' : '600', color: currentSection === 'sites' ? '#1d4ed8' : '#334155', fontSize: '14px' }}>
+              Сайты & CMS
             </span>
           </div>
         </div>
@@ -955,13 +1027,63 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
               </div>
 
               <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', border: '1px solid #cbd5e1', borderRadius: '8px', overflow: 'hidden' }}>
+                  <button
+                    onClick={() => setScheduleViewMode('list')}
+                    style={{
+                      padding: '6px 12px',
+                      background: scheduleViewMode === 'list' ? '#e2e8f0' : '#ffffff',
+                      border: 'none',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      fontSize: '12px',
+                      fontWeight: scheduleViewMode === 'list' ? 'bold' : 'normal'
+                    }}
+                  >
+                    <List size={14} /> Список
+                  </button>
+                  <button
+                    onClick={() => setScheduleViewMode('calendar')}
+                    style={{
+                      padding: '6px 12px',
+                      background: scheduleViewMode === 'calendar' ? '#e2e8f0' : '#ffffff',
+                      border: 'none',
+                      borderLeft: '1px solid #cbd5e1',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      fontSize: '12px',
+                      fontWeight: scheduleViewMode === 'calendar' ? 'bold' : 'normal'
+                    }}
+                  >
+                    <Grid size={14} /> Календарь
+                  </button>
+                </div>
+
+                <select
+                  className="form-input"
+                  value={scheduleTypeFilter}
+                  onChange={e => setScheduleTypeFilter(e.target.value)}
+                  style={{ fontSize: '13px', fontWeight: '600' }}
+                >
+                  <option value="all">Все типы мероприятий</option>
+                  <option value="Музыкальный круиз">Музыкальный круиз</option>
+                  <option value="Трибьют-концерт">Трибьют-концерт</option>
+                  <option value="Джаз на Неве">Джаз на Неве</option>
+                  <option value="Вечеринка">Вечеринка</option>
+                  <option value="Экскурсия">Экскурсия</option>
+                </select>
+
                 <select
                   className="form-input"
                   value={scheduleProgramFilter}
                   onChange={e => setScheduleProgramFilter(e.target.value)}
                   style={{ fontSize: '13px', fontWeight: '600' }}
                 >
-                  <option value="all">Все программы ({sessions.length} рейсов)</option>
+                  <option value="all">Все программы ({sessions.length})</option>
                   {events.map(ev => (
                     <option key={ev.id} value={ev.id}>{ev.title}</option>
                   ))}
@@ -981,71 +1103,126 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {filteredSessions.slice(0, 60).map(s => (
-                <div
-                  key={s.id}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '14px 18px',
-                    background: '#ffffff',
-                    border: '1px solid #e2e8f0',
-                    borderRadius: '10px',
-                    gap: '14px',
-                    flexWrap: 'wrap'
-                  }}
-                >
-                  <div style={{ flex: '1 1 380px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                      <div style={{ fontFamily: 'monospace', fontWeight: 'bold', color: '#1d4ed8', fontSize: '15px' }}>
-                        🗓️ {s.start_time}
+              {scheduleViewMode === 'calendar' ? (
+                (() => {
+                  const year = calendarMonth.getFullYear();
+                  const month = calendarMonth.getMonth();
+                  const firstDay = new Date(year, month, 1).getDay();
+                  const daysInMonth = new Date(year, month + 1, 0).getDate();
+                  const startOffset = (firstDay === 0 ? 7 : firstDay) - 1; // Mon = 0
+                  
+                  const days = [];
+                  for (let i = 0; i < startOffset; i++) days.push(null);
+                  for (let i = 1; i <= daysInMonth; i++) days.push(i);
+
+                  const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+
+                  return (
+                    <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '16px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                        <button onClick={() => setCalendarMonth(new Date(year, month - 1, 1))} style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', background: '#f8fafc', cursor: 'pointer' }}>&larr; Пред. месяц</button>
+                        <strong style={{ fontSize: '16px' }}>{monthNames[month]} {year}</strong>
+                        <button onClick={() => setCalendarMonth(new Date(year, month + 1, 1))} style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', background: '#f8fafc', cursor: 'pointer' }}>След. месяц &rarr;</button>
                       </div>
-                      <div style={{ fontWeight: 'bold', color: '#0f172a', fontSize: '15px' }}>
-                        {s.event_title}
+                      
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center', fontWeight: 'bold', fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
+                        <div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', gridAutoRows: 'minmax(100px, auto)' }}>
+                        {days.map((d, idx) => {
+                          if (d === null) return <div key={`empty-${idx}`} style={{ background: '#f8fafc', borderRadius: '6px' }} />;
+                          
+                          const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                          const daySessions = filteredSessions.filter(s => s.start_time.startsWith(dateStr));
+                          
+                          return (
+                            <div key={`day-${d}`} style={{ border: '1px solid #e2e8f0', borderRadius: '6px', padding: '8px', display: 'flex', flexDirection: 'column', background: daySessions.length > 0 ? '#f0fdf4' : '#ffffff' }}>
+                              <span style={{ fontSize: '14px', fontWeight: 'bold', color: daySessions.length > 0 ? '#16a34a' : '#64748b', marginBottom: '6px' }}>{d}</span>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', overflowY: 'auto', flex: 1 }}>
+                                {daySessions.map(s => (
+                                  <div key={s.id} style={{ fontSize: '10px', background: '#ffffff', border: '1px solid #dcfce3', padding: '4px', borderRadius: '4px', textAlign: 'left', lineHeight: '1.2' }}>
+                                    <strong style={{ color: '#0f172a' }}>{s.start_time.split(' ')[1]}</strong><br/>
+                                    <span style={{ color: '#2563eb' }}>{s.event_title}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '6px', flexWrap: 'wrap', fontSize: '12px', color: '#64748b' }}>
-                      <span>📍 {s.venue_name} ({s.pier_address})</span>
-                      {s.musician_names && s.musician_names.length > 0 && (
-                        <span style={{ background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold' }}>
-                          🎸 {s.musician_names.join(', ')}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <strong style={{ color: '#059669', fontSize: '15px' }}>{s.min_price || 1500} ₽</strong>
-                    <button
-                      onClick={() => handleDeleteSession(s.id)}
-                      title="Удалить рейс"
+                  );
+                })()
+              ) : (
+                <>
+                  {filteredSessions.slice(0, 60).map(s => (
+                    <div
+                      key={s.id}
                       style={{
-                        padding: '6px 10px',
-                        background: '#fff1f2',
-                        color: '#e11d48',
-                        border: '1px solid #fecdd3',
-                        borderRadius: '6px',
-                        cursor: 'pointer'
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '14px 18px',
+                        background: '#ffffff',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '10px',
+                        gap: '14px',
+                        flexWrap: 'wrap'
                       }}
                     >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                      <div style={{ flex: '1 1 380px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                          <div style={{ fontFamily: 'monospace', fontWeight: 'bold', color: '#1d4ed8', fontSize: '15px' }}>
+                            🗓️ {s.start_time}
+                          </div>
+                          <div style={{ fontWeight: 'bold', color: '#0f172a', fontSize: '15px' }}>
+                            {s.event_title}
+                          </div>
+                        </div>
 
-              {filteredSessions.length > 60 && (
-                <div style={{ textAlign: 'center', padding: '12px', color: '#64748b', fontSize: '12px' }}>
-                  Показано первые 60 из {filteredSessions.length} рейсов.
-                </div>
-              )}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '6px', flexWrap: 'wrap', fontSize: '12px', color: '#64748b' }}>
+                          <span>📍 {s.venue_name} ({s.pier_address})</span>
+                          {s.musician_names && s.musician_names.length > 0 && (
+                            <span style={{ background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold' }}>
+                              🎸 {s.musician_names.join(', ')}
+                            </span>
+                          )}
+                        </div>
+                      </div>
 
-              {filteredSessions.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '40px', color: '#64748b', background: '#f8fafc', borderRadius: '10px', border: '1px dashed #cbd5e1' }}>
-                  Рейсы для выбранной программы еще не созданы. Нажмите <strong>«Назначить рейсы»</strong> выше!
-                </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <strong style={{ color: '#059669', fontSize: '15px' }}>{s.min_price || 1500} ₽</strong>
+                        <button
+                          onClick={() => handleDeleteSession(s.id)}
+                          title="Удалить рейс"
+                          style={{
+                            padding: '6px 10px',
+                            background: '#fff1f2',
+                            color: '#e11d48',
+                            border: '1px solid #fecdd3',
+                            borderRadius: '6px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+
+                  {filteredSessions.length > 60 && (
+                    <div style={{ textAlign: 'center', padding: '12px', color: '#64748b', fontSize: '12px' }}>
+                      Показано первые 60 из {filteredSessions.length} рейсов.
+                    </div>
+                  )}
+
+                  {filteredSessions.length === 0 && (
+                    <div style={{ textAlign: 'center', padding: '40px', color: '#64748b', background: '#f8fafc', borderRadius: '10px', border: '1px dashed #cbd5e1' }}>
+                      Рейсы для выбранной программы еще не созданы. Нажмите <strong>«Назначить рейсы»</strong> выше!
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -1303,6 +1480,81 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
             )}
           </div>
         )}
+
+        {/* 5. АФИША (WIDGET GENERATOR) */}
+        {currentSection === 'afisha' && (
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', gap: '10px' }}>
+              <Sparkles size={24} color="var(--color-primary)" />
+              <div>
+                <h3 style={{ margin: 0, color: '#0f172a', fontSize: '18px' }}>
+                  Генератор виджета Афиши
+                </h3>
+                <div style={{ fontSize: '13px', color: '#64748b', marginTop: '2px' }}>
+                  Выберите контент (программу, мероприятие или коммерческий проект/сайт) для создания виджета на клиентской стороне
+                </div>
+              </div>
+            </div>
+
+            <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0', marginBottom: '24px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+                <div>
+                  <label className="form-label" style={{ fontWeight: '600' }}>Программа</label>
+                  <select className="form-input" style={{ width: '100%', marginTop: '4px' }}>
+                    <option value="">Все программы</option>
+                    {programs.map(p => (
+                      <option key={p.id} value={p.id}>{p.title}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="form-label" style={{ fontWeight: '600' }}>Мероприятие / Рейс</label>
+                  <select className="form-input" style={{ width: '100%', marginTop: '4px' }}>
+                    <option value="">Все рейсы</option>
+                    {events.map(e => (
+                      <option key={e.id} value={e.id}>{e.date} {e.time} - {e.program_title || 'Рейс'}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="form-label" style={{ fontWeight: '600' }}>Сайт (Коммерческий проект)</label>
+                  <select className="form-input" style={{ width: '100%', marginTop: '4px' }}>
+                    <option value="">Все сайты</option>
+                    <option value="rockhitneva">Рок Хит Нева (rockhitneva.ru)</option>
+                    <option value="aquasound">Аква Саунд (aquasound.club)</option>
+                    <option value="corp">Корпоративы</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                <button
+                  onClick={() => {
+                    if (navigateTo) navigateTo('sites', '#sites');
+                  }}
+                  className="btn btn-primary"
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 24px', borderRadius: '8px', fontWeight: 'bold' }}
+                >
+                  <Sparkles size={18} />
+                  Создать страницу с виджетом
+                </button>
+              </div>
+            </div>
+            
+            <h4 style={{ margin: '0 0 16px 0', color: '#334155' }}>Предварительный просмотр Афиши:</h4>
+            {/* Render the actual Afisha component so manager can see and filter it */}
+            <div style={{ border: '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden' }}>
+               <Afisha onSelectEvent={onSelectEvent} />
+            </div>
+          </div>
+        )}
+
+        {/* 6. САЙТЫ & CMS */}
+        {currentSection === 'sites' && (
+          <div>
+            <SitesAdmin />
+          </div>
+        )}
       </div>
 
       {/* ========================================================= */}
@@ -1337,6 +1589,16 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
                 <div>
                   <label className="form-label">Возрастной ценз</label>
                   <input type="text" className="form-input" value={eventForm.age_restriction} onChange={e => setEventForm({ ...eventForm, age_restriction: e.target.value })} style={{ width: '100%', marginTop: '4px' }} />
+                </div>
+                <div>
+                  <label className="form-label">Тип мероприятия</label>
+                  <select className="form-input" value={eventForm.event_type} onChange={e => setEventForm({ ...eventForm, event_type: e.target.value })} style={{ width: '100%', marginTop: '4px' }}>
+                    <option value="Музыкальный круиз">Музыкальный круиз</option>
+                    <option value="Трибьют-концерт">Трибьют-концерт</option>
+                    <option value="Джаз на Неве">Джаз на Неве</option>
+                    <option value="Вечеринка">Вечеринка</option>
+                    <option value="Экскурсия">Экскурсия</option>
+                  </select>
                 </div>
                 <div>
                   <label className="form-label">Длительность (мин)</label>
