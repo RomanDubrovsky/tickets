@@ -69,12 +69,14 @@ CREATE TABLE IF NOT EXISTS bookings (
 INSERT INTO ships (id, name, description, capacity, image_url, coordinates)
 VALUES 
 ('a26084cb-626a-4638-b769-d4ff5a772da0', 'Рок Хит Нева', 'Комфортабельный теплоход с живой рок-музыкой, баром и отличным обзором на Неву.', 80, 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&w=800&q=80', '{"lat": 59.9402, "lng": 30.3152}'),
-('b51b3f7f-e7cb-4b36-9a29-b632fa5a7751', 'Чайка', 'Современный теплоход-ресторан премиум класса с панорамным остеклением.', 120, 'https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?auto=format&fit=crop&w=800&q=80', '{"lat": 59.9312, "lng": 30.3601}');
+('b51b3f7f-e7cb-4b36-9a29-b632fa5a7751', 'Чайка', 'Современный теплоход-ресторан премиум класса с панорамным остеклением.', 120, 'https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?auto=format&fit=crop&w=800&q=80', '{"lat": 59.9312, "lng": 30.3601}')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO agents (id, name, promo_code, commission_rate)
 VALUES 
 ('c38b2512-108b-4b13-88bc-4672e8111223', 'Алексей (Промоутер Центр)', 'ALEXROCK', 0.15),
-('d48b2512-208b-4b13-88bc-4672e8111224', 'Отель Астория (Дилер)', 'ASTORIA10', 0.10);
+('d48b2512-208b-4b13-88bc-4672e8111224', 'Отель Астория (Дилер)', 'ASTORIA10', 0.10)
+ON CONFLICT (id) DO NOTHING;
 
 -- Example grid hall (concert hall)
 INSERT INTO halls (id, name, type, rows, seats_per_row)
@@ -84,7 +86,8 @@ VALUES (
     'grid',
     15,
     20
-);
+)
+ON CONFLICT (id) DO NOTHING;
 
 -- Example custom SVG hall (ship deck)
 INSERT INTO halls (id, name, type, svg_path, seats_json)
@@ -97,11 +100,48 @@ VALUES (
         {"id":"S1","x":120,"y":45,"category":"standard"},
         {"id":"V1","x":300,"y":90,"category":"vip"}
     ]'::jsonb
-);
+)
+ON CONFLICT (id) DO NOTHING;
 
 -- Events now reference a hall (using the grid hall above)
 INSERT INTO events (id, ship_id, hall_id, name, description, date, time, price_standard, price_vip, status)
 VALUES 
 ('e18c6501-c852-47e2-8951-b844f2d3d991', 'a26084cb-626a-4638-b769-d4ff5a772da0', 'f2c1d6e2-1b2a-4c3c-9f7e-1234567890ab', 'Вечерний Рок-Круиз', 'Хиты мирового рока на Неве под разводные мосты. Живой звук и ресторан на борту.', CURRENT_DATE, '20:00:00', 1200.00, 2500.00, 'active'),
 ('e18c6501-c852-47e2-8951-b844f2d3d992', 'a26084cb-626a-4638-b769-d4ff5a772da0', 'f2c1d6e2-1b2a-4c3c-9f7e-1234567890ab', 'Ночной Джаз на Неве', 'Спокойная джазовая музыка и великолепные ночные виды Петербурга.', CURRENT_DATE + INTERVAL '1 day', '22:30:00', 1500.00, 3000.00, 'active'),
-('e18c6501-c852-47e2-8951-b844f2d3d993', 'b51b3f7f-e7cb-4b36-9a29-b632fa5a7751', 'f2c1d6e2-1b2a-4c3c-9f7e-1234567890ab', 'Гастрономический круиз "Панорама"', 'Изысканный ужин от шеф-повара во время прогулки по Неве.', CURRENT_DATE, '18:00:00', 2000.00, 4500.00, 'active');
+('e18c6501-c852-47e2-8951-b844f2d3d993', 'b51b3f7f-e7cb-4b36-9a29-b632fa5a7751', 'f2c1d6e2-1b2a-4c3c-9f7e-1234567890ab', 'Гастрономический круиз "Панорама"', 'Изысканный ужин от шеф-повара во время прогулки по Неве.', CURRENT_DATE, '18:00:00', 2000.00, 4500.00, 'active')
+ON CONFLICT (id) DO NOTHING;
+
+-- 8. Expenses table (fixed and variable costs)
+CREATE TABLE IF NOT EXISTS expenses (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    type TEXT CHECK (type IN ('fixed', 'variable')) NOT NULL,
+    category TEXT NOT NULL,
+    amount NUMERIC(10,2) NOT NULL,
+    date DATE NOT NULL,
+    event_id UUID REFERENCES events(id) ON DELETE CASCADE,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 9. Transactions table (Cash flow)
+CREATE TABLE IF NOT EXISTS transactions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    amount NUMERIC(10,2) NOT NULL,
+    type TEXT CHECK (type IN ('in', 'out')) NOT NULL,
+    date TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    description TEXT,
+    booking_id UUID REFERENCES bookings(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 10. Alerts table (System alarms)
+CREATE TABLE IF NOT EXISTS alerts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    level TEXT CHECK (level IN ('info', 'warning', 'critical')) NOT NULL,
+    title TEXT NOT NULL,
+    message TEXT NOT NULL,
+    entity_type TEXT,
+    entity_id UUID,
+    status TEXT DEFAULT 'new' CHECK (status IN ('new', 'resolved')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);

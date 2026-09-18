@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, Shield, Calendar, Users, DollarSign } from 'lucide-react';
+import { Plus, Trash2, Shield, Calendar, Users, DollarSign, Activity } from 'lucide-react';
 import { getEvents, getShips, createEvent, getBookings, getHalls } from '../db';
+import AdminDashboard from './AdminDashboard';
 
 export default function AdminPanel() {
   const [events, setEvents] = useState([]);
@@ -15,7 +16,7 @@ export default function AdminPanel() {
   const [priceVip, setPriceVip] = useState(2500);
   const [shipId, setShipId] = useState('');
   const [hallId, setHallId] = useState('');
-  const [activeTab, setActiveTab] = useState('events');
+  const [activeTab, setActiveTab] = useState('dashboard');
 
   const loadData = async () => {
     const fetchedEvents = await getEvents();
@@ -86,6 +87,12 @@ export default function AdminPanel() {
       {/* Tabs */}
       <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
         <button 
+          className={`btn ${activeTab === 'dashboard' ? 'btn-primary' : 'btn-secondary'}`}
+          onClick={() => setActiveTab('dashboard')}
+        >
+          <Activity size={16} /> Дашборд
+        </button>
+        <button 
           className={`btn ${activeTab === 'events' ? 'btn-primary' : 'btn-secondary'}`}
           onClick={() => setActiveTab('events')}
         >
@@ -122,6 +129,12 @@ export default function AdminPanel() {
       </div>
 
       {/* Tab Contents */}
+      {activeTab === 'dashboard' && (
+        <div className="glass">
+          <AdminDashboard />
+        </div>
+      )}
+
       {activeTab === 'events' && (
         <div className="glass" style={{ padding: '24px' }}>
           <h2 style={{ fontFamily: 'var(--font-title)', marginBottom: '16px' }}>Расписание рейсов</h2>

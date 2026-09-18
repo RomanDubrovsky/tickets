@@ -10,10 +10,28 @@ const DEFAULT_CATEGORIES = [
   { id: 'bar', name: 'Барная зона', color: '#10b981', price: 1000 }
 ];
 
-export default function HallRenderer({ hall, event, selectedSeat, setSelectedSeat, occupiedSeats = [] }) {
+export default function HallRenderer({
+  hall,
+  event,
+  selectedSeat,
+  setSelectedSeat,
+  selectedSeats = [],
+  setSelectedSeats,
+  onToggleSeat,
+  occupiedSeats = []
+}) {
   const [hoveredSeat, setHoveredSeat] = useState(null);
 
   if (!hall) return null;
+
+  // Normalize selected array
+  const activeSelectedList = selectedSeats && selectedSeats.length > 0
+    ? selectedSeats
+    : selectedSeat
+    ? [selectedSeat]
+    : [];
+
+  const isSeatSelected = (seatId) => activeSelectedList.some((s) => s.id === seatId);
 
   const categories = hall.categories && hall.categories.length > 0 ? hall.categories : DEFAULT_CATEGORIES;
   const getCategory = (catId) => {
@@ -25,7 +43,7 @@ export default function HallRenderer({ hall, event, selectedSeat, setSelectedSea
     const cat = getCategory(seat.categoryId);
     const price = cat.price || (seat.categoryId === 'vip_window' || seat.categoryId === 'stage_front' ? event?.price_vip : event?.price_standard) || 1500;
 
-    setSelectedSeat({
+    const seatObj = {
       id: seat.id,
       seatNumber: seat.seatNumber,
       tableId: tableOrZone.id,
@@ -34,7 +52,28 @@ export default function HallRenderer({ hall, event, selectedSeat, setSelectedSea
       categoryId: cat.id,
       type: cat.id,
       price: price
-    });
+    };
+
+    if (onToggleSeat) {
+      onToggleSeat(seatObj);
+    } else if (setSelectedSeats) {
+      setSelectedSeats((prev) => {
+        const exists = prev.some((s) => s.id === seatObj.id);
+        if (exists) {
+          return prev.filter((s) => s.id !== seatObj.id);
+        } else {
+          return [...prev, seatObj];
+        }
+      });
+    }
+
+    if (setSelectedSeat) {
+      if (selectedSeat && selectedSeat.id === seatObj.id) {
+        setSelectedSeat(null);
+      } else {
+        setSelectedSeat(seatObj);
+      }
+    }
   };
 
   // --- 1. SPECIAL CASE: ONLY ENTRY TICKETS HALL ---
@@ -96,7 +135,7 @@ export default function HallRenderer({ hall, event, selectedSeat, setSelectedSea
               const ticketNum = i + 1;
               const ticketId = `ENTRY-${ticketNum}`;
               const isOccupied = occupiedSeats.includes(ticketId) || occupiedSeats.includes(String(ticketNum));
-              const isSelected = selectedSeat && selectedSeat.id === ticketId;
+              const isSelected = isSeatSelected(ticketId);
 
               return (
                 <button
@@ -108,7 +147,7 @@ export default function HallRenderer({ hall, event, selectedSeat, setSelectedSea
                       { id: ticketId, seatNumber: ticketNum, categoryId: entryCat.id }
                     )
                   }
-                  title={`Входной билет №${ticketNum} (${ticketPrice} ₽)${isOccupied ? ' — Занято' : ''}`}
+                  title={`Входной билет №${ticketNum} (${ticketPrice} ₽)${isOccupied ? ' — Занято' : isSelected ? ' — Выбран' : ''}`}
                   style={{
                     width: '38px',
                     height: '38px',
@@ -134,10 +173,10 @@ export default function HallRenderer({ hall, event, selectedSeat, setSelectedSea
           </div>
         </div>
 
-        {selectedSeat && (
+        {activeSelectedList.length > 0 && (
           <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '12px', display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#166534', fontWeight: '600' }}>
             <CheckCircle2 size={18} />
-            Выбран входной билет №{selectedSeat.seatNumber} — {ticketPrice} ₽
+            Выбрано входных билетов: {activeSelectedList.length} шт. на сумму {activeSelectedList.reduce((acc, s) => acc + (s.price || ticketPrice), 0)} ₽
           </div>
         )}
       </div>
@@ -152,6 +191,8 @@ export default function HallRenderer({ hall, event, selectedSeat, setSelectedSea
   const elementsScale = hall.elementsScale || 1.0;
 
   if (hasTables || hasZones) {
+    const totalSelectedSum = activeSelectedList.reduce((acc, s) => acc + (s.price || 1500), 0);
+
     return (
       <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '16px' }}>
         {/* Hover info strip with stable fixed height to prevent layout shift / jitter */}
@@ -176,14 +217,16 @@ export default function HallRenderer({ hall, event, selectedSeat, setSelectedSea
           {hoveredSeat ? (
             <span style={{ display: 'inline-flex', alignItems: 'center', background: '#eff6ff', padding: '6px 14px', borderRadius: '20px', border: '1px solid #bfdbfe', lineHeight: '1.2' }}>
               📍 <strong>{hoveredSeat.tableLabel}, Место {hoveredSeat.seatNumber}</strong> — {hoveredSeat.categoryName} ({hoveredSeat.price} ₽)
-              {hoveredSeat.isOccupied ? ' 🔴 (Занято)' : ' 🟢 (Свободно, нажмите для выбора)'}
+              {hoveredSeat.isOccupied ? ' 🔴 (Занято)' : ' 🟢 (Нажмите, чтобы выбрать / снять)'}
             </span>
-          ) : selectedSeat ? (
+          ) : activeSelectedList.length > 0 ? (
             <span style={{ display: 'inline-flex', alignItems: 'center', background: '#f0fdf4', padding: '6px 14px', borderRadius: '20px', border: '1px solid #bbf7d0', color: '#166534', lineHeight: '1.2' }}>
-              ✓ Выбрано: <strong>{selectedSeat.tableLabel || selectedSeat.tableId}, Место {selectedSeat.seatNumber}</strong> ({selectedSeat.categoryName} — {selectedSeat.price} ₽)
+              ✓ Выбрано мест: <strong>{activeSelectedList.length} шт.</strong> ({totalSelectedSum} ₽) — нажмите на кресло, чтобы добавить или снять
             </span>
           ) : (
-            <span style={{ color: '#64748b', display: 'inline-flex', alignItems: 'center', lineHeight: '1.2' }}>Нажмите на любое свободное место за столиком или в зоне танцпола для выбора билета</span>
+            <span style={{ color: '#64748b', display: 'inline-flex', alignItems: 'center', lineHeight: '1.2' }}>
+              Нажмите на любые свободные места за столиками для выбора (можно выбрать несколько)
+            </span>
           )}
         </div>
 

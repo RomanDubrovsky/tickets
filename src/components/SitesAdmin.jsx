@@ -174,7 +174,9 @@ const DEFAULT_DOMAINS = [
   }
 ];
 
-export default function SitesAdmin() {
+export { DEFAULT_DOMAINS };
+
+export default function SitesAdmin({ initialDomainId, initialSelectedPageId }) {
   const [domains, setDomains] = useState(() => {
     const saved = localStorage.getItem('cms_domains_v2');
     if (saved) {
@@ -187,7 +189,25 @@ export default function SitesAdmin() {
     return DEFAULT_DOMAINS;
   });
 
-  const [selectedDomainId, setSelectedDomainId] = useState(2); // 2 = rockhitneva.ru
+  const [selectedDomainId, setSelectedDomainId] = useState(initialDomainId || 2); // 2 = rockhitneva.ru
+
+  useEffect(() => {
+    if (initialDomainId) {
+      setSelectedDomainId(initialDomainId);
+    }
+  }, [initialDomainId]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('cms_domains_v2');
+    if (saved) {
+      try {
+        setDomains(JSON.parse(saved));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, [selectedDomainId]);
+
   const [activeTab, setActiveTab] = useState('pages'); // 'pages' or 'gateways'
   const [notification, setNotification] = useState('');
 

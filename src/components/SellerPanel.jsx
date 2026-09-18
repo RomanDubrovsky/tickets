@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { DollarSign, Shield, Users, Ticket, ArrowLeft, Percent, Compass, Plus, Star } from 'lucide-react';
+import { DollarSign, Shield, Users, Ticket, ArrowLeft, Percent, Compass, Plus, Star, QrCode } from 'lucide-react';
 import { getEvents, getBookings, createBooking, getHallById, getHalls } from '../db';
 import HallRenderer from './HallRenderer';
+import ScannerApp from './ScannerApp';
 
 export default function SellerPanel({ onBack }) {
   const [events, setEvents] = useState([]);
@@ -13,7 +14,7 @@ export default function SellerPanel({ onBack }) {
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [currentHall, setCurrentHall] = useState(null);
-  const [activeTab, setActiveTab] = useState('sell'); // 'sell', 'history'
+  const [activeTab, setActiveTab] = useState('sell'); // 'sell', 'history', 'scanner'
 
   const loadData = async () => {
     const fetchedEvents = await getEvents();
@@ -111,6 +112,12 @@ export default function SellerPanel({ onBack }) {
           onClick={() => setActiveTab('history')}
         >
           <Users size={16} /> История продаж кассы
+        </button>
+        <button 
+          className={`btn ${activeTab === 'scanner' ? 'btn-primary' : 'btn-secondary'}`}
+          onClick={() => setActiveTab('scanner')}
+        >
+          <QrCode size={16} /> Сканер билетов (Контролер)
         </button>
       </div>
 
@@ -264,6 +271,12 @@ export default function SellerPanel({ onBack }) {
               </table>
             </div>
           )}
+        </div>
+      )}
+
+      {activeTab === 'scanner' && (
+        <div style={{ marginTop: '10px' }}>
+          <ScannerApp />
         </div>
       )}
     </div>

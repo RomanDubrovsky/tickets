@@ -11,6 +11,7 @@ import lockManager from './lockManager.js';
 import { calculateDynamicPrice } from './dynamicPricing.js';
 import webhookManager from './webhooks.js';
 import { startQuotaReleaseWorker } from './quotaWorker.js';
+import { startAlertWorker } from './alertWorker.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,6 +25,7 @@ const pool = new Pool({
 
 // Start background workers
 startQuotaReleaseWorker(pool, 300000); // Check every 5 minutes
+startAlertWorker(pool, 600000); // Check every 10 minutes
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -225,4 +227,60 @@ app.post('/api/v1/tickets/book', async (req, res) => {
   }
 });
 
+// --- ADMIN DASHBOARD APIs ---
+
+app.get('/api/v1/admin/dashboard/summary', async (req, res) => {
+  try {
+    const revenueRes = await pool.query("SELECT COALESCE(SUM(price_paid), 0) as total FROM bookings WHERE status = 'confirmed'");
+    const ticketsRes = await pool.query("SELECT COUNT(*) as count FROM bookings WHERE status = 'confirmed'");
+    const averageTicketRes = await pool.query("SELECT COALESCE(AVG(price_paid), 0) as avg FROM bookings WHERE status = 'confirmed'");
+    
+    res.json({
+      success: true,
+      data: {
+        totalRevenue: revenueRes.rows[0].total,
+        totalTickets: ticketsRes.rows[0].count,
+        averageTicketPrice: averageTicketRes.rows[0].avg
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get('/api/v1/admin/dashboard/alerts', async (req, res) => {
+  try {
+    const alertsRes = await pool.query("SELECT * FROM alerts WHERE status = 'new' ORDER BY created_at DESC");
+    res.json({ success: true, data: alertsRes.rows });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get('/api/v1/admin/finances/unit-economics/:event_id', async (req, res) => {
+  try {
+    const { event_id } = req.params;
+    
+    const revenueRes = await pool.query("SELECT COALESCE(SUM(price_paid), 0) as total FROM bookings WHERE event_id = $1 AND status = 'confirmed'", [event_id]);
+    const expensesRes = await pool.query("SELECT COALESCE(SUM(amount), 0) as total FROM expenses WHERE event_id = $1", [event_id]);
+    
+    const revenue = parseFloat(revenueRes.rows[0].total);
+    const expenses = parseFloat(expensesRes.rows[0].total);
+    const profit = revenue - expenses;
+    
+    res.json({
+      success: true,
+      data: {
+        eventId: event_id,
+        revenue,
+        expenses,
+        profit
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 app.listen(PORT, () => console.log(`Yandex Cloud API Gateway running on port ${PORT}`));
+

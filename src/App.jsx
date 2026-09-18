@@ -37,6 +37,12 @@ export default function App() {
         setCurrentView('venues');
       } else if (hash === '#afisha') {
         setCurrentView('afisha');
+      } else if (hash === '#agent' || hash === '#hotels') {
+        setCurrentView('agent');
+      } else if (hash === '#seller') {
+        setCurrentView('seller');
+      } else if (hash === '#admin') {
+        setCurrentView('admin');
       }
     };
     window.addEventListener('hashchange', handleHashChange);
@@ -71,7 +77,7 @@ export default function App() {
       case 'venues':
         return <ProgramsManager defaultSection="venues" />;
       case 'sites':
-        return <SitesAdmin />;
+        return <ProgramsManager defaultSection="sites" />;
       case 'builder':
         return <DeckBuilder />;
       case 'widget':
@@ -79,7 +85,7 @@ export default function App() {
       case 'scanner':
         return <ScannerApp />;
       case 'afisha':
-        return <Afisha onSelectEvent={handleSelectEvent} />;
+        return <ProgramsManager defaultSection="afisha" onSelectEvent={handleSelectEvent} navigateTo={navigateTo} />;
       case 'booking':
         return selectedEvent ? (
           <BookingDetails event={selectedEvent} onBack={handleBackToAfisha} />
@@ -107,75 +113,44 @@ export default function App() {
               <span>ПЛАТФОРМА</span>
             </div>
             <div className="nav-links">
-              {/* 1. Репертуар & Расписание & Площадки */}
+              {/* 1. Менеджер (Репертуар & Расписание & Площадки & Афиша & Сайты) */}
               <button
-                className={`nav-link ${currentView === 'programs' || currentView === 'sessions' || currentView === 'venues' ? 'active' : ''}`}
+                className={`nav-link ${currentView === 'programs' || currentView === 'sessions' || currentView === 'venues' || currentView === 'musicians' || currentView === 'afisha' || currentView === 'sites' ? 'active' : ''}`}
                 onClick={() => navigateTo('programs', '#programs')}
-                title="Репертуар программ, расписание рейсов и площадки"
+                title="Рабочее место менеджера (Репертуар, расписание, судна, афиша, сайты)"
               >
                 <Music size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
-                Программы & Рейсы
+                Менеджер
               </button>
 
-              {/* 2. Сайты и лендинги */}
+              {/* 2. Касса причала (Продажа билетов & История & Сканер) */}
               <button
-                className={`nav-link ${currentView === 'sites' ? 'active' : ''}`}
-                onClick={() => navigateTo('sites', '#sites')}
-                title="Управление сайтами, посадочными страницами и кассами"
-              >
-                <Globe size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
-                Сайты & CMS
-              </button>
-
-
-              {/* 4. Касса Причала */}
-              <button
-                className={`nav-link ${currentView === 'seller' ? 'active' : ''}`}
-                onClick={() => navigateTo('seller', '')}
-                title="Терминал кассира на причале"
+                className={`nav-link ${currentView === 'seller' || currentView === 'scanner' ? 'active' : ''}`}
+                onClick={() => navigateTo('seller', '#seller')}
+                title="Рабочее место кассира/контролера на причале (Продажа и проверка билетов)"
               >
                 <Ticket size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
-                Касса Причала
+                Касса причала
               </button>
 
-              {/* 5. Партнеры & Агенты */}
+              {/* 3. Партнеры & Отели (Стойка ресепшн + Управляющий отеля) */}
               <button
                 className={`nav-link ${currentView === 'agent' ? 'active' : ''}`}
-                onClick={() => navigateTo('agent', '')}
-                title="Кабинет агента и реферальные ссылки"
+                onClick={() => navigateTo('agent', '#agent')}
+                title="Рабочее место отеля / партнера (Ресепшн для гостей и кабинет управляющего)"
               >
                 <Percent size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
-                Партнеры
+                Отели & Партнеры
               </button>
 
-              {/* 6. Админка */}
+              {/* 4. Администратор */}
               <button
                 className={`nav-link ${currentView === 'admin' ? 'active' : ''}`}
-                onClick={() => navigateTo('admin', '')}
+                onClick={() => navigateTo('admin', '#admin')}
                 title="Панель администратора"
               >
                 <Shield size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
-                Админка
-              </button>
-
-              {/* 7. Клиентская Афиша */}
-              <button
-                className={`nav-link ${currentView === 'afisha' || currentView === 'booking' ? 'active' : ''}`}
-                onClick={() => navigateTo('afisha', '#afisha')}
-                title="Клиентская афиша рейсов"
-              >
-                <Sparkles size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
-                Афиша
-              </button>
-
-              {/* 8. Сканер билетов */}
-              <button
-                className={`nav-link ${currentView === 'scanner' ? 'active' : ''}`}
-                onClick={() => navigateTo('scanner', '#scanner')}
-                title="Сканер QR-кодов билетов"
-              >
-                <QrCode size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
-                Сканер
+                Администратор
               </button>
 
               {/* Contextual Help Trigger Button */}

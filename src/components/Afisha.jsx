@@ -102,29 +102,6 @@ export default function Afisha({ onSelectEvent }) {
           Музыкальные прогулки по Неве и Финскому заливу под разводными мостами
         </p>
 
-        {/* Category Tabs */}
-        <div className="afisha-tabs">
-          <button 
-            className={`afisha-tab-btn ${activeCategory === 'all' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('all')}
-          >
-            Все программы
-          </button>
-          <button 
-            className={`afisha-tab-btn ${activeCategory === 'season_hits' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('season_hits')}
-          >
-            <Flame size={16} color="#e55f2e" style={{ marginRight: '6px' }} />
-            Хиты сезона
-          </button>
-          <button 
-            className={`afisha-tab-btn ${activeCategory === 'bridges' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('bridges')}
-          >
-            <Compass size={16} color="#2563eb" style={{ marginRight: '6px' }} />
-            Разводные мосты
-          </button>
-        </div>
       </div>
 
       {/* Filter / Search Bar */}
@@ -215,7 +192,27 @@ export default function Afisha({ onSelectEvent }) {
             const extraCount = slots.length - 4;
 
             return (
-              <div key={event.id} className="concert-card glass">
+              <div key={event.id} className="concert-card glass" style={{ overflow: 'hidden' }}>
+                {/* Event Image Placeholder */}
+                <div style={{
+                  width: '100%',
+                  height: '180px',
+                  backgroundColor: `hsl(${(event.id * 137) % 360}, 40%, 80%)`, // deterministic pastel color
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'rgba(0,0,0,0.4)',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  marginBottom: '16px',
+                  borderBottom: '1px solid rgba(0,0,0,0.05)'
+                }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                    <Music size={32} opacity={0.5} />
+                    <span>Фото программы</span>
+                  </div>
+                </div>
+
                 {/* Tags Row */}
                 <div className="card-tags-row">
                   <span className="badge-tag badge-hit">
@@ -314,8 +311,25 @@ export default function Afisha({ onSelectEvent }) {
       {/* Info Modal */}
       {infoModalEvent && (
         <div className="modal-backdrop" onClick={() => setInfoModalEvent(null)}>
-          <div className="modal-window glass" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
+          <div className="modal-window glass" onClick={(e) => e.stopPropagation()} style={{ overflow: 'hidden', padding: 0 }}>
+            {/* Modal Image Placeholder */}
+            <div style={{
+              width: '100%',
+              height: '250px',
+              backgroundColor: `hsl(${(infoModalEvent.id * 137) % 360}, 40%, 80%)`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'rgba(0,0,0,0.4)'
+            }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                <Music size={48} opacity={0.5} />
+                <span style={{ fontWeight: '500' }}>Фото программы</span>
+              </div>
+            </div>
+
+            <div style={{ padding: '24px' }}>
+              <div className="modal-header" style={{ paddingTop: 0 }}>
               <div>
                 <div className="card-tags-row" style={{ marginBottom: '8px' }}>
                   <span className="badge-tag badge-hit"><Flame size={13} /> Хит</span>
@@ -408,6 +422,7 @@ export default function Afisha({ onSelectEvent }) {
               >
                 Перейти к выбору мест от {infoModalEvent.price_standard} ₽
               </button>
+            </div>
             </div>
           </div>
         </div>
