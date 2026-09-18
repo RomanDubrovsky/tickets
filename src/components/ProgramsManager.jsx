@@ -189,43 +189,43 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
 
   // LocalStorage Persistence
   const [events, setEvents] = useState(() => {
-    const saved = localStorage.getItem('pm_events_v3');
+    const saved = localStorage.getItem('pm_events_v4');
     return saved ? JSON.parse(saved) : INITIAL_EVENTS;
   });
 
   const [venues, setVenues] = useState(() => {
-    const saved = localStorage.getItem('pm_venues_v3');
+    const saved = localStorage.getItem('pm_venues_v4');
     return saved ? JSON.parse(saved) : INITIAL_VENUES;
   });
 
   const [sessions, setSessions] = useState(() => {
-    const saved = localStorage.getItem('pm_sessions_v3');
+    const saved = localStorage.getItem('pm_sessions_v4');
     return saved ? JSON.parse(saved) : INITIAL_SESSIONS;
   });
 
   const [musicians, setMusicians] = useState(() => {
-    const saved = localStorage.getItem('pm_musicians_v3');
+    const saved = localStorage.getItem('pm_musicians_v4');
     return saved ? JSON.parse(saved) : INITIAL_MUSICIANS;
   });
 
   const saveEvents = (data) => {
     setEvents(data);
-    localStorage.setItem('pm_events_v3', JSON.stringify(data));
+    localStorage.setItem('pm_events_v4', JSON.stringify(data));
   };
 
   const saveVenues = (data) => {
     setVenues(data);
-    localStorage.setItem('pm_venues_v3', JSON.stringify(data));
+    localStorage.setItem('pm_venues_v4', JSON.stringify(data));
   };
 
   const saveSessions = (data) => {
     setSessions(data);
-    localStorage.setItem('pm_sessions_v3', JSON.stringify(data));
+    localStorage.setItem('pm_sessions_v4', JSON.stringify(data));
   };
 
   const saveMusicians = (data) => {
     setMusicians(data);
-    localStorage.setItem('pm_musicians_v3', JSON.stringify(data));
+    localStorage.setItem('pm_musicians_v4', JSON.stringify(data));
   };
 
   const showNotification = (msg) => {
@@ -245,22 +245,19 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
     duration_minutes: 120, min_price: 1800, is_featured: true, iframe_code: ''
   });
 
-  // 2. UNIFIED Event Session Creation Modal (Single Event OR Recurring Schedule + Musicians)
+  // 2. UNIFIED Event Session Creation Modal (Single Event OR Recurring Schedule + Musicians + Venue Creation)
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [targetProgram, setTargetProgram] = useState(null);
   const [scheduleMode, setScheduleMode] = useState('recurring'); // 'single' or 'recurring'
   const [scheduleForm, setScheduleForm] = useState({
     venue_id: 1,
     min_price: 1800,
-    // Single event fields
     single_date: '2026-05-01',
     single_time: '19:30',
-    // Recurring fields
     date_from: '2026-05-01',
     date_to: '2026-09-30',
     days_of_week: [5, 6, 0], // Fri, Sat, Sun
     times: '19:00, 21:30',
-    // Musicians
     selected_musician_ids: []
   });
 
@@ -271,7 +268,7 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
     name: '', role: 'Рок-группа', genre: 'Русский рок', description: '', phone: ''
   });
 
-  // 4. Venue Modal
+  // 4. Venue & Pier Modal (Can be triggered from sidebar OR from inside Schedule modal)
   const [venueModalOpen, setVenueModalOpen] = useState(false);
   const [editingVenueId, setEditingVenueId] = useState(null);
   const [venueForm, setVenueForm] = useState({
@@ -541,10 +538,78 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
     }
   };
 
+  // -------------------------------------------------------------
+  // VENUES & PIERS CRUD (Direct or Inside Schedule Modal)
+  // -------------------------------------------------------------
+  const handleOpenAddVenue = () => {
+    setEditingVenueId(null);
+    setVenueForm({
+      name: '',
+      pier_address: 'Санкт-Петербург, Причал Набережная Макарова, 34',
+      capacity: 120,
+      description: ''
+    });
+    setVenueModalOpen(true);
+  };
+
+  const handleSaveVenue = (e) => {
+    e.preventDefault();
+    if (!venueForm.name.trim() || !venueForm.pier_address.trim()) {
+      alert('Укажите название судна и адрес причала');
+      return;
+    }
+
+    if (editingVenueId) {
+      const updated = venues.map(v => v.id === editingVenueId ? {
+        ...v,
+        name: venueForm.name,
+        pier_address: venueForm.pier_address,
+        capacity: Number(venueForm.capacity),
+        description: venueForm.description
+      } : v);
+      saveVenues(updated);
+      showNotification(`Площадка «${venueForm.name}» обновлена`);
+    } else {
+      const newVn = {
+        id: Date.now(),
+        name: venueForm.name,
+        pier_address: venueForm.pier_address,
+        capacity: Number(venueForm.capacity),
+        description: venueForm.description
+      };
+      const updated = [...venues, newVn];
+      saveVenues(updated);
+
+      // If schedule creation modal is currently open, automatically select this new venue!
+      if (scheduleModalOpen) {
+        setScheduleForm(prev => ({
+          ...prev,
+          venue_id: newVn.id
+        }));
+      }
+
+      showNotification(`Судно «${venueForm.name}» добавлено в справочник и выбрано!`);
+    }
+    setVenueModalOpen(false);
+  };
+
+  const handleDeleteVenue = (id, name) => {
+    if (venues.length <= 1) {
+      alert('В справочнике должно оставаться хотя бы одно судно');
+      return;
+    }
+    if (window.confirm(`Удалить судно «${name}» из справочника?`)) {
+      saveVenues(venues.filter(v => v.id !== id));
+      showNotification(`Судно «${name}» удалено`);
+    }
+  };
+
   // Filtered schedule
   const filteredSessions = scheduleProgramFilter === 'all'
     ? sessions
     : sessions.filter(s => s.event_id === Number(scheduleProgramFilter));
+
+  const currentSelectedVenue = venues.find(v => v.id === Number(scheduleForm.venue_id)) || venues[0];
 
   return (
     <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
@@ -691,7 +756,7 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
 
         <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid #e2e8f0' }}>
           <div style={{ fontSize: '12px', color: '#64748b', lineHeight: '1.5' }}>
-            💡 <strong>Быстрый алгоритм:</strong> Создайте программу в репертуаре, затем нажмите на ней <strong>«Назначить рейсы»</strong>, чтобы запланировать сеансы и привязать музыкантов.
+            💡 <strong>Единый процесс:</strong> Создавайте программы и сразу назначайте на них рейсы, выбирая или добавляя на лету нужные <strong>теплоходы, причалы и музыкантов</strong>.
           </div>
         </div>
       </div>
@@ -726,7 +791,7 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
                   Репертуар программ ({events.length})
                 </h3>
                 <div style={{ fontSize: '13px', color: '#64748b', marginTop: '2px' }}>
-                  Создавайте программы и назначайте на них регулярные или одиночные рейсы с музыкантами
+                  Создавайте программы и назначайте на них регулярные или одиночные рейсы
                 </div>
               </div>
               <button
@@ -790,9 +855,8 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
                       </div>
                     </div>
 
-                    {/* Main action buttons on the program card */}
+                    {/* Action buttons on the program card */}
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-                      {/* Prominent Button: Create Event / Schedule */}
                       <button
                         onClick={() => handleOpenScheduleModal(ev)}
                         style={{
@@ -1085,16 +1149,7 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
                 </div>
               </div>
               <button
-                onClick={() => {
-                  setEditingVenueId(null);
-                  setVenueForm({
-                    name: '',
-                    pier_address: 'Санкт-Петербург, Причал Набережная Макарова, 34',
-                    capacity: 120,
-                    description: ''
-                  });
-                  setVenueModalOpen(true);
-                }}
+                onClick={handleOpenAddVenue}
                 className="btn btn-primary"
                 style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 18px', borderRadius: '8px', fontWeight: 'bold' }}
               >
@@ -1130,33 +1185,48 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
                       </div>
                     </div>
 
-                    <button
-                      onClick={() => {
-                        setEditingVenueId(vn.id);
-                        setVenueForm({
-                          name: vn.name,
-                          pier_address: vn.pier_address,
-                          capacity: vn.capacity || 120,
-                          description: vn.description || ''
-                        });
-                        setVenueModalOpen(true);
-                      }}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                        padding: '6px 12px',
-                        background: '#f8fafc',
-                        color: '#334155',
-                        border: '1px solid #cbd5e1',
-                        borderRadius: '6px',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <Edit3 size={14} color="#2563eb" /> Редактировать
-                    </button>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      <button
+                        onClick={() => {
+                          setEditingVenueId(vn.id);
+                          setVenueForm({
+                            name: vn.name,
+                            pier_address: vn.pier_address,
+                            capacity: vn.capacity || 120,
+                            description: vn.description || ''
+                          });
+                          setVenueModalOpen(true);
+                        }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          padding: '6px 12px',
+                          background: '#f8fafc',
+                          color: '#334155',
+                          border: '1px solid #cbd5e1',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <Edit3 size={14} color="#2563eb" /> Редактировать
+                      </button>
+                      <button
+                        onClick={() => handleDeleteVenue(vn.id, vn.name)}
+                        style={{
+                          padding: '6px 10px',
+                          background: '#fff1f2',
+                          color: '#e11d48',
+                          border: '1px solid #fecdd3',
+                          borderRadius: '6px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -1296,33 +1366,66 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
                 </div>
               </div>
 
-              {/* Venue & Price */}
-              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '12px' }}>
-                <div>
-                  <label className="form-label" style={{ fontWeight: '600' }}>Площадка / Теплоход *</label>
-                  <select
-                    className="form-input"
-                    value={scheduleForm.venue_id}
-                    onChange={e => setScheduleForm({ ...scheduleForm, venue_id: Number(e.target.value) })}
-                    required
-                    style={{ width: '100%', marginTop: '4px' }}
+              {/* Venue & Pier with inline "+ Добавить судно/причал" button */}
+              <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <label className="form-label" style={{ fontWeight: 'bold', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Anchor size={16} color="#2563eb" /> Площадка, Теплоход и Причал *
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleOpenAddVenue}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      padding: '4px 10px',
+                      background: '#eff6ff',
+                      color: '#2563eb',
+                      border: '1px solid #bfdbfe',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      cursor: 'pointer'
+                    }}
                   >
-                    {venues.map(vn => (
-                      <option key={vn.id} value={vn.id}>{vn.name} ({vn.capacity} мест)</option>
-                    ))}
-                  </select>
+                    <Plus size={14} /> Добавить судно / причал
+                  </button>
                 </div>
-                <div>
-                  <label className="form-label" style={{ fontWeight: '600' }}>Цена от (₽) *</label>
-                  <input
-                    type="number"
-                    className="form-input"
-                    value={scheduleForm.min_price}
-                    onChange={e => setScheduleForm({ ...scheduleForm, min_price: e.target.value })}
-                    required
-                    style={{ width: '100%', marginTop: '4px' }}
-                  />
+
+                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '12px' }}>
+                  <div>
+                    <select
+                      className="form-input"
+                      value={scheduleForm.venue_id}
+                      onChange={e => setScheduleForm({ ...scheduleForm, venue_id: Number(e.target.value) })}
+                      required
+                      style={{ width: '100%', fontWeight: '600' }}
+                    >
+                      {venues.map(vn => (
+                        <option key={vn.id} value={vn.id}>{vn.name} ({vn.capacity} мест)</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <input
+                      type="number"
+                      className="form-input"
+                      value={scheduleForm.min_price}
+                      onChange={e => setScheduleForm({ ...scheduleForm, min_price: e.target.value })}
+                      placeholder="Цена (₽)"
+                      required
+                      style={{ width: '100%' }}
+                    />
+                  </div>
                 </div>
+
+                {currentSelectedVenue && (
+                  <div style={{ fontSize: '12px', color: '#475569', marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <MapPin size={14} color="#059669" />
+                    <span>Причал: <strong>{currentSelectedVenue.pier_address}</strong> (вместимость {currentSelectedVenue.capacity} чел.)</span>
+                  </div>
+                )}
               </div>
 
               {/* SINGLE MODE FIELDS */}
@@ -1449,7 +1552,7 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
                       cursor: 'pointer'
                     }}
                   >
-                    <Plus size={14} /> Создать музыканта в справочник
+                    <Plus size={14} /> Добавить музыканта
                   </button>
                 </div>
 
@@ -1585,56 +1688,67 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
       )}
 
       {/* ========================================================= */}
-      {/* MODAL 4: VENUE CREATE / EDIT                              */}
+      {/* MODAL 4: VENUE & PIER CREATE / EDIT                       */}
       {/* ========================================================= */}
       {venueModalOpen && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.65)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.65)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100, padding: '20px' }}>
           <div style={{ background: '#ffffff', borderRadius: '16px', width: '100%', maxWidth: '540px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }}>
-            <h4 style={{ margin: '0 0 16px 0', fontSize: '17px' }}>{editingVenueId ? 'Редактирование судна' : 'Новое судно / площадка'}</h4>
-            <form onSubmit={e => {
-              e.preventDefault();
-              if (editingVenueId) {
-                const updated = venues.map(v => v.id === editingVenueId ? {
-                  ...v,
-                  name: venueForm.name,
-                  pier_address: venueForm.pier_address,
-                  capacity: Number(venueForm.capacity),
-                  description: venueForm.description
-                } : v);
-                saveVenues(updated);
-                showNotification('Площадка сохранена');
-              } else {
-                const newVn = {
-                  id: Date.now(),
-                  name: venueForm.name,
-                  pier_address: venueForm.pier_address,
-                  capacity: Number(venueForm.capacity),
-                  description: venueForm.description
-                };
-                saveVenues([...venues, newVn]);
-                showNotification('Судно добавлено');
-              }
-              setVenueModalOpen(false);
-            }} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <h4 style={{ margin: '0 0 16px 0', fontSize: '17px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Anchor size={18} color="#2563eb" /> {editingVenueId ? 'Редактирование площадки / судна' : 'Новое судно и причал в справочник'}
+            </h4>
+            <form onSubmit={handleSaveVenue} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div>
-                <label className="form-label" style={{ fontWeight: '600' }}>Название судна *</label>
-                <input type="text" className="form-input" value={venueForm.name} onChange={e => setVenueForm({ ...venueForm, name: e.target.value })} required placeholder="Теплоход «Рок Хит Нева»" style={{ width: '100%' }} />
+                <label className="form-label" style={{ fontWeight: '600' }}>Название судна / Площадки *</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={venueForm.name}
+                  onChange={e => setVenueForm({ ...venueForm, name: e.target.value })}
+                  required
+                  placeholder="Теплоход «Рок Хит Нева»"
+                  style={{ width: '100%', marginTop: '4px' }}
+                />
               </div>
+
               <div>
-                <label className="form-label" style={{ fontWeight: '600' }}>Адрес причала (для билетов) *</label>
-                <input type="text" className="form-input" value={venueForm.pier_address} onChange={e => setVenueForm({ ...venueForm, pier_address: e.target.value })} required style={{ width: '100%' }} />
+                <label className="form-label" style={{ fontWeight: '600' }}>Адрес причала отправления (выводится на билетах) *</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={venueForm.pier_address}
+                  onChange={e => setVenueForm({ ...venueForm, pier_address: e.target.value })}
+                  required
+                  placeholder="Санкт-Петербург, Причал Набережная Макарова, 34"
+                  style={{ width: '100%', marginTop: '4px' }}
+                />
               </div>
+
               <div>
-                <label className="form-label">Вместимость (пассажиров)</label>
-                <input type="number" className="form-input" value={venueForm.capacity} onChange={e => setVenueForm({ ...venueForm, capacity: e.target.value })} style={{ width: '100%' }} />
+                <label className="form-label">Вместимость судна (пассажиров)</label>
+                <input
+                  type="number"
+                  className="form-input"
+                  value={venueForm.capacity}
+                  onChange={e => setVenueForm({ ...venueForm, capacity: e.target.value })}
+                  style={{ width: '100%', marginTop: '4px' }}
+                />
               </div>
+
               <div>
-                <label className="form-label">Описание</label>
-                <textarea className="form-input" rows={2} value={venueForm.description} onChange={e => setVenueForm({ ...venueForm, description: e.target.value })} style={{ width: '100%' }} />
+                <label className="form-label">Описание судна (палубы, бар, сцена)</label>
+                <textarea
+                  className="form-input"
+                  rows={2}
+                  value={venueForm.description}
+                  onChange={e => setVenueForm({ ...venueForm, description: e.target.value })}
+                  placeholder="Двухпалубный теплоход, закрытый теплый салон и открытая верхняя палуба..."
+                  style={{ width: '100%', marginTop: '4px' }}
+                />
               </div>
+
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '12px' }}>
                 <button type="button" onClick={() => setVenueModalOpen(false)} style={{ padding: '8px 16px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '8px', cursor: 'pointer' }}>Отмена</button>
-                <button type="submit" className="btn btn-primary" style={{ padding: '8px 20px', borderRadius: '8px' }}>Сохранить</button>
+                <button type="submit" className="btn btn-primary" style={{ padding: '8px 20px', borderRadius: '8px' }}>Сохранить в справочник</button>
               </div>
             </form>
           </div>
