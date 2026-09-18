@@ -191,6 +191,103 @@ const INITIAL_SESSIONS = [
   }
 ];
 
+// =============================================================
+// VALIDATION & CALCULATION HELPERS
+// =============================================================
+
+// 1. Dynamic Ship Capacity from Deck Scheme
+export const getVenueCapacityBreakdown = (venue) => {
+  if (!venue) return { total: 0, seats: 0, zones: 0, isCalculated: false };
+  const deck = venue.deckData;
+  if (!deck) return { total: venue.capacity || 120, seats: 0, zones: 0, isCalculated: false };
+  
+  let seats = 0;
+  if (deck.tables && Array.isArray(deck.tables)) {
+    deck.tables.forEach(t => {
+      if (t.seats && Array.isArray(t.seats)) {
+        seats += t.seats.length;
+      }
+    });
+  }
+
+  let zones = 0;
+  if (deck.zones && Array.isArray(deck.zones)) {
+    deck.zones.forEach(z => {
+      zones += Number(z.capacity) || 0;
+    });
+  }
+
+  const total = seats + zones;
+  if (total > 0) {
+    return { total, seats, zones, isCalculated: true };
+  }
+  return { total: venue.capacity || 120, seats: 0, zones: 0, isCalculated: false };
+};
+
+// 2. Arrival / End-time Calculator
+export const getSessionTimeRange = (startTimeStr, durationMinutes = 120) => {
+  if (!startTimeStr) return { date: '', start: '', end: '', range: '' };
+  const parts = startTimeStr.split(' ');
+  if (parts.length < 2) return { date: startTimeStr, start: '', end: '', range: startTimeStr };
+  const [date, time] = parts;
+  const [h, m] = time.split(':').map(Number);
+  if (isNaN(h) || isNaN(m)) return { date, start: time, end: '', range: time };
+  
+  const totalStart = h * 60 + m;
+  const totalEnd = totalStart + Number(durationMinutes);
+  const endH = Math.floor(totalEnd / 60) % 24;
+  const endM = totalEnd % 60;
+  const endStr = `${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}`;
+  
+  return {
+    date,
+    start: time,
+    end: endStr,
+    range: `${time} → ${endStr}`
+  };
+};
+
+// 3. Ship Schedule Overlap Conflict Detector
+export const checkSessionConflict = (existingSessions, eventsList, candStartStr, candDurationMins, candVenueId) => {
+  if (!candStartStr) return null;
+  const parts = candStartStr.split(' ');
+  if (parts.length < 2) return null;
+  const [candDate, candTime] = parts;
+  const [cH, cM] = candTime.split(':').map(Number);
+  if (isNaN(cH) || isNaN(cM)) return null;
+
+  const cStart = cH * 60 + cM;
+  const cEnd = cStart + Number(candDurationMins);
+
+  for (const ex of existingSessions) {
+    if (ex.venue_id !== candVenueId) continue;
+    const exParts = ex.start_time.split(' ');
+    if (exParts.length < 2) continue;
+    const [exDate, exTime] = exParts;
+    if (exDate !== candDate) continue;
+
+    const exProg = eventsList.find(e => e.id === ex.event_id);
+    const exDuration = exProg?.duration_minutes || 120;
+    const [eH, eM] = exTime.split(':').map(Number);
+    if (isNaN(eH) || isNaN(eM)) continue;
+
+    const exStart = eH * 60 + eM;
+    const exEnd = exStart + exDuration;
+
+    // Overlap: interval [cStart, cEnd] intersects [exStart, exEnd]
+    if (Math.max(cStart, exStart) < Math.min(cEnd, exEnd)) {
+      return {
+        conflictingSession: ex,
+        candTime,
+        exTime,
+        date: candDate,
+        exTitle: ex.event_title
+      };
+    }
+  }
+  return null;
+};
+
 export default function ProgramsManager({ defaultSection = 'events', onSelectEvent, navigateTo }) {
   const [currentSection, setCurrentSection] = useState(defaultSection); // 'events', 'sessions', 'musicians', 'venues', 'afisha'
   const [notification, setNotification] = useState('');
@@ -466,10 +563,24 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
     const vn = venues.find(item => item.id === Number(scheduleForm.venue_id)) || venues[0];
     const selectedMusicians = musicians.filter(m => scheduleForm.selected_musician_ids.includes(m.id));
     const musicianNames = selectedMusicians.map(m => m.name);
+    const duration = Number(targetProgram.duration_minutes) || 120;
 
     if (scheduleMode === 'single') {
       // Single event creation
       const start_time = `${scheduleForm.single_date} ${scheduleForm.single_time}`;
+
+      // Conflict validation
+      const conflict = checkSessionConflict(sessions, events, start_time, duration, vn.id);
+      if (conflict) {
+        const confirmOverlap = window.confirm(
+          `⚠️ ВНИМАНИЕ: Обнаружен конфликт расписания судна!\n\n` +
+          `Теплоход «${vn.name}» уже занят в дату ${conflict.date} рейсом «${conflict.exTitle}» (отправление ${conflict.exTime}).\n` +
+          `Новый рейс: ${start_time} (длительность ${duration} мин).\n\n` +
+          `Вы уверены, что хотите назначить рейс на это же время?`
+        );
+        if (!confirmOverlap) return;
+      }
+
       const newSess = {
         id: Date.now(),
         event_id: targetProgram.id,
@@ -478,6 +589,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
         venue_name: vn ? vn.name : 'Теплоход',
         pier_address: vn ? vn.pier_address : 'Причал Наб. Макарова, 34',
         start_time: start_time,
+        duration_minutes: duration,
         min_price: Number(scheduleForm.min_price),
         musician_names: musicianNames
       };
@@ -485,6 +597,15 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
       showNotification(`Рейс на ${start_time} успешно добавлен в расписание!`);
     } else {
       // Recurring schedule creation (Mass generator)
+      if (new Date(scheduleForm.date_to) < new Date(scheduleForm.date_from)) {
+        alert('Ошибка: Дата окончания сезона не может быть раньше даты начала.');
+        return;
+      }
+      if (!scheduleForm.days_of_week || scheduleForm.days_of_week.length === 0) {
+        alert('Ошибка: Выберите хотя бы один день недели для регулярных рейсов.');
+        return;
+      }
+
       const timeList = scheduleForm.times.split(',').map(t => t.trim()).filter(Boolean);
       if (timeList.length === 0) {
         alert('Укажите хотя бы одно время отправления (например: 19:00)');
@@ -495,6 +616,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
       const endDate = new Date(scheduleForm.date_to);
       const newSessions = [];
       let count = 0;
+      let conflictCount = 0;
 
       let curr = new Date(startDate);
       while (curr <= endDate) {
@@ -506,6 +628,12 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
           const dateStr = `${year}-${month}-${day}`;
 
           for (const t of timeList) {
+            const candStart = `${dateStr} ${t}`;
+            const conflict = checkSessionConflict(sessions, events, candStart, duration, vn.id);
+            if (conflict) {
+              conflictCount++;
+            }
+
             count++;
             newSessions.push({
               id: Date.now() + count,
@@ -514,7 +642,8 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
               venue_id: vn ? vn.id : 1,
               venue_name: vn ? vn.name : 'Теплоход',
               pier_address: vn ? vn.pier_address : 'Причал Наб. Макарова, 34',
-              start_time: `${dateStr} ${t}`,
+              start_time: candStart,
+              duration_minutes: duration,
               min_price: Number(scheduleForm.min_price),
               musician_names: musicianNames
             });
@@ -526,6 +655,15 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
       if (newSessions.length === 0) {
         alert('В выбранном диапазоне дат не совпало ни одного дня недели.');
         return;
+      }
+
+      if (conflictCount > 0) {
+        const confirmAll = window.confirm(
+          `⚠️ ВНИМАНИЕ: Обнаружено ${conflictCount} пересечений по времени с уже существующими рейсами судна «${vn.name}»!\n\n` +
+          `Всего генерируется ${newSessions.length} рейсов.\n` +
+          `Продолжить генерацию с учетом возможных наложений?`
+        );
+        if (!confirmAll) return;
       }
 
       saveSessions([...sessions, ...newSessions]);
@@ -1210,12 +1348,17 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
                             <div key={`day-${d}`} style={{ border: '1px solid #e2e8f0', borderRadius: '6px', padding: '8px', display: 'flex', flexDirection: 'column', background: daySessions.length > 0 ? '#f0fdf4' : '#ffffff' }}>
                               <span style={{ fontSize: '14px', fontWeight: 'bold', color: daySessions.length > 0 ? '#16a34a' : '#64748b', marginBottom: '6px' }}>{d}</span>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', overflowY: 'auto', flex: 1 }}>
-                                {daySessions.map(s => (
-                                  <div key={s.id} style={{ fontSize: '10px', background: '#ffffff', border: '1px solid #dcfce3', padding: '4px', borderRadius: '4px', textAlign: 'left', lineHeight: '1.2' }}>
-                                    <strong style={{ color: '#0f172a' }}>{s.start_time.split(' ')[1]}</strong><br/>
-                                    <span style={{ color: '#2563eb' }}>{s.event_title}</span>
-                                  </div>
-                                ))}
+                                {daySessions.map(s => {
+                                  const prog = events.find(e => e.id === s.event_id);
+                                  const dur = s.duration_minutes || prog?.duration_minutes || 120;
+                                  const tInfo = getSessionTimeRange(s.start_time, dur);
+                                  return (
+                                    <div key={s.id} style={{ fontSize: '10px', background: '#ffffff', border: '1px solid #dcfce3', padding: '4px 6px', borderRadius: '4px', textAlign: 'left', lineHeight: '1.2' }}>
+                                      <strong style={{ color: '#0f172a' }}>{tInfo.range || s.start_time.split(' ')[1]}</strong><br/>
+                                      <span style={{ color: '#2563eb', fontWeight: '500' }}>{s.event_title}</span>
+                                    </div>
+                                  );
+                                })}
                               </div>
                             </div>
                           );
@@ -1226,40 +1369,47 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
                 })()
               ) : (
                 <>
-                  {filteredSessions.slice(0, 60).map(s => (
-                    <div
-                      key={s.id}
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        padding: '14px 18px',
-                        background: '#ffffff',
-                        border: '1px solid #e2e8f0',
-                        borderRadius: '10px',
-                        gap: '14px',
-                        flexWrap: 'wrap'
-                      }}
-                    >
-                      <div style={{ flex: '1 1 380px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                          <div style={{ fontFamily: 'monospace', fontWeight: 'bold', color: '#1d4ed8', fontSize: '15px' }}>
-                            🗓️ {s.start_time}
-                          </div>
-                          <div style={{ fontWeight: 'bold', color: '#0f172a', fontSize: '15px' }}>
-                            {s.event_title}
-                          </div>
-                        </div>
-
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '6px', flexWrap: 'wrap', fontSize: '12px', color: '#64748b' }}>
-                          <span>📍 {s.venue_name} ({s.pier_address})</span>
-                          {s.musician_names && s.musician_names.length > 0 && (
-                            <span style={{ background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold' }}>
-                              🎸 {s.musician_names.join(', ')}
+                  {filteredSessions.slice(0, 60).map(s => {
+                    const prog = events.find(e => e.id === s.event_id);
+                    const dur = s.duration_minutes || prog?.duration_minutes || 120;
+                    const tInfo = getSessionTimeRange(s.start_time, dur);
+                    return (
+                      <div
+                        key={s.id}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          padding: '14px 18px',
+                          background: '#ffffff',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: '10px',
+                          gap: '14px',
+                          flexWrap: 'wrap'
+                        }}
+                      >
+                        <div style={{ flex: '1 1 380px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                            <div style={{ fontFamily: 'monospace', fontWeight: 'bold', color: '#1d4ed8', fontSize: '14px', background: '#eff6ff', padding: '3px 8px', borderRadius: '6px' }}>
+                              🗓️ {tInfo.date} &nbsp;⏰ {tInfo.range}
+                            </div>
+                            <span style={{ fontSize: '11px', background: '#f1f5f9', color: '#475569', padding: '2px 6px', borderRadius: '4px', fontWeight: '600' }}>
+                              ⏱ {dur} мин
                             </span>
-                          )}
+                            <div style={{ fontWeight: 'bold', color: '#0f172a', fontSize: '15px' }}>
+                              {s.event_title}
+                            </div>
+                          </div>
+
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '6px', flexWrap: 'wrap', fontSize: '12px', color: '#64748b' }}>
+                            <span>📍 {s.venue_name} ({s.pier_address})</span>
+                            {s.musician_names && s.musician_names.length > 0 && (
+                              <span style={{ background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold' }}>
+                                🎸 {s.musician_names.join(', ')}
+                              </span>
+                            )}
+                          </div>
                         </div>
-                      </div>
 
                       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                         <strong style={{ color: '#059669', fontSize: '15px' }}>{s.min_price || 1500} ₽</strong>
@@ -1279,7 +1429,8 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
                         </button>
                       </div>
                     </div>
-                  ))}
+                  );
+                })}
 
                   {filteredSessions.length > 60 && (
                     <div style={{ textAlign: 'center', padding: '12px', color: '#64748b', fontSize: '12px' }}>
@@ -1458,10 +1609,23 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
                           <div style={{ fontSize: '12px', color: '#64748b' }}>
                             {vn.description}
                           </div>
-                          <div style={{ marginTop: '8px', fontSize: '12px', color: '#475569' }}>
-                            Вместимость: <strong>{vn.capacity} пассажиров</strong>
-                            {vn.deckData && <span style={{ marginLeft: '10px', color: '#16a34a' }}>✓ Схема настроена</span>}
-                          </div>
+                          {(() => {
+                            const capInfo = getVenueCapacityBreakdown(vn);
+                            return (
+                              <div style={{ marginTop: '8px', fontSize: '12px', color: '#475569', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                                <span>Вместимость: <strong>{capInfo.total} пассажиров</strong></span>
+                                {capInfo.isCalculated ? (
+                                  <span style={{ fontSize: '11px', background: '#dcfce7', color: '#15803d', border: '1px solid #bbf7d0', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold' }}>
+                                    ✓ Схема активна: {capInfo.seats} кресел + {capInfo.zones} танцпол
+                                  </span>
+                                ) : (
+                                  <span style={{ fontSize: '11px', background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a', padding: '2px 8px', borderRadius: '12px' }}>
+                                    ⚠️ Схема не нарисована (по умолчанию {vn.capacity} мест)
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          })()}
                         </div>
 
                         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: '300px' }}>
@@ -1871,9 +2035,14 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
                       required
                       style={{ width: '100%', fontWeight: '600' }}
                     >
-                      {venues.map(vn => (
-                        <option key={vn.id} value={vn.id}>{vn.name} ({vn.capacity} мест)</option>
-                      ))}
+                      {venues.map(vn => {
+                        const cap = getVenueCapacityBreakdown(vn);
+                        return (
+                          <option key={vn.id} value={vn.id}>
+                            {vn.name} ({cap.total} мест{cap.isCalculated ? `: ${cap.seats} ст. + ${cap.zones} вход.` : ''})
+                          </option>
+                        );
+                      })}
                     </select>
                   </div>
                   <div>
@@ -1892,7 +2061,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
                 {currentSelectedVenue && (
                   <div style={{ fontSize: '12px', color: '#475569', marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <MapPin size={14} color="#059669" />
-                    <span>Причал: <strong>{currentSelectedVenue.pier_address}</strong> (вместимость {currentSelectedVenue.capacity} чел.)</span>
+                    <span>Причал: <strong>{currentSelectedVenue.pier_address}</strong> (вместимость по схеме: <strong>{getVenueCapacityBreakdown(currentSelectedVenue).total} чел.</strong>)</span>
                   </div>
                 )}
               </div>
