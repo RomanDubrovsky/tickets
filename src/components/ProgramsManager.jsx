@@ -1,14 +1,64 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Music, Calendar, Anchor, Plus, Edit3, Trash2, X, 
-  Check, Sparkles, Filter, Clock, MapPin, Tag, Layers
+  Check, Sparkles, Filter, Clock, MapPin, Tag, Layers,
+  Users, Mic, Radio, CheckSquare, Square, ChevronRight
 } from 'lucide-react';
+
+const INITIAL_MUSICIANS = [
+  {
+    id: 1,
+    name: 'Рок-группа «Кинохроника»',
+    role: 'Трибьют-группа',
+    genre: 'Русский рок / КИНО',
+    description: 'Официальный трибьют-коллектив песен Виктора Цоя и группы Кино с аутентичным живым звуком.',
+    phone: '+7 (921) 111-22-33'
+  },
+  {
+    id: 2,
+    name: 'Рок-бэнд «Brotherhood»',
+    role: 'Кавер-бэнд',
+    genre: 'Русский рок 90-х / Брат',
+    description: 'Исполнители культовых саундтреков к фильмам «Брат» и «Брат 2» (Наутилус, Би-2, Агата Кристи, Смысловые Галлюцинации).',
+    phone: '+7 (921) 222-33-44'
+  },
+  {
+    id: 3,
+    name: 'Cocker Band SPb',
+    role: 'Блюз-рок оркестр',
+    genre: 'Блюз-рок / Soul',
+    description: 'Энергичный трибьют Джо Кокеру с мощным вокалом и живой духовой секцией.',
+    phone: '+7 (921) 333-44-55'
+  },
+  {
+    id: 4,
+    name: 'Zeppelin Moon',
+    role: 'Хард-рок трибьют',
+    genre: 'Классический рок / Led Zeppelin',
+    description: 'Драйвовое хард-рок шоу с виртуозными гитарными соло на Неве.',
+    phone: '+7 (921) 444-55-66'
+  },
+  {
+    id: 5,
+    name: 'Михаил Лебедев (Саксофон)',
+    role: 'Соло-исполнитель',
+    genre: 'Джаз / Лаунж / Саксофон',
+    description: 'Лауреат международных конкурсов, романтический саксофон на закате и под разводными мостами.',
+    phone: '+7 (921) 555-66-77'
+  },
+  {
+    id: 6,
+    name: 'Квартет «Aqua Jazz»',
+    role: 'Джаз-ансамбль',
+    genre: 'Джаз / Свинг / Поп-джаз',
+    description: 'Атмосферный живой аккомпанемент для панорамных вечерних круизов по Неве.',
+    phone: '+7 (921) 666-77-88'
+  }
+];
 
 const INITIAL_EVENTS = [
   {
     id: 1,
-    domain_id: 2,
-    domain_name: 'rockhitneva.ru',
     title: 'Брат (Саундтреки к фильму)',
     slug: 'brother',
     short_desc: 'Культовые рок-хиты 90-х и саундтреки из легендарных фильмов Алексея Балабанова.',
@@ -16,12 +66,11 @@ const INITIAL_EVENTS = [
     age_restriction: '18+',
     min_price: 1800,
     is_featured: true,
+    default_musician_ids: [2],
     iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/brother/"></div>'
   },
   {
     id: 2,
-    domain_id: 2,
-    domain_name: 'rockhitneva.ru',
     title: 'Виктор Цой & Кино',
     slug: 'viktortsoy',
     short_desc: 'Живое исполнение бессмертных песен группы КИНО на волнах ночной Невы.',
@@ -29,12 +78,11 @@ const INITIAL_EVENTS = [
     age_restriction: '16+',
     min_price: 1700,
     is_featured: true,
+    default_musician_ids: [1],
     iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/viktortsoy/"></div>'
   },
   {
     id: 3,
-    domain_id: 2,
-    domain_name: 'rockhitneva.ru',
     title: 'Рок под разводными мостами',
     slug: 'rock-bridges',
     short_desc: 'Ночной круиз под разводку Дворцового и Троицкого мостов в сопровождении рок-бэнда.',
@@ -42,12 +90,11 @@ const INITIAL_EVENTS = [
     age_restriction: '18+',
     min_price: 2200,
     is_featured: true,
+    default_musician_ids: [1, 2],
     iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/rock-bridges/"></div>'
   },
   {
     id: 4,
-    domain_id: 2,
-    domain_name: 'rockhitneva.ru',
     title: 'JOE COCKER Tribute',
     slug: 'joe-cocker',
     short_desc: 'Блюз-рок программа и лучшие баллады Джо Кокера с живой духовой секцией.',
@@ -55,12 +102,11 @@ const INITIAL_EVENTS = [
     age_restriction: '18+',
     min_price: 1600,
     is_featured: false,
+    default_musician_ids: [3],
     iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/joe-cocker/"></div>'
   },
   {
     id: 5,
-    domain_id: 2,
-    domain_name: 'rockhitneva.ru',
     title: 'Led Zeppelin Tribute',
     slug: 'led-zeppelin-tribute',
     short_desc: 'Мощный хард-рок трибьют легендам мировой рок-сцены.',
@@ -68,50 +114,21 @@ const INITIAL_EVENTS = [
     age_restriction: '18+',
     min_price: 1800,
     is_featured: false,
+    default_musician_ids: [4],
     iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/led-zeppelin/"></div>'
-  },
-  {
-    id: 6,
-    domain_id: 1,
-    domain_name: 'aquasound.club',
-    title: 'Большой круг по Неве',
-    slug: 'bigring',
-    short_desc: 'Панорамный вечерний круиз с живым джазом и видами на парадный Петербург.',
-    duration_minutes: 90,
-    age_restriction: '12+',
-    min_price: 1400,
-    is_featured: true,
-    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/bigring/"></div>'
-  },
-  {
-    id: 7,
-    domain_id: 1,
-    domain_name: 'aquasound.club',
-    title: 'Разводные мосты',
-    slug: 'bridges',
-    short_desc: 'Романтический ночной рейс под музыку саксофона с выходом в Финский залив.',
-    duration_minutes: 150,
-    age_restriction: '18+',
-    min_price: 2000,
-    is_featured: true,
-    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/bridges/"></div>'
   }
 ];
 
 const INITIAL_VENUES = [
   {
     id: 1,
-    domain_id: 2,
-    domain_name: 'rockhitneva.ru',
     name: 'Теплоход «Рок Хит Нева»',
     pier_address: 'Санкт-Петербург, ст. м. Спортивная, причал Набережная Макарова, 34',
     capacity: 120,
-    description: 'Двухпалубный комфортабельный рок-теплоход с закрытым теплым салоном и открытой верхней палубой'
+    description: 'Двухпалубный комфортабельный рок-теплоход с закрытым теплым салоном, сценой и открытой верхней палубой'
   },
   {
     id: 2,
-    domain_id: 1,
-    domain_name: 'aquasound.club',
     name: 'Теплоход «Акватория Звука»',
     pier_address: 'Санкт-Петербург, ст. м. Спортивная, причал Набережная Макарова, 34',
     capacity: 100,
@@ -122,100 +139,93 @@ const INITIAL_VENUES = [
 const INITIAL_SESSIONS = [
   {
     id: 101,
-    domain_id: 2,
-    domain_name: 'rockhitneva.ru',
     event_id: 3,
     event_title: 'Рок под разводными мостами',
     venue_id: 1,
     venue_name: 'Теплоход «Рок Хит Нева»',
     pier_address: 'Причал Наб. Макарова, 34',
     start_time: '2026-05-01 23:55',
-    min_price: 2200
+    min_price: 2200,
+    musician_names: ['Рок-группа «Кинохроника»']
   },
   {
     id: 102,
-    domain_id: 2,
-    domain_name: 'rockhitneva.ru',
     event_id: 1,
     event_title: 'Брат (Саундтреки к фильму)',
     venue_id: 1,
     venue_name: 'Теплоход «Рок Хит Нева»',
     pier_address: 'Причал Наб. Макарова, 34',
     start_time: '2026-05-02 19:30',
-    min_price: 1800
+    min_price: 1800,
+    musician_names: ['Рок-бэнд «Brotherhood»']
   },
   {
     id: 103,
-    domain_id: 2,
-    domain_name: 'rockhitneva.ru',
     event_id: 2,
     event_title: 'Виктор Цой & Кино',
     venue_id: 1,
     venue_name: 'Теплоход «Рок Хит Нева»',
     pier_address: 'Причал Наб. Макарова, 34',
     start_time: '2026-05-02 22:00',
-    min_price: 1700
+    min_price: 1700,
+    musician_names: ['Рок-группа «Кинохроника»']
   },
   {
     id: 104,
-    domain_id: 1,
-    domain_name: 'aquasound.club',
-    event_id: 6,
-    event_title: 'Большой круг по Неве',
-    venue_id: 2,
-    venue_name: 'Теплоход «Акватория Звука»',
+    event_id: 4,
+    event_title: 'JOE COCKER Tribute',
+    venue_id: 1,
+    venue_name: 'Теплоход «Рок Хит Нева»',
     pier_address: 'Причал Наб. Макарова, 34',
-    start_time: '2026-05-01 18:00',
-    min_price: 1400
-  },
-  {
-    id: 105,
-    domain_id: 1,
-    domain_name: 'aquasound.club',
-    event_id: 7,
-    event_title: 'Разводные мосты',
-    venue_id: 2,
-    venue_name: 'Теплоход «Акватория Звука»',
-    pier_address: 'Причал Наб. Макарова, 34',
-    start_time: '2026-05-01 23:55',
-    min_price: 2000
+    start_time: '2026-05-03 19:30',
+    min_price: 1600,
+    musician_names: ['Cocker Band SPb']
   }
 ];
 
 export default function ProgramsManager({ defaultSection = 'events' }) {
-  const [currentSection, setCurrentSection] = useState(defaultSection); // 'events', 'sessions', 'venues'
-  const [selectedSiteFilter, setSelectedSiteFilter] = useState('all'); // 'all', '2' (rockhitneva), '1' (aquasound)
+  const [currentSection, setCurrentSection] = useState(defaultSection); // 'events', 'sessions', 'musicians', 'venues'
   const [notification, setNotification] = useState('');
 
-  // LocalStorage State
+  // LocalStorage Persistence
   const [events, setEvents] = useState(() => {
-    const saved = localStorage.getItem('pm_events');
+    const saved = localStorage.getItem('pm_events_v3');
     return saved ? JSON.parse(saved) : INITIAL_EVENTS;
   });
 
   const [venues, setVenues] = useState(() => {
-    const saved = localStorage.getItem('pm_venues');
+    const saved = localStorage.getItem('pm_venues_v3');
     return saved ? JSON.parse(saved) : INITIAL_VENUES;
   });
 
   const [sessions, setSessions] = useState(() => {
-    const saved = localStorage.getItem('pm_sessions');
+    const saved = localStorage.getItem('pm_sessions_v3');
     return saved ? JSON.parse(saved) : INITIAL_SESSIONS;
+  });
+
+  const [musicians, setMusicians] = useState(() => {
+    const saved = localStorage.getItem('pm_musicians_v3');
+    return saved ? JSON.parse(saved) : INITIAL_MUSICIANS;
   });
 
   const saveEvents = (data) => {
     setEvents(data);
-    localStorage.setItem('pm_events', JSON.stringify(data));
+    localStorage.setItem('pm_events_v3', JSON.stringify(data));
   };
 
   const saveVenues = (data) => {
     setVenues(data);
-    localStorage.setItem('pm_venues', JSON.stringify(data));
+    localStorage.setItem('pm_venues_v3', JSON.stringify(data));
   };
 
   const saveSessions = (data) => {
     setSessions(data);
-    localStorage.setItem('pm_sessions', JSON.stringify(data));
+    localStorage.setItem('pm_sessions_v3', JSON.stringify(data));
+  };
+
+  const saveMusicians = (data) => {
+    setMusicians(data);
+    localStorage.setItem('pm_musicians_v3', JSON.stringify(data));
   };
 
   const showNotification = (msg) => {
@@ -223,56 +233,62 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
     setTimeout(() => setNotification(''), 3500);
   };
 
-  // Modals state
+  // -------------------------------------------------------------
+  // MODAL STATES
+  // -------------------------------------------------------------
+
+  // 1. Program Create/Edit Modal
   const [eventModalOpen, setEventModalOpen] = useState(false);
   const [editingEventId, setEditingEventId] = useState(null);
   const [eventForm, setEventForm] = useState({
-    title: '', slug: '', domain_id: 2, short_desc: '', age_restriction: '18+',
+    title: '', slug: '', short_desc: '', age_restriction: '18+',
     duration_minutes: 120, min_price: 1800, is_featured: true, iframe_code: ''
   });
 
-  const [massGenModalOpen, setMassGenModalOpen] = useState(false);
-  const [massGenForm, setMassGenForm] = useState({
-    event_id: '',
-    venue_id: '',
+  // 2. UNIFIED Event Session Creation Modal (Single Event OR Recurring Schedule + Musicians)
+  const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
+  const [targetProgram, setTargetProgram] = useState(null);
+  const [scheduleMode, setScheduleMode] = useState('recurring'); // 'single' or 'recurring'
+  const [scheduleForm, setScheduleForm] = useState({
+    venue_id: 1,
+    min_price: 1800,
+    // Single event fields
+    single_date: '2026-05-01',
+    single_time: '19:30',
+    // Recurring fields
     date_from: '2026-05-01',
     date_to: '2026-09-30',
-    days_of_week: [5, 6, 0],
+    days_of_week: [5, 6, 0], // Fri, Sat, Sun
     times: '19:00, 21:30',
-    min_price: 1800
+    // Musicians
+    selected_musician_ids: []
   });
 
-  const [sessionModalOpen, setSessionModalOpen] = useState(false);
-  const [sessionForm, setSessionForm] = useState({
-    event_id: '', venue_id: '', start_time: '2026-05-01 19:00', min_price: 1800
+  // 3. Quick Add Musician Modal
+  const [musicianModalOpen, setMusicianModalOpen] = useState(false);
+  const [editingMusicianId, setEditingMusicianId] = useState(null);
+  const [musicianForm, setMusicianForm] = useState({
+    name: '', role: 'Рок-группа', genre: 'Русский рок', description: '', phone: ''
   });
 
+  // 4. Venue Modal
   const [venueModalOpen, setVenueModalOpen] = useState(false);
   const [editingVenueId, setEditingVenueId] = useState(null);
   const [venueForm, setVenueForm] = useState({
-    name: '', domain_id: 2, pier_address: 'Санкт-Петербург, Причал Набережная Макарова, 34', capacity: 120, description: ''
+    name: '', pier_address: 'Санкт-Петербург, Причал Набережная Макарова, 34', capacity: 120, description: ''
   });
 
-  // Filtered lists based on Site filter
-  const filteredEvents = selectedSiteFilter === 'all' 
-    ? events 
-    : events.filter(e => e.domain_id === Number(selectedSiteFilter));
+  // Filter in Schedule table
+  const [scheduleProgramFilter, setScheduleProgramFilter] = useState('all');
 
-  const filteredSessions = selectedSiteFilter === 'all' 
-    ? sessions 
-    : sessions.filter(s => s.domain_id === Number(selectedSiteFilter));
-
-  const filteredVenues = selectedSiteFilter === 'all' 
-    ? venues 
-    : venues.filter(v => v.domain_id === Number(selectedSiteFilter));
-
-  // Event handlers
+  // -------------------------------------------------------------
+  // PROGRAM CRUD
+  // -------------------------------------------------------------
   const handleOpenCreateEvent = () => {
     setEditingEventId(null);
     setEventForm({
       title: '',
       slug: '',
-      domain_id: selectedSiteFilter === 'all' ? 2 : Number(selectedSiteFilter),
       short_desc: '',
       age_restriction: '18+',
       duration_minutes: 120,
@@ -288,7 +304,6 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
     setEventForm({
       title: ev.title,
       slug: ev.slug,
-      domain_id: ev.domain_id || 2,
       short_desc: ev.short_desc || '',
       age_restriction: ev.age_restriction || '18+',
       duration_minutes: ev.duration_minutes || 120,
@@ -301,16 +316,18 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
 
   const handleSaveEvent = (e) => {
     e.preventDefault();
+    if (!eventForm.title.trim() || !eventForm.slug.trim()) {
+      alert('Укажите название и URL Slug программы');
+      return;
+    }
+
     const cleanSlug = eventForm.slug.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
-    const domName = Number(eventForm.domain_id) === 1 ? 'aquasound.club' : 'rockhitneva.ru';
 
     if (editingEventId) {
       const updated = events.map(ev => ev.id === editingEventId ? {
         ...ev,
         title: eventForm.title,
         slug: cleanSlug,
-        domain_id: Number(eventForm.domain_id),
-        domain_name: domName,
         short_desc: eventForm.short_desc,
         age_restriction: eventForm.age_restriction,
         duration_minutes: Number(eventForm.duration_minutes),
@@ -325,17 +342,16 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
         id: Date.now(),
         title: eventForm.title,
         slug: cleanSlug,
-        domain_id: Number(eventForm.domain_id),
-        domain_name: domName,
         short_desc: eventForm.short_desc,
         age_restriction: eventForm.age_restriction,
         duration_minutes: Number(eventForm.duration_minutes),
         min_price: Number(eventForm.min_price),
         is_featured: eventForm.is_featured,
+        default_musician_ids: [],
         iframe_code: eventForm.iframe_code
       };
       saveEvents([...events, newEv]);
-      showNotification('Новое мероприятие создано!');
+      showNotification('Новая программа создана! Теперь вы можете назначить рейсы.');
     }
     setEventModalOpen(false);
   };
@@ -347,92 +363,200 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
     }
   };
 
-  // Mass Generator
-  const handleOpenMassGen = () => {
-    const firstEv = filteredEvents[0] || events[0];
-    const firstVn = filteredVenues[0] || venues[0];
-    setMassGenForm({
-      event_id: firstEv ? firstEv.id : '',
-      venue_id: firstVn ? firstVn.id : '',
+  // -------------------------------------------------------------
+  // UNIFIED SCHEDULE CREATION (Inside Program)
+  // -------------------------------------------------------------
+  const handleOpenScheduleModal = (prog) => {
+    setTargetProgram(prog);
+    setScheduleMode('recurring');
+    setScheduleForm({
+      venue_id: venues[0] ? venues[0].id : 1,
+      min_price: prog.min_price || 1800,
+      single_date: '2026-05-01',
+      single_time: '19:30',
       date_from: '2026-05-01',
       date_to: '2026-09-30',
-      days_of_week: [5, 6, 0],
+      days_of_week: [5, 6, 0], // Fri, Sat, Sun
       times: '19:00, 21:30',
-      min_price: firstEv ? firstEv.min_price : 1800
+      selected_musician_ids: prog.default_musician_ids || []
     });
-    setMassGenModalOpen(true);
+    setScheduleModalOpen(true);
   };
 
-  const handleRunMassGenerator = (e) => {
+  const handleSaveSchedule = (e) => {
     e.preventDefault();
-    const ev = events.find(item => item.id === Number(massGenForm.event_id));
-    const vn = venues.find(item => item.id === Number(massGenForm.venue_id));
-    if (!ev) {
-      alert('Выберите программу');
+    if (!targetProgram) return;
+
+    const vn = venues.find(item => item.id === Number(scheduleForm.venue_id)) || venues[0];
+    const selectedMusicians = musicians.filter(m => scheduleForm.selected_musician_ids.includes(m.id));
+    const musicianNames = selectedMusicians.map(m => m.name);
+
+    if (scheduleMode === 'single') {
+      // Single event creation
+      const start_time = `${scheduleForm.single_date} ${scheduleForm.single_time}`;
+      const newSess = {
+        id: Date.now(),
+        event_id: targetProgram.id,
+        event_title: targetProgram.title,
+        venue_id: vn ? vn.id : 1,
+        venue_name: vn ? vn.name : 'Теплоход',
+        pier_address: vn ? vn.pier_address : 'Причал Наб. Макарова, 34',
+        start_time: start_time,
+        min_price: Number(scheduleForm.min_price),
+        musician_names: musicianNames
+      };
+      saveSessions([...sessions, newSess]);
+      showNotification(`Рейс на ${start_time} успешно добавлен в расписание!`);
+    } else {
+      // Recurring schedule creation (Mass generator)
+      const timeList = scheduleForm.times.split(',').map(t => t.trim()).filter(Boolean);
+      if (timeList.length === 0) {
+        alert('Укажите хотя бы одно время отправления (например: 19:00)');
+        return;
+      }
+
+      const startDate = new Date(scheduleForm.date_from);
+      const endDate = new Date(scheduleForm.date_to);
+      const newSessions = [];
+      let count = 0;
+
+      let curr = new Date(startDate);
+      while (curr <= endDate) {
+        const dayOfWeek = curr.getDay();
+        if (scheduleForm.days_of_week.includes(dayOfWeek)) {
+          const year = curr.getFullYear();
+          const month = String(curr.getMonth() + 1).padStart(2, '0');
+          const day = String(curr.getDate()).padStart(2, '0');
+          const dateStr = `${year}-${month}-${day}`;
+
+          for (const t of timeList) {
+            count++;
+            newSessions.push({
+              id: Date.now() + count,
+              event_id: targetProgram.id,
+              event_title: targetProgram.title,
+              venue_id: vn ? vn.id : 1,
+              venue_name: vn ? vn.name : 'Теплоход',
+              pier_address: vn ? vn.pier_address : 'Причал Наб. Макарова, 34',
+              start_time: `${dateStr} ${t}`,
+              min_price: Number(scheduleForm.min_price),
+              musician_names: musicianNames
+            });
+          }
+        }
+        curr.setDate(curr.getDate() + 1);
+      }
+
+      if (newSessions.length === 0) {
+        alert('В выбранном диапазоне дат не совпало ни одного дня недели.');
+        return;
+      }
+
+      saveSessions([...sessions, ...newSessions]);
+      showNotification(`Сгенерировано ${newSessions.length} регулярных рейсов для «${targetProgram.title}»!`);
+    }
+
+    setScheduleModalOpen(false);
+  };
+
+  const handleDeleteSession = (id) => {
+    saveSessions(sessions.filter(s => s.id !== id));
+    showNotification('Рейс удален');
+  };
+
+  // -------------------------------------------------------------
+  // MUSICIANS DIRECTORY CRUD
+  // -------------------------------------------------------------
+  const handleOpenAddMusician = () => {
+    setEditingMusicianId(null);
+    setMusicianForm({
+      name: '',
+      role: 'Рок-группа',
+      genre: 'Русский рок',
+      description: '',
+      phone: ''
+    });
+    setMusicianModalOpen(true);
+  };
+
+  const handleOpenEditMusician = (mus) => {
+    setEditingMusicianId(mus.id);
+    setMusicianForm({
+      name: mus.name,
+      role: mus.role || 'Исполнитель',
+      genre: mus.genre || '',
+      description: mus.description || '',
+      phone: mus.phone || ''
+    });
+    setMusicianModalOpen(true);
+  };
+
+  const handleSaveMusician = (e) => {
+    e.preventDefault();
+    if (!musicianForm.name.trim()) {
+      alert('Укажите имя артиста или название группы');
       return;
     }
 
-    const timeList = massGenForm.times.split(',').map(t => t.trim()).filter(Boolean);
-    const startDate = new Date(massGenForm.date_from);
-    const endDate = new Date(massGenForm.date_to);
-    const newSessions = [];
-    let count = 0;
+    if (editingMusicianId) {
+      const updated = musicians.map(m => m.id === editingMusicianId ? {
+        ...m,
+        name: musicianForm.name,
+        role: musicianForm.role,
+        genre: musicianForm.genre,
+        description: musicianForm.description,
+        phone: musicianForm.phone
+      } : m);
+      saveMusicians(updated);
+      showNotification(`Музыкант «${musicianForm.name}» обновлен`);
+    } else {
+      const newMus = {
+        id: Date.now(),
+        name: musicianForm.name,
+        role: musicianForm.role,
+        genre: musicianForm.genre,
+        description: musicianForm.description,
+        phone: musicianForm.phone
+      };
+      const updated = [...musicians, newMus];
+      saveMusicians(updated);
 
-    let curr = new Date(startDate);
-    while (curr <= endDate) {
-      const dayOfWeek = curr.getDay();
-      if (massGenForm.days_of_week.includes(dayOfWeek)) {
-        const year = curr.getFullYear();
-        const month = String(curr.getMonth() + 1).padStart(2, '0');
-        const day = String(curr.getDate()).padStart(2, '0');
-        const dateStr = `${year}-${month}-${day}`;
-
-        for (const t of timeList) {
-          count++;
-          newSessions.push({
-            id: Date.now() + count,
-            domain_id: ev.domain_id,
-            domain_name: ev.domain_name,
-            event_id: ev.id,
-            event_title: ev.title,
-            venue_id: vn ? vn.id : 1,
-            venue_name: vn ? vn.name : 'Теплоход',
-            pier_address: vn ? vn.pier_address : 'Причал Наб. Макарова, 34',
-            start_time: `${dateStr} ${t}`,
-            min_price: Number(massGenForm.min_price)
-          });
-        }
+      // Auto-select this musician if schedule modal is open
+      if (scheduleModalOpen) {
+        setScheduleForm(prev => ({
+          ...prev,
+          selected_musician_ids: [...prev.selected_musician_ids, newMus.id]
+        }));
       }
-      curr.setDate(curr.getDate() + 1);
-    }
 
-    saveSessions([...sessions, ...newSessions]);
-    setMassGenModalOpen(false);
-    showNotification(`Сгенерировано ${newSessions.length} рейсов на сезон!`);
+      showNotification(`Музыкант «${musicianForm.name}» добавлен в справочник!`);
+    }
+    setMusicianModalOpen(false);
   };
+
+  const handleDeleteMusician = (id, name) => {
+    if (window.confirm(`Удалить музыканта «${name}» из справочника?`)) {
+      saveMusicians(musicians.filter(m => m.id !== id));
+      showNotification(`Музыкант «${name}» удален`);
+    }
+  };
+
+  // Filtered schedule
+  const filteredSessions = scheduleProgramFilter === 'all'
+    ? sessions
+    : sessions.filter(s => s.event_id === Number(scheduleProgramFilter));
 
   return (
     <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-      {/* LEFT SIDEBAR: 3 Sections */}
-      <div className="glass" style={{ flex: '1 1 280px', padding: '20px' }}>
-        <div style={{ marginBottom: '16px' }}>
-          <label style={{ fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase', color: '#64748b', letterSpacing: '0.5px' }}>
-            Фильтр по сайту:
-          </label>
-          <select 
-            className="form-input" 
-            value={selectedSiteFilter} 
-            onChange={e => setSelectedSiteFilter(e.target.value)}
-            style={{ width: '100%', marginTop: '6px', fontWeight: '600' }}
-          >
-            <option value="all">🌐 Все сайты проекта</option>
-            <option value="2">🎸 rockhitneva.ru</option>
-            <option value="1">🎵 aquasound.club</option>
-          </select>
-        </div>
+      {/* LEFT SIDEBAR: 4 Main Sections */}
+      <div className="glass" style={{ flex: '1 1 270px', padding: '20px' }}>
+        <h4 style={{ margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px', color: '#0f172a', fontSize: '16px' }}>
+          <Music size={20} color="var(--color-primary)" />
+          Репертуар & Расписание
+        </h4>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {/* Menu Item 1: Программы */}
+          {/* Section 1: Программы */}
           <div
             onClick={() => setCurrentSection('events')}
             style={{
@@ -449,7 +573,7 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <Music size={18} color={currentSection === 'events' ? '#2563eb' : '#64748b'} />
-              <span style={{ fontWeight: currentSection === 'events' ? 'bold' : '600', color: currentSection === 'events' ? '#1d4ed8' : '#334155' }}>
+              <span style={{ fontWeight: currentSection === 'events' ? 'bold' : '600', color: currentSection === 'events' ? '#1d4ed8' : '#334155', fontSize: '14px' }}>
                 🎭 Программы
               </span>
             </div>
@@ -461,11 +585,11 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
               borderRadius: '12px',
               fontWeight: 'bold'
             }}>
-              {filteredEvents.length}
+              {events.length}
             </span>
           </div>
 
-          {/* Menu Item 2: Расписание & Рейсы */}
+          {/* Section 2: Расписание */}
           <div
             onClick={() => setCurrentSection('sessions')}
             style={{
@@ -482,7 +606,7 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <Calendar size={18} color={currentSection === 'sessions' ? '#2563eb' : '#64748b'} />
-              <span style={{ fontWeight: currentSection === 'sessions' ? 'bold' : '600', color: currentSection === 'sessions' ? '#1d4ed8' : '#334155' }}>
+              <span style={{ fontWeight: currentSection === 'sessions' ? 'bold' : '600', color: currentSection === 'sessions' ? '#1d4ed8' : '#334155', fontSize: '14px' }}>
                 🗓️ Расписание
               </span>
             </div>
@@ -494,11 +618,44 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
               borderRadius: '12px',
               fontWeight: 'bold'
             }}>
-              {filteredSessions.length}
+              {sessions.length}
             </span>
           </div>
 
-          {/* Menu Item 3: Площадки & Суда */}
+          {/* Section 3: Справочник Музыканты */}
+          <div
+            onClick={() => setCurrentSection('musicians')}
+            style={{
+              padding: '14px 16px',
+              borderRadius: '10px',
+              background: currentSection === 'musicians' ? '#eff6ff' : '#f8fafc',
+              border: currentSection === 'musicians' ? '1px solid #3b82f6' : '1px solid #e2e8f0',
+              cursor: 'pointer',
+              transition: 'all 0.15s',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Mic size={18} color={currentSection === 'musicians' ? '#2563eb' : '#64748b'} />
+              <span style={{ fontWeight: currentSection === 'musicians' ? 'bold' : '600', color: currentSection === 'musicians' ? '#1d4ed8' : '#334155', fontSize: '14px' }}>
+                🎸 Музыканты
+              </span>
+            </div>
+            <span style={{
+              fontSize: '12px',
+              background: currentSection === 'musicians' ? '#2563eb' : '#e2e8f0',
+              color: currentSection === 'musicians' ? '#ffffff' : '#334155',
+              padding: '2px 8px',
+              borderRadius: '12px',
+              fontWeight: 'bold'
+            }}>
+              {musicians.length}
+            </span>
+          </div>
+
+          {/* Section 4: Площадки & Суда */}
           <div
             onClick={() => setCurrentSection('venues')}
             style={{
@@ -515,7 +672,7 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <Anchor size={18} color={currentSection === 'venues' ? '#2563eb' : '#64748b'} />
-              <span style={{ fontWeight: currentSection === 'venues' ? 'bold' : '600', color: currentSection === 'venues' ? '#1d4ed8' : '#334155' }}>
+              <span style={{ fontWeight: currentSection === 'venues' ? 'bold' : '600', color: currentSection === 'venues' ? '#1d4ed8' : '#334155', fontSize: '14px' }}>
                 📌 Площадки & Суда
               </span>
             </div>
@@ -527,38 +684,19 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
               borderRadius: '12px',
               fontWeight: 'bold'
             }}>
-              {filteredVenues.length}
+              {venues.length}
             </span>
           </div>
         </div>
 
-        {/* Quick Action Button on left */}
         <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid #e2e8f0' }}>
-          <button
-            onClick={handleOpenMassGen}
-            style={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              padding: '10px 14px',
-              background: '#2563eb',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '13px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              boxShadow: '0 2px 4px rgba(37,99,235,0.25)'
-            }}
-          >
-            <Sparkles size={16} /> 🚀 Генератор на сезон
-          </button>
+          <div style={{ fontSize: '12px', color: '#64748b', lineHeight: '1.5' }}>
+            💡 <strong>Быстрый алгоритм:</strong> Создайте программу в репертуаре, затем нажмите на ней <strong>«Назначить рейсы»</strong>, чтобы запланировать сеансы и привязать музыкантов.
+          </div>
         </div>
       </div>
 
-      {/* RIGHT WORKSPACE: List & Management */}
+      {/* RIGHT WORKSPACE */}
       <div className="glass" style={{ flex: '1 1 700px', padding: '24px' }}>
         {notification && (
           <div style={{
@@ -578,81 +716,325 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
           </div>
         )}
 
-        {/* SECTION 1: ПРОГРАММЫ (EVENTS) */}
+        {/* 1. ПРОГРАММЫ (EVENTS) */}
         {currentSection === 'events' && (
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
               <div>
                 <h3 style={{ margin: 0, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Music size={22} color="var(--color-primary)" />
-                  Репертуар программ ({filteredEvents.length})
+                  Репертуар программ ({events.length})
                 </h3>
                 <div style={{ fontSize: '13px', color: '#64748b', marginTop: '2px' }}>
-                  Создание и редактирование концертных программ, длительности, цен и Ticketland-кода
+                  Создавайте программы и назначайте на них регулярные или одиночные рейсы с музыкантами
                 </div>
               </div>
               <button
                 onClick={handleOpenCreateEvent}
                 className="btn btn-primary"
-                style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 18px', borderRadius: '8px', fontWeight: 'bold' }}
+                style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 20px', borderRadius: '8px', fontWeight: 'bold' }}
               >
                 <Plus size={16} /> Создать программу
               </button>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {filteredEvents.map(ev => (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              {events.map(ev => {
+                const programSessionsCount = sessions.filter(s => s.event_id === ev.id).length;
+                return (
+                  <div
+                    key={ev.id}
+                    style={{
+                      padding: '18px 20px',
+                      background: '#ffffff',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '12px',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.03)',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      gap: '16px',
+                      flexWrap: 'wrap'
+                    }}
+                  >
+                    <div style={{ flex: '1 1 340px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                        <span style={{ fontWeight: 'bold', fontSize: '17px', color: '#0f172a' }}>{ev.title}</span>
+                        {ev.is_featured && (
+                          <span style={{ fontSize: '10px', background: '#fee2e2', color: '#dc2626', border: '1px solid #fca5a5', padding: '2px 7px', borderRadius: '4px', fontWeight: 'bold' }}>
+                            🔥 ХИТ СЕЗОНА
+                          </span>
+                        )}
+                        <span style={{ fontSize: '11px', background: '#eff6ff', color: '#2563eb', padding: '2px 8px', borderRadius: '10px', fontWeight: '600' }}>
+                          🗓️ {programSessionsCount} {programSessionsCount === 1 ? 'рейс' : 'рейсов'}
+                        </span>
+                      </div>
+
+                      <div style={{ fontSize: '13px', color: '#475569', marginTop: '6px' }}>
+                        {ev.short_desc || '—'}
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginTop: '10px', flexWrap: 'wrap', fontSize: '12px' }}>
+                        <span style={{ background: '#f1f5f9', color: '#334155', padding: '3px 8px', borderRadius: '4px', fontFamily: 'monospace' }}>
+                          /{ev.slug}/
+                        </span>
+                        <span style={{ color: '#64748b' }}>
+                          ⏱ {ev.duration_minutes || 120} мин
+                        </span>
+                        <span style={{ color: '#64748b' }}>
+                          🔞 {ev.age_restriction || '18+'}
+                        </span>
+                        <strong style={{ color: '#059669', fontSize: '14px' }}>
+                          от {ev.min_price || 1500} ₽
+                        </strong>
+                      </div>
+                    </div>
+
+                    {/* Main action buttons on the program card */}
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+                      {/* Prominent Button: Create Event / Schedule */}
+                      <button
+                        onClick={() => handleOpenScheduleModal(ev)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          padding: '8px 16px',
+                          background: '#2563eb',
+                          color: '#ffffff',
+                          border: 'none',
+                          borderRadius: '8px',
+                          fontSize: '13px',
+                          fontWeight: 'bold',
+                          cursor: 'pointer',
+                          boxShadow: '0 2px 4px rgba(37,99,235,0.25)'
+                        }}
+                      >
+                        <Calendar size={15} /> Назначить рейсы
+                      </button>
+
+                      <button
+                        onClick={() => handleOpenEditEvent(ev)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          padding: '8px 12px',
+                          background: '#f8fafc',
+                          color: '#334155',
+                          border: '1px solid #cbd5e1',
+                          borderRadius: '8px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <Edit3 size={14} color="#2563eb" /> Редактировать
+                      </button>
+
+                      <button
+                        onClick={() => handleDeleteEvent(ev.id, ev.title)}
+                        style={{
+                          padding: '8px 10px',
+                          background: '#fff1f2',
+                          color: '#e11d48',
+                          border: '1px solid #fecdd3',
+                          borderRadius: '8px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {events.length === 0 && (
+                <div style={{ textAlign: 'center', padding: '40px', color: '#64748b', background: '#f8fafc', borderRadius: '10px', border: '1px dashed #cbd5e1' }}>
+                  Программы еще не добавлены. Нажмите «Создать программу» выше!
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* 2. РАСПИСАНИЕ & РЕЙСЫ (SESSIONS) */}
+        {currentSection === 'sessions' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
+              <div>
+                <h3 style={{ margin: 0, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Calendar size={22} color="var(--color-primary)" />
+                  Расписание рейсов ({filteredSessions.length})
+                </h3>
+                <div style={{ fontSize: '13px', color: '#64748b', marginTop: '2px' }}>
+                  Список всех назначенных сеансов, причалов и музыкантов на борту
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                <select
+                  className="form-input"
+                  value={scheduleProgramFilter}
+                  onChange={e => setScheduleProgramFilter(e.target.value)}
+                  style={{ fontSize: '13px', fontWeight: '600' }}
+                >
+                  <option value="all">Все программы ({sessions.length} рейсов)</option>
+                  {events.map(ev => (
+                    <option key={ev.id} value={ev.id}>{ev.title}</option>
+                  ))}
+                </select>
+
+                <button
+                  onClick={() => {
+                    const firstEv = events[0];
+                    if (firstEv) handleOpenScheduleModal(firstEv);
+                  }}
+                  className="btn btn-primary"
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '8px', fontWeight: 'bold' }}
+                >
+                  <Plus size={16} /> Назначить рейсы
+                </button>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {filteredSessions.slice(0, 60).map(s => (
                 <div
-                  key={ev.id}
+                  key={s.id}
                   style={{
-                    padding: '16px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '14px 18px',
                     background: '#ffffff',
                     border: '1px solid #e2e8f0',
                     borderRadius: '10px',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                    gap: '16px',
+                    gap: '14px',
                     flexWrap: 'wrap'
                   }}
                 >
-                  <div style={{ flex: '1 1 320px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                      <span style={{ fontWeight: 'bold', fontSize: '16px', color: '#0f172a' }}>{ev.title}</span>
-                      {ev.is_featured && (
-                        <span style={{ fontSize: '10px', background: '#fee2e2', color: '#dc2626', border: '1px solid #fca5a5', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
-                          🔥 ХИТ СЕЗОНА
+                  <div style={{ flex: '1 1 380px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                      <div style={{ fontFamily: 'monospace', fontWeight: 'bold', color: '#1d4ed8', fontSize: '15px' }}>
+                        🗓️ {s.start_time}
+                      </div>
+                      <div style={{ fontWeight: 'bold', color: '#0f172a', fontSize: '15px' }}>
+                        {s.event_title}
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '6px', flexWrap: 'wrap', fontSize: '12px', color: '#64748b' }}>
+                      <span>📍 {s.venue_name} ({s.pier_address})</span>
+                      {s.musician_names && s.musician_names.length > 0 && (
+                        <span style={{ background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold' }}>
+                          🎸 {s.musician_names.join(', ')}
                         </span>
                       )}
-                      <span style={{ fontSize: '11px', background: '#eff6ff', color: '#2563eb', padding: '2px 8px', borderRadius: '10px', fontWeight: '600' }}>
-                        {ev.domain_name}
-                      </span>
-                    </div>
-
-                    <div style={{ fontSize: '13px', color: '#475569', marginTop: '6px' }}>
-                      {ev.short_desc || '—'}
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginTop: '10px', flexWrap: 'wrap', fontSize: '12px' }}>
-                      <span style={{ background: '#f1f5f9', color: '#334155', padding: '3px 8px', borderRadius: '4px', fontFamily: 'monospace' }}>
-                        /{ev.slug}/
-                      </span>
-                      <span style={{ color: '#64748b' }}>
-                        ⏱ {ev.duration_minutes || 120} мин
-                      </span>
-                      <span style={{ color: '#64748b' }}>
-                        🔞 {ev.age_restriction || '18+'}
-                      </span>
-                      <strong style={{ color: '#059669', fontSize: '14px' }}>
-                        от {ev.min_price || 1500} ₽
-                      </strong>
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <strong style={{ color: '#059669', fontSize: '15px' }}>{s.min_price || 1500} ₽</strong>
                     <button
-                      onClick={() => handleOpenEditEvent(ev)}
+                      onClick={() => handleDeleteSession(s.id)}
+                      title="Удалить рейс"
+                      style={{
+                        padding: '6px 10px',
+                        background: '#fff1f2',
+                        color: '#e11d48',
+                        border: '1px solid #fecdd3',
+                        borderRadius: '6px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+
+              {filteredSessions.length > 60 && (
+                <div style={{ textAlign: 'center', padding: '12px', color: '#64748b', fontSize: '12px' }}>
+                  Показано первые 60 из {filteredSessions.length} рейсов.
+                </div>
+              )}
+
+              {filteredSessions.length === 0 && (
+                <div style={{ textAlign: 'center', padding: '40px', color: '#64748b', background: '#f8fafc', borderRadius: '10px', border: '1px dashed #cbd5e1' }}>
+                  Рейсы для выбранной программы еще не созданы. Нажмите <strong>«Назначить рейсы»</strong> выше!
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* 3. СПРАВОЧНИК МУЗЫКАНТОВ (MUSICIANS DIRECTORY) */}
+        {currentSection === 'musicians' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
+              <div>
+                <h3 style={{ margin: 0, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Mic size={22} color="var(--color-primary)" />
+                  Справочник музыкантов и артистов ({musicians.length})
+                </h3>
+                <div style={{ fontSize: '13px', color: '#64748b', marginTop: '2px' }}>
+                  База артистов и коллективов для привязки к рейсам и программам
+                </div>
+              </div>
+              <button
+                onClick={handleOpenAddMusician}
+                className="btn btn-primary"
+                style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 18px', borderRadius: '8px', fontWeight: 'bold' }}
+              >
+                <Plus size={16} /> Добавить музыканта
+              </button>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '14px' }}>
+              {musicians.map(mus => (
+                <div
+                  key={mus.id}
+                  style={{
+                    padding: '18px',
+                    background: '#ffffff',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '12px',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.03)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between'
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                      <h4 style={{ margin: 0, fontSize: '16px', color: '#0f172a', fontWeight: 'bold' }}>
+                        {mus.name}
+                      </h4>
+                      <span style={{ fontSize: '11px', background: '#eff6ff', color: '#2563eb', padding: '2px 8px', borderRadius: '10px', fontWeight: '600' }}>
+                        {mus.role}
+                      </span>
+                    </div>
+
+                    <div style={{ fontSize: '12px', color: '#7c3aed', fontWeight: '600', marginTop: '4px' }}>
+                      🎵 {mus.genre}
+                    </div>
+
+                    <div style={{ fontSize: '13px', color: '#475569', marginTop: '8px', lineHeight: '1.4' }}>
+                      {mus.description || 'Описание не указано'}
+                    </div>
+
+                    {mus.phone && (
+                      <div style={{ fontSize: '12px', color: '#64748b', marginTop: '10px' }}>
+                        📞 Контакт: <strong>{mus.phone}</strong>
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #f1f5f9' }}>
+                    <button
+                      onClick={() => handleOpenEditMusician(mus)}
                       style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -670,7 +1052,7 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
                       <Edit3 size={14} color="#2563eb" /> Редактировать
                     </button>
                     <button
-                      onClick={() => handleDeleteEvent(ev.id, ev.title)}
+                      onClick={() => handleDeleteMusician(mus.id, mus.name)}
                       style={{
                         padding: '6px 10px',
                         background: '#fff1f2',
@@ -685,154 +1067,21 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
                   </div>
                 </div>
               ))}
-
-              {filteredEvents.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '40px', color: '#64748b', background: '#f8fafc', borderRadius: '10px', border: '1px dashed #cbd5e1' }}>
-                  Мероприятия не найдены. Нажмите «Создать программу» выше!
-                </div>
-              )}
             </div>
           </div>
         )}
 
-        {/* SECTION 2: РАСПИСАНИЕ & РЕЙСЫ (SESSIONS) */}
-        {currentSection === 'sessions' && (
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
-              <div>
-                <h3 style={{ margin: 0, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Calendar size={22} color="var(--color-primary)" />
-                  Расписание рейсов ({filteredSessions.length})
-                </h3>
-                <div style={{ fontSize: '13px', color: '#64748b', marginTop: '2px' }}>
-                  Все рейсы на сезон по дням недели и времени отправления
-                </div>
-              </div>
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                <button
-                  onClick={handleOpenMassGen}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '8px 16px',
-                    background: '#2563eb',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontSize: '13px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 4px rgba(37,99,235,0.3)'
-                  }}
-                >
-                  <Sparkles size={16} /> 🚀 Генератор на сезон
-                </button>
-                <button
-                  onClick={() => {
-                    const firstEv = filteredEvents[0] || events[0];
-                    const firstVn = filteredVenues[0] || venues[0];
-                    setSessionForm({
-                      event_id: firstEv ? firstEv.id : '',
-                      venue_id: firstVn ? firstVn.id : '',
-                      start_time: '2026-05-01 19:00',
-                      min_price: 1800
-                    });
-                    setSessionModalOpen(true);
-                  }}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '8px 14px',
-                    background: '#f8fafc',
-                    color: '#334155',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: '8px',
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <Plus size={16} /> Одиночный рейс
-                </button>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {filteredSessions.slice(0, 50).map(s => (
-                <div
-                  key={s.id}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '12px 16px',
-                    background: '#ffffff',
-                    border: '1px solid #e2e8f0',
-                    borderRadius: '8px',
-                    gap: '12px',
-                    flexWrap: 'wrap'
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
-                    <div style={{ fontFamily: 'monospace', fontWeight: 'bold', color: '#1d4ed8', fontSize: '14px' }}>
-                      🗓️ {s.start_time}
-                    </div>
-                    <div>
-                      <div style={{ fontWeight: '600', color: '#0f172a', fontSize: '14px' }}>{s.event_title}</div>
-                      <div style={{ fontSize: '11px', color: '#64748b' }}>{s.venue_name} ({s.pier_address})</div>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <strong style={{ color: '#059669', fontSize: '14px' }}>{s.min_price || 1500} ₽</strong>
-                    <button
-                      onClick={() => {
-                        saveSessions(sessions.filter(item => item.id !== s.id));
-                        showNotification('Рейс удален');
-                      }}
-                      style={{
-                        padding: '4px 8px',
-                        background: '#fff1f2',
-                        color: '#e11d48',
-                        border: '1px solid #fecdd3',
-                        borderRadius: '4px',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <Trash2 size={13} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-
-              {filteredSessions.length > 50 && (
-                <div style={{ textAlign: 'center', padding: '12px', color: '#64748b', fontSize: '12px' }}>
-                  Показано первые 50 из {filteredSessions.length} рейсов.
-                </div>
-              )}
-
-              {filteredSessions.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '40px', color: '#64748b', background: '#f8fafc', borderRadius: '10px', border: '1px dashed #cbd5e1' }}>
-                  Расписание пусто. Нажмите <strong>«🚀 Генератор на сезон»</strong> для автозаполнения с мая по сентябрь!
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* SECTION 3: ПЛОЩАДКИ & СУДА (VENUES) */}
+        {/* 4. ПЛОЩАДКИ & СУДА (VENUES) */}
         {currentSection === 'venues' && (
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
               <div>
                 <h3 style={{ margin: 0, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Anchor size={22} color="var(--color-primary)" />
-                  Площадки, теплоходы и причалы ({filteredVenues.length})
+                  Площадки, теплоходы и причалы ({venues.length})
                 </h3>
                 <div style={{ fontSize: '13px', color: '#64748b', marginTop: '2px' }}>
-                  Адрес причала отправления, вместимость судов и описание
+                  Суда и адреса причалов отправления для вывода в афише и на билетах
                 </div>
               </div>
               <button
@@ -840,7 +1089,6 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
                   setEditingVenueId(null);
                   setVenueForm({
                     name: '',
-                    domain_id: selectedSiteFilter === 'all' ? 2 : Number(selectedSiteFilter),
                     pier_address: 'Санкт-Петербург, Причал Набережная Макарова, 34',
                     capacity: 120,
                     description: ''
@@ -848,34 +1096,29 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
                   setVenueModalOpen(true);
                 }}
                 className="btn btn-primary"
-                style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 18px', borderRadius: '8px', fontWeight: 'bold' }}
+                style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 18px', borderRadius: '8px', fontWeight: 'bold' }}
               >
                 <Plus size={16} /> Добавить судно
               </button>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {filteredVenues.map(vn => (
+              {venues.map(vn => (
                 <div
                   key={vn.id}
                   style={{
-                    padding: '16px',
+                    padding: '18px',
                     background: '#ffffff',
                     border: '1px solid #e2e8f0',
-                    borderRadius: '10px',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.03)'
+                    borderRadius: '12px',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.03)'
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
                     <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <h4 style={{ margin: 0, fontSize: '16px', color: '#0f172a', fontWeight: 'bold' }}>
-                          {vn.name}
-                        </h4>
-                        <span style={{ fontSize: '11px', background: '#eff6ff', color: '#2563eb', padding: '2px 8px', borderRadius: '10px', fontWeight: '600' }}>
-                          {vn.domain_name}
-                        </span>
-                      </div>
+                      <h4 style={{ margin: 0, fontSize: '16px', color: '#0f172a', fontWeight: 'bold' }}>
+                        {vn.name}
+                      </h4>
                       <div style={{ fontSize: '13px', color: '#2563eb', margin: '6px 0 4px 0' }}>
                         📍 {vn.pier_address}
                       </div>
@@ -887,36 +1130,33 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
                       </div>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '6px' }}>
-                      <button
-                        onClick={() => {
-                          setEditingVenueId(vn.id);
-                          setVenueForm({
-                            name: vn.name,
-                            domain_id: vn.domain_id || 2,
-                            pier_address: vn.pier_address,
-                            capacity: vn.capacity || 120,
-                            description: vn.description || ''
-                          });
-                          setVenueModalOpen(true);
-                        }}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                          padding: '6px 12px',
-                          background: '#f8fafc',
-                          color: '#334155',
-                          border: '1px solid #cbd5e1',
-                          borderRadius: '6px',
-                          fontSize: '12px',
-                          fontWeight: '600',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        <Edit3 size={14} color="#2563eb" /> Редактировать
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => {
+                        setEditingVenueId(vn.id);
+                        setVenueForm({
+                          name: vn.name,
+                          pier_address: vn.pier_address,
+                          capacity: vn.capacity || 120,
+                          description: vn.description || ''
+                        });
+                        setVenueModalOpen(true);
+                      }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        padding: '6px 12px',
+                        background: '#f8fafc',
+                        color: '#334155',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <Edit3 size={14} color="#2563eb" /> Редактировать
+                    </button>
                   </div>
                 </div>
               ))}
@@ -925,29 +1165,22 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
         )}
       </div>
 
-      {/* MODAL: Event Create/Edit */}
+      {/* ========================================================= */}
+      {/* MODAL 1: PROGRAM CREATE / EDIT                            */}
+      {/* ========================================================= */}
       {eventModalOpen && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.65)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
           <div style={{ background: '#ffffff', borderRadius: '16px', width: '100%', maxWidth: '680px', maxHeight: '90vh', overflowY: 'auto', border: '1px solid #e2e8f0', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }}>
             <div style={{ padding: '18px 24px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h4 style={{ margin: 0, fontSize: '17px', color: '#0f172a' }}>
-                {editingEventId ? 'Редактирование программы' : 'Новое мероприятие / программа'}
+                {editingEventId ? 'Редактирование программы' : 'Новая программа в репертуар'}
               </h4>
               <button onClick={() => setEventModalOpen(false)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '8px', padding: '6px', cursor: 'pointer' }}><X size={18} /></button>
             </div>
             <form onSubmit={handleSaveEvent} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '12px' }}>
-                <div>
-                  <label className="form-label" style={{ fontWeight: '600' }}>Название программы *</label>
-                  <input type="text" className="form-input" value={eventForm.title} onChange={e => setEventForm({ ...eventForm, title: e.target.value })} required placeholder="Например: Рок под разводными мостами" style={{ width: '100%', marginTop: '4px' }} />
-                </div>
-                <div>
-                  <label className="form-label" style={{ fontWeight: '600' }}>Сайт проекта</label>
-                  <select className="form-input" value={eventForm.domain_id} onChange={e => setEventForm({ ...eventForm, domain_id: Number(e.target.value) })} style={{ width: '100%', marginTop: '4px' }}>
-                    <option value={2}>rockhitneva.ru</option>
-                    <option value={1}>aquasound.club</option>
-                  </select>
-                </div>
+              <div>
+                <label className="form-label" style={{ fontWeight: '600' }}>Название программы *</label>
+                <input type="text" className="form-input" value={eventForm.title} onChange={e => setEventForm({ ...eventForm, title: e.target.value })} required placeholder="Например: Рок под разводными мостами" style={{ width: '100%', marginTop: '4px' }} />
               </div>
 
               <div>
@@ -996,167 +1229,374 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
         </div>
       )}
 
-      {/* MODAL: Mass Generator */}
-      {massGenModalOpen && (
+      {/* ========================================================= */}
+      {/* MODAL 2: UNIFIED EVENT CREATION & SCHEDULE GENERATOR      */}
+      {/* ========================================================= */}
+      {scheduleModalOpen && targetProgram && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.65)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-          <div style={{ background: '#ffffff', borderRadius: '16px', width: '100%', maxWidth: '640px', maxHeight: '90vh', overflowY: 'auto', border: '1px solid #e2e8f0', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }}>
+          <div style={{ background: '#ffffff', borderRadius: '16px', width: '100%', maxWidth: '680px', maxHeight: '90vh', overflowY: 'auto', border: '1px solid #e2e8f0', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }}>
             <div style={{ padding: '18px 24px', background: '#2563eb', color: 'white', borderRadius: '16px 16px 0 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h4 style={{ margin: 0, fontSize: '17px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Sparkles size={18} /> Генератор расписания на сезон
-              </h4>
-              <button onClick={() => setMassGenModalOpen(false)} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '8px', padding: '6px', color: 'white', cursor: 'pointer' }}><X size={18} /></button>
-            </div>
-            <form onSubmit={handleRunMassGenerator} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div>
-                  <label className="form-label" style={{ fontWeight: '600' }}>Программа *</label>
-                  <select className="form-input" value={massGenForm.event_id} onChange={e => setMassGenForm({ ...massGenForm, event_id: e.target.value })} required style={{ width: '100%', marginTop: '4px' }}>
-                    {events.map(ev => (
-                      <option key={ev.id} value={ev.id}>{ev.title} ({ev.domain_name})</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="form-label" style={{ fontWeight: '600' }}>Площадка / Теплоход *</label>
-                  <select className="form-input" value={massGenForm.venue_id} onChange={e => setMassGenForm({ ...massGenForm, venue_id: e.target.value })} required style={{ width: '100%', marginTop: '4px' }}>
-                    {venues.map(vn => (
-                      <option key={vn.id} value={vn.id}>{vn.name}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div>
-                  <label className="form-label" style={{ fontWeight: '600' }}>Период с:</label>
-                  <input type="date" className="form-input" value={massGenForm.date_from} onChange={e => setMassGenForm({ ...massGenForm, date_from: e.target.value })} required style={{ width: '100%', marginTop: '4px' }} />
-                </div>
-                <div>
-                  <label className="form-label" style={{ fontWeight: '600' }}>Период по:</label>
-                  <input type="date" className="form-input" value={massGenForm.date_to} onChange={e => setMassGenForm({ ...massGenForm, date_to: e.target.value })} required style={{ width: '100%', marginTop: '4px' }} />
-                </div>
-              </div>
-
               <div>
-                <label className="form-label" style={{ fontWeight: '600', marginBottom: '6px', display: 'block' }}>Дни недели:</label>
-                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                  {[
-                    { id: 1, label: 'Пн' }, { id: 2, label: 'Вт' }, { id: 3, label: 'Ср' },
-                    { id: 4, label: 'Чт' }, { id: 5, label: 'Пт' }, { id: 6, label: 'Сб' }, { id: 0, label: 'Вс' }
-                  ].map(d => (
-                    <label key={d.id} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', cursor: 'pointer' }}>
-                      <input
-                        type="checkbox"
-                        checked={massGenForm.days_of_week.includes(d.id)}
-                        onChange={e => {
-                          if (e.target.checked) {
-                            setMassGenForm({ ...massGenForm, days_of_week: [...massGenForm.days_of_week, d.id] });
-                          } else {
-                            setMassGenForm({ ...massGenForm, days_of_week: massGenForm.days_of_week.filter(id => id !== d.id) });
-                          }
-                        }}
-                      />
-                      <span style={{ fontWeight: d.id === 5 || d.id === 6 || d.id === 0 ? 'bold' : 'normal', color: d.id === 5 || d.id === 6 || d.id === 0 ? '#2563eb' : '#475569' }}>
-                        {d.label}
-                      </span>
-                    </label>
-                  ))}
+                <h4 style={{ margin: 0, fontSize: '17px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Calendar size={18} /> Назначить рейсы (Создать мероприятие)
+                </h4>
+                <div style={{ fontSize: '12px', color: '#bfdbfe', marginTop: '2px' }}>
+                  Программа: <strong>{targetProgram.title}</strong>
+                </div>
+              </div>
+              <button onClick={() => setScheduleModalOpen(false)} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '8px', padding: '6px', color: 'white', cursor: 'pointer' }}><X size={18} /></button>
+            </div>
+
+            <form onSubmit={handleSaveSchedule} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {/* Type Switcher: Single vs Recurring */}
+              <div>
+                <label className="form-label" style={{ fontWeight: 'bold', marginBottom: '8px', display: 'block', color: '#0f172a' }}>
+                  Тип назначения рейсов:
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div
+                    onClick={() => setScheduleMode('recurring')}
+                    style={{
+                      padding: '12px 14px',
+                      borderRadius: '10px',
+                      border: scheduleMode === 'recurring' ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                      background: scheduleMode === 'recurring' ? '#eff6ff' : '#f8fafc',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold', color: scheduleMode === 'recurring' ? '#1d4ed8' : '#334155' }}>
+                      <input type="radio" checked={scheduleMode === 'recurring'} onChange={() => setScheduleMode('recurring')} />
+                      <span>🗓️ Регулярные рейсы на сезон</span>
+                    </div>
+                    <div style={{ fontSize: '11px', color: '#64748b', marginTop: '4px', marginLeft: '24px' }}>
+                      Массовая генерация по дням недели на май–сентябрь
+                    </div>
+                  </div>
+
+                  <div
+                    onClick={() => setScheduleMode('single')}
+                    style={{
+                      padding: '12px 14px',
+                      borderRadius: '10px',
+                      border: scheduleMode === 'single' ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                      background: scheduleMode === 'single' ? '#eff6ff' : '#f8fafc',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold', color: scheduleMode === 'single' ? '#1d4ed8' : '#334155' }}>
+                      <input type="radio" checked={scheduleMode === 'single'} onChange={() => setScheduleMode('single')} />
+                      <span>🎟️ Одиночное мероприятие</span>
+                    </div>
+                    <div style={{ fontSize: '11px', color: '#64748b', marginTop: '4px', marginLeft: '24px' }}>
+                      Один конкретный рейс в выбранную дату и время
+                    </div>
+                  </div>
                 </div>
               </div>
 
+              {/* Venue & Price */}
               <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '12px' }}>
                 <div>
-                  <label className="form-label" style={{ fontWeight: '600' }}>Время отправления (через запятую) *</label>
-                  <input type="text" className="form-input" value={massGenForm.times} onChange={e => setMassGenForm({ ...massGenForm, times: e.target.value })} placeholder="19:00, 21:30" required style={{ width: '100%', marginTop: '4px' }} />
+                  <label className="form-label" style={{ fontWeight: '600' }}>Площадка / Теплоход *</label>
+                  <select
+                    className="form-input"
+                    value={scheduleForm.venue_id}
+                    onChange={e => setScheduleForm({ ...scheduleForm, venue_id: Number(e.target.value) })}
+                    required
+                    style={{ width: '100%', marginTop: '4px' }}
+                  >
+                    {venues.map(vn => (
+                      <option key={vn.id} value={vn.id}>{vn.name} ({vn.capacity} мест)</option>
+                    ))}
+                  </select>
                 </div>
                 <div>
-                  <label className="form-label" style={{ fontWeight: '600' }}>Базовая цена (₽)</label>
-                  <input type="number" className="form-input" value={massGenForm.min_price} onChange={e => setMassGenForm({ ...massGenForm, min_price: e.target.value })} required style={{ width: '100%', marginTop: '4px' }} />
+                  <label className="form-label" style={{ fontWeight: '600' }}>Цена от (₽) *</label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    value={scheduleForm.min_price}
+                    onChange={e => setScheduleForm({ ...scheduleForm, min_price: e.target.value })}
+                    required
+                    style={{ width: '100%', marginTop: '4px' }}
+                  />
+                </div>
+              </div>
+
+              {/* SINGLE MODE FIELDS */}
+              {scheduleMode === 'single' && (
+                <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '10px', border: '1px solid #e2e8f0', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label className="form-label" style={{ fontWeight: '600' }}>Дата рейса *</label>
+                    <input
+                      type="date"
+                      className="form-input"
+                      value={scheduleForm.single_date}
+                      onChange={e => setScheduleForm({ ...scheduleForm, single_date: e.target.value })}
+                      required
+                      style={{ width: '100%', marginTop: '4px' }}
+                    />
+                  </div>
+                  <div>
+                    <label className="form-label" style={{ fontWeight: '600' }}>Время отправления *</label>
+                    <input
+                      type="time"
+                      className="form-input"
+                      value={scheduleForm.single_time}
+                      onChange={e => setScheduleForm({ ...scheduleForm, single_time: e.target.value })}
+                      required
+                      style={{ width: '100%', marginTop: '4px' }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* RECURRING MODE FIELDS */}
+              {scheduleMode === 'recurring' && (
+                <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '10px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <div>
+                      <label className="form-label" style={{ fontWeight: '600' }}>Период с:</label>
+                      <input
+                        type="date"
+                        className="form-input"
+                        value={scheduleForm.date_from}
+                        onChange={e => setScheduleForm({ ...scheduleForm, date_from: e.target.value })}
+                        required
+                        style={{ width: '100%', marginTop: '4px' }}
+                      />
+                    </div>
+                    <div>
+                      <label className="form-label" style={{ fontWeight: '600' }}>Период по:</label>
+                      <input
+                        type="date"
+                        className="form-input"
+                        value={scheduleForm.date_to}
+                        onChange={e => setScheduleForm({ ...scheduleForm, date_to: e.target.value })}
+                        required
+                        style={{ width: '100%', marginTop: '4px' }}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="form-label" style={{ fontWeight: '600', marginBottom: '6px', display: 'block' }}>Дни недели регулярных рейсов:</label>
+                    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                      {[
+                        { id: 1, label: 'Пн' }, { id: 2, label: 'Вт' }, { id: 3, label: 'Ср' },
+                        { id: 4, label: 'Чт' }, { id: 5, label: 'Пт' }, { id: 6, label: 'Сб' }, { id: 0, label: 'Вс' }
+                      ].map(d => (
+                        <label key={d.id} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', cursor: 'pointer', background: '#ffffff', border: '1px solid #cbd5e1', padding: '4px 10px', borderRadius: '6px' }}>
+                          <input
+                            type="checkbox"
+                            checked={scheduleForm.days_of_week.includes(d.id)}
+                            onChange={e => {
+                              if (e.target.checked) {
+                                setScheduleForm({ ...scheduleForm, days_of_week: [...scheduleForm.days_of_week, d.id] });
+                              } else {
+                                setScheduleForm({ ...scheduleForm, days_of_week: scheduleForm.days_of_week.filter(id => id !== d.id) });
+                              }
+                            }}
+                          />
+                          <span style={{ fontWeight: d.id === 5 || d.id === 6 || d.id === 0 ? 'bold' : 'normal', color: d.id === 5 || d.id === 6 || d.id === 0 ? '#2563eb' : '#475569' }}>
+                            {d.label}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="form-label" style={{ fontWeight: '600' }}>Время отправления (через запятую) *</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={scheduleForm.times}
+                      onChange={e => setScheduleForm({ ...scheduleForm, times: e.target.value })}
+                      placeholder="19:00, 21:30"
+                      required
+                      style={{ width: '100%', marginTop: '4px' }}
+                    />
+                    <div style={{ fontSize: '11px', color: '#64748b', marginTop: '3px' }}>
+                      Будет создан отдельный сеанс на каждое указанное время в каждый выбранный день недели
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* MUSICIANS DIRECTORY PICKER & ADD BUTTON */}
+              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '14px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <label className="form-label" style={{ fontWeight: 'bold', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Mic size={16} color="#7c3aed" /> Музыканты / Артисты на борту:
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleOpenAddMusician}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      padding: '4px 10px',
+                      background: '#f3e8ff',
+                      color: '#7e22ce',
+                      border: '1px solid #d8b4fe',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Plus size={14} /> Создать музыканта в справочник
+                  </button>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '8px', maxHeight: '140px', overflowY: 'auto', padding: '4px' }}>
+                  {musicians.map(m => {
+                    const isSelected = scheduleForm.selected_musician_ids.includes(m.id);
+                    return (
+                      <div
+                        key={m.id}
+                        onClick={() => {
+                          if (isSelected) {
+                            setScheduleForm({ ...scheduleForm, selected_musician_ids: scheduleForm.selected_musician_ids.filter(id => id !== m.id) });
+                          } else {
+                            setScheduleForm({ ...scheduleForm, selected_musician_ids: [...scheduleForm.selected_musician_ids, m.id] });
+                          }
+                        }}
+                        style={{
+                          padding: '8px 10px',
+                          borderRadius: '8px',
+                          border: isSelected ? '1px solid #7c3aed' : '1px solid #e2e8f0',
+                          background: isSelected ? '#faf5ff' : '#ffffff',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px'
+                        }}
+                      >
+                        <input type="checkbox" checked={isSelected} readOnly />
+                        <div style={{ overflow: 'hidden' }}>
+                          <div style={{ fontSize: '13px', fontWeight: isSelected ? 'bold' : '500', color: isSelected ? '#6b21a8' : '#1e293b', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                            {m.name}
+                          </div>
+                          <div style={{ fontSize: '11px', color: '#64748b' }}>
+                            {m.genre}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '12px' }}>
-                <button type="button" onClick={() => setMassGenModalOpen(false)} style={{ padding: '8px 16px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '8px', cursor: 'pointer' }}>Отмена</button>
-                <button type="submit" className="btn btn-primary" style={{ padding: '8px 24px', borderRadius: '8px', fontWeight: 'bold' }}>Сгенерировать рейсы</button>
+                <button type="button" onClick={() => setScheduleModalOpen(false)} style={{ padding: '8px 16px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '8px', cursor: 'pointer' }}>Отмена</button>
+                <button type="submit" className="btn btn-primary" style={{ padding: '8px 24px', borderRadius: '8px', fontWeight: 'bold' }}>
+                  {scheduleMode === 'single' ? 'Создать рейс' : 'Сгенерировать регулярные рейсы'}
+                </button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* MODAL: Single Session Create */}
-      {sessionModalOpen && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.65)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-          <div style={{ background: '#ffffff', borderRadius: '16px', width: '100%', maxWidth: '520px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }}>
-            <h4 style={{ margin: '0 0 16px 0', fontSize: '17px' }}>Добавить отдельный рейс</h4>
-            <form onSubmit={e => {
-              e.preventDefault();
-              const ev = events.find(item => item.id === Number(sessionForm.event_id));
-              const vn = venues.find(item => item.id === Number(sessionForm.venue_id));
-              if (!ev) return;
-              const newS = {
-                id: Date.now(),
-                domain_id: ev.domain_id,
-                domain_name: ev.domain_name,
-                event_id: ev.id,
-                event_title: ev.title,
-                venue_id: vn ? vn.id : 1,
-                venue_name: vn ? vn.name : 'Теплоход',
-                pier_address: vn ? vn.pier_address : 'Причал Наб. Макарова, 34',
-                start_time: sessionForm.start_time,
-                min_price: Number(sessionForm.min_price)
-              };
-              saveSessions([...sessions, newS]);
-              setSessionModalOpen(false);
-              showNotification('Рейс добавлен в расписание');
-            }} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      {/* ========================================================= */}
+      {/* MODAL 3: MUSICIAN CREATE / EDIT                           */}
+      {/* ========================================================= */}
+      {musicianModalOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.65)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100, padding: '20px' }}>
+          <div style={{ background: '#ffffff', borderRadius: '16px', width: '100%', maxWidth: '540px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }}>
+            <h4 style={{ margin: '0 0 16px 0', fontSize: '17px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Mic size={18} color="#7c3aed" /> {editingMusicianId ? 'Редактировать музыканта' : 'Новый артист в справочник'}
+            </h4>
+            <form onSubmit={handleSaveMusician} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div>
-                <label className="form-label">Программа</label>
-                <select className="form-input" value={sessionForm.event_id} onChange={e => setSessionForm({ ...sessionForm, event_id: e.target.value })} style={{ width: '100%' }}>
-                  {events.map(ev => (
-                    <option key={ev.id} value={ev.id}>{ev.title} ({ev.domain_name})</option>
-                  ))}
-                </select>
+                <label className="form-label" style={{ fontWeight: '600' }}>Имя артиста или Название группы *</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={musicianForm.name}
+                  onChange={e => setMusicianForm({ ...musicianForm, name: e.target.value })}
+                  required
+                  placeholder="Например: Рок-группа «Кинохроника»"
+                  style={{ width: '100%', marginTop: '4px' }}
+                />
               </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label className="form-label" style={{ fontWeight: '600' }}>Формат / Роль</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={musicianForm.role}
+                    onChange={e => setMusicianForm({ ...musicianForm, role: e.target.value })}
+                    placeholder="Трибьют-группа, Солист..."
+                    style={{ width: '100%', marginTop: '4px' }}
+                  />
+                </div>
+                <div>
+                  <label className="form-label" style={{ fontWeight: '600' }}>Музыкальный жанр</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={musicianForm.genre}
+                    onChange={e => setMusicianForm({ ...musicianForm, genre: e.target.value })}
+                    placeholder="Русский рок, Джаз..."
+                    style={{ width: '100%', marginTop: '4px' }}
+                  />
+                </div>
+              </div>
+
               <div>
-                <label className="form-label">Площадка</label>
-                <select className="form-input" value={sessionForm.venue_id} onChange={e => setSessionForm({ ...sessionForm, venue_id: e.target.value })} style={{ width: '100%' }}>
-                  {venues.map(vn => (
-                    <option key={vn.id} value={vn.id}>{vn.name}</option>
-                  ))}
-                </select>
+                <label className="form-label">Краткое описание / репертуар</label>
+                <textarea
+                  className="form-input"
+                  rows={2}
+                  value={musicianForm.description}
+                  onChange={e => setMusicianForm({ ...musicianForm, description: e.target.value })}
+                  placeholder="Исполнение хитов Цоя, живой звук..."
+                  style={{ width: '100%', marginTop: '4px' }}
+                />
               </div>
+
               <div>
-                <label className="form-label">Дата и время (ГГГГ-ММ-ДД ЧЧ:ММ)</label>
-                <input type="text" className="form-input" value={sessionForm.start_time} onChange={e => setSessionForm({ ...sessionForm, start_time: e.target.value })} style={{ width: '100%' }} />
+                <label className="form-label">Телефон / Контакт представителя</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={musicianForm.phone}
+                  onChange={e => setMusicianForm({ ...musicianForm, phone: e.target.value })}
+                  placeholder="+7 (921) ..."
+                  style={{ width: '100%', marginTop: '4px' }}
+                />
               </div>
-              <div>
-                <label className="form-label">Цена от (₽)</label>
-                <input type="number" className="form-input" value={sessionForm.min_price} onChange={e => setSessionForm({ ...sessionForm, min_price: e.target.value })} style={{ width: '100%' }} />
-              </div>
+
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '12px' }}>
-                <button type="button" onClick={() => setSessionModalOpen(false)} style={{ padding: '8px 16px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '8px', cursor: 'pointer' }}>Отмена</button>
-                <button type="submit" className="btn btn-primary" style={{ padding: '8px 20px', borderRadius: '8px' }}>Добавить рейс</button>
+                <button type="button" onClick={() => setMusicianModalOpen(false)} style={{ padding: '8px 16px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '8px', cursor: 'pointer' }}>Отмена</button>
+                <button type="submit" className="btn btn-primary" style={{ padding: '8px 20px', borderRadius: '8px' }}>Сохранить в справочник</button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* MODAL: Venue Create/Edit */}
+      {/* ========================================================= */}
+      {/* MODAL 4: VENUE CREATE / EDIT                              */}
+      {/* ========================================================= */}
       {venueModalOpen && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.65)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
           <div style={{ background: '#ffffff', borderRadius: '16px', width: '100%', maxWidth: '540px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }}>
             <h4 style={{ margin: '0 0 16px 0', fontSize: '17px' }}>{editingVenueId ? 'Редактирование судна' : 'Новое судно / площадка'}</h4>
             <form onSubmit={e => {
               e.preventDefault();
-              const domName = Number(venueForm.domain_id) === 1 ? 'aquasound.club' : 'rockhitneva.ru';
               if (editingVenueId) {
                 const updated = venues.map(v => v.id === editingVenueId ? {
                   ...v,
                   name: venueForm.name,
-                  domain_id: Number(venueForm.domain_id),
-                  domain_name: domName,
                   pier_address: venueForm.pier_address,
                   capacity: Number(venueForm.capacity),
                   description: venueForm.description
@@ -1167,8 +1607,6 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
                 const newVn = {
                   id: Date.now(),
                   name: venueForm.name,
-                  domain_id: Number(venueForm.domain_id),
-                  domain_name: domName,
                   pier_address: venueForm.pier_address,
                   capacity: Number(venueForm.capacity),
                   description: venueForm.description
@@ -1181,13 +1619,6 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
               <div>
                 <label className="form-label" style={{ fontWeight: '600' }}>Название судна *</label>
                 <input type="text" className="form-input" value={venueForm.name} onChange={e => setVenueForm({ ...venueForm, name: e.target.value })} required placeholder="Теплоход «Рок Хит Нева»" style={{ width: '100%' }} />
-              </div>
-              <div>
-                <label className="form-label" style={{ fontWeight: '600' }}>Сайт проекта</label>
-                <select className="form-input" value={venueForm.domain_id} onChange={e => setVenueForm({ ...venueForm, domain_id: Number(e.target.value) })} style={{ width: '100%' }}>
-                  <option value={2}>rockhitneva.ru</option>
-                  <option value={1}>aquasound.club</option>
-                </select>
               </div>
               <div>
                 <label className="form-label" style={{ fontWeight: '600' }}>Адрес причала (для билетов) *</label>
