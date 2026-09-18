@@ -127,15 +127,6 @@ export default function App() {
                 Сайты & CMS
               </button>
 
-              {/* 3. Конструктор палуб */}
-              <button
-                className={`nav-link ${currentView === 'builder' ? 'active' : ''}`}
-                onClick={() => navigateTo('builder', '#builder')}
-                title="Визуальный конструктор схем рассадки"
-              >
-                <Layout size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
-                Конструктор схем
-              </button>
 
               {/* 4. Касса Причала */}
               <button

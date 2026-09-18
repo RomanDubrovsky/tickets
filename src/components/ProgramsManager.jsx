@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { 
   Music, Calendar, Anchor, Plus, Edit3, Trash2, X, 
   Check, Sparkles, Filter, Clock, MapPin, Tag, Layers,
-  Users, Mic, Radio, CheckSquare, Square, ChevronRight
+  Users, Mic, Radio, CheckSquare, Square, ChevronRight, Layout, Copy
 } from 'lucide-react';
+import DeckBuilder from './DeckBuilder';
 
 const INITIAL_MUSICIANS = [
   {
@@ -239,6 +240,7 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
 
   // 1. Program Create/Edit Modal
   const [eventModalOpen, setEventModalOpen] = useState(false);
+  const [selectedVenueForDeck, setSelectedVenueForDeck] = useState(null);
   const [editingEventId, setEditingEventId] = useState(null);
   const [eventForm, setEventForm] = useState({
     title: '', slug: '', short_desc: '', age_restriction: '18+',
@@ -604,6 +606,18 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
     }
   };
 
+  const handleDuplicateVenue = (id, name) => {
+    const venueToCopy = venues.find(v => v.id === id);
+    if (!venueToCopy) return;
+    const newVn = {
+      ...venueToCopy,
+      id: Date.now(),
+      name: `${venueToCopy.name} (Копия)`
+    };
+    saveVenues([...venues, newVn]);
+    showNotification(`Схема / судно скопировано: ${newVn.name}`);
+  };
+
   // Filtered schedule
   const filteredSessions = scheduleProgramFilter === 'all'
     ? sessions
@@ -720,9 +734,12 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
             </span>
           </div>
 
-          {/* Section 4: Площадки & Суда */}
+          {/* Section 4: Конструктор схем */}
           <div
-            onClick={() => setCurrentSection('venues')}
+            onClick={() => {
+              setCurrentSection('venues');
+              setSelectedVenueForDeck(null); // Return to list view
+            }}
             style={{
               padding: '14px 16px',
               borderRadius: '10px',
@@ -736,9 +753,9 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Anchor size={18} color={currentSection === 'venues' ? '#2563eb' : '#64748b'} />
+              <Layout size={18} color={currentSection === 'venues' ? '#2563eb' : '#64748b'} />
               <span style={{ fontWeight: currentSection === 'venues' ? 'bold' : '600', color: currentSection === 'venues' ? '#1d4ed8' : '#334155', fontSize: '14px' }}>
-                📌 Площадки & Суда
+                📐 Конструктор схем
               </span>
             </div>
             <span style={{
@@ -1135,102 +1152,155 @@ export default function ProgramsManager({ defaultSection = 'events' }) {
           </div>
         )}
 
-        {/* 4. ПЛОЩАДКИ & СУДА (VENUES) */}
+        {/* 4. ПЛОЩАДКИ & СУДА (VENUES / DECK BUILDER) */}
         {currentSection === 'venues' && (
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
+            {selectedVenueForDeck ? (
+              <DeckBuilder 
+                venue={venues.find(v => v.id === selectedVenueForDeck)} 
+                onSave={(deckData) => {
+                  const vn = venues.find(v => v.id === selectedVenueForDeck);
+                  if (vn) {
+                    saveVenues(venues.map(v => v.id === vn.id ? { ...v, deckData } : v));
+                    showNotification('Схема рассадки сохранена!');
+                  }
+                }}
+                onCancel={() => setSelectedVenueForDeck(null)}
+              />
+            ) : (
               <div>
-                <h3 style={{ margin: 0, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Anchor size={22} color="var(--color-primary)" />
-                  Площадки, теплоходы и причалы ({venues.length})
-                </h3>
-                <div style={{ fontSize: '13px', color: '#64748b', marginTop: '2px' }}>
-                  Суда и адреса причалов отправления для вывода в афише и на билетах
-                </div>
-              </div>
-              <button
-                onClick={handleOpenAddVenue}
-                className="btn btn-primary"
-                style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 18px', borderRadius: '8px', fontWeight: 'bold' }}
-              >
-                <Plus size={16} /> Добавить судно
-              </button>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {venues.map(vn => (
-                <div
-                  key={vn.id}
-                  style={{
-                    padding: '18px',
-                    background: '#ffffff',
-                    border: '1px solid #e2e8f0',
-                    borderRadius: '12px',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.03)'
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
-                    <div>
-                      <h4 style={{ margin: 0, fontSize: '16px', color: '#0f172a', fontWeight: 'bold' }}>
-                        {vn.name}
-                      </h4>
-                      <div style={{ fontSize: '13px', color: '#2563eb', margin: '6px 0 4px 0' }}>
-                        📍 {vn.pier_address}
-                      </div>
-                      <div style={{ fontSize: '12px', color: '#64748b' }}>
-                        {vn.description}
-                      </div>
-                      <div style={{ marginTop: '8px', fontSize: '12px', color: '#475569' }}>
-                        Вместимость: <strong>{vn.capacity} пассажиров</strong>
-                      </div>
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '6px' }}>
-                      <button
-                        onClick={() => {
-                          setEditingVenueId(vn.id);
-                          setVenueForm({
-                            name: vn.name,
-                            pier_address: vn.pier_address,
-                            capacity: vn.capacity || 120,
-                            description: vn.description || ''
-                          });
-                          setVenueModalOpen(true);
-                        }}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                          padding: '6px 12px',
-                          background: '#f8fafc',
-                          color: '#334155',
-                          border: '1px solid #cbd5e1',
-                          borderRadius: '6px',
-                          fontSize: '12px',
-                          fontWeight: '600',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        <Edit3 size={14} color="#2563eb" /> Редактировать
-                      </button>
-                      <button
-                        onClick={() => handleDeleteVenue(vn.id, vn.name)}
-                        style={{
-                          padding: '6px 10px',
-                          background: '#fff1f2',
-                          color: '#e11d48',
-                          border: '1px solid #fecdd3',
-                          borderRadius: '6px',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        <Trash2 size={14} />
-                      </button>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
+                  <div>
+                    <h3 style={{ margin: 0, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Layout size={22} color="var(--color-primary)" />
+                      Конструктор схем, теплоходы и причалы ({venues.length})
+                    </h3>
+                    <div style={{ fontSize: '13px', color: '#64748b', marginTop: '2px' }}>
+                      Суда, их схемы рассадки (столики / танцпол) и адреса причалов
                     </div>
                   </div>
+                  <button
+                    onClick={handleOpenAddVenue}
+                    className="btn btn-primary"
+                    style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 18px', borderRadius: '8px', fontWeight: 'bold' }}
+                  >
+                    <Plus size={16} /> Добавить судно
+                  </button>
                 </div>
-              ))}
-            </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {venues.map(vn => (
+                    <div
+                      key={vn.id}
+                      style={{
+                        padding: '18px',
+                        background: '#ffffff',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '12px',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.03)'
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
+                        <div>
+                          <h4 style={{ margin: 0, fontSize: '16px', color: '#0f172a', fontWeight: 'bold' }}>
+                            {vn.name}
+                          </h4>
+                          <div style={{ fontSize: '13px', color: '#2563eb', margin: '6px 0 4px 0' }}>
+                            📍 {vn.pier_address}
+                          </div>
+                          <div style={{ fontSize: '12px', color: '#64748b' }}>
+                            {vn.description}
+                          </div>
+                          <div style={{ marginTop: '8px', fontSize: '12px', color: '#475569' }}>
+                            Вместимость: <strong>{vn.capacity} пассажиров</strong>
+                            {vn.deckData && <span style={{ marginLeft: '10px', color: '#16a34a' }}>✓ Схема настроена</span>}
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: '300px' }}>
+                          <button
+                            onClick={() => setSelectedVenueForDeck(vn.id)}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              padding: '6px 12px',
+                              background: '#eff6ff',
+                              color: '#2563eb',
+                              border: '1px solid #bfdbfe',
+                              borderRadius: '6px',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            <Layout size={14} /> Конструктор схемы
+                          </button>
+                          <button
+                            onClick={() => handleDuplicateVenue(vn.id, vn.name)}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              padding: '6px 12px',
+                              background: '#f8fafc',
+                              color: '#334155',
+                              border: '1px solid #cbd5e1',
+                              borderRadius: '6px',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            <Copy size={14} /> Копировать
+                          </button>
+                          <button
+                            onClick={() => {
+                              setEditingVenueId(vn.id);
+                              setVenueForm({
+                                name: vn.name,
+                                pier_address: vn.pier_address,
+                                capacity: vn.capacity || 120,
+                                description: vn.description || ''
+                              });
+                              setVenueModalOpen(true);
+                            }}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              padding: '6px 12px',
+                              background: '#f8fafc',
+                              color: '#334155',
+                              border: '1px solid #cbd5e1',
+                              borderRadius: '6px',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            <Edit3 size={14} /> Настройки
+                          </button>
+                          <button
+                            onClick={() => handleDeleteVenue(vn.id, vn.name)}
+                            style={{
+                              padding: '6px 10px',
+                              background: '#fff1f2',
+                              color: '#e11d48',
+                              border: '1px solid #fecdd3',
+                              borderRadius: '6px',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

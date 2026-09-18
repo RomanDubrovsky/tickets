@@ -2,9 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { 
   Plus, Trash2, Save, Layout, Layers, Check, Upload, Tag, Palette, 
   MousePointer, BoxSelect, Paintbrush, Copy, RefreshCw, ZoomIn, ZoomOut, Eye,
-  Sliders, Move, Ticket, Sparkles, Grid
+  Sliders, Move, Ticket, Sparkles, Grid, X
 } from 'lucide-react';
-import { getHalls } from '../db';
 
 const PRESET_COLORS = [
   '#f59e0b', // Amber / Gold (VIP)
@@ -66,22 +65,25 @@ export function computeSeatPositions(tableType, seatsCount, width = 70, height =
   return seats;
 }
 
-export default function DeckBuilder() {
-  const [deckWidth, setDeckWidth] = useState(880);
-  const [deckHeight, setDeckHeight] = useState(520);
-  const [deckName, setDeckName] = useState('Верхняя палуба «Рок Хит Нева»');
+export default function DeckBuilder({ venue, onSave, onCancel }) {
+  // Use venue data if available, otherwise defaults
+  const initialDeck = venue?.deckData || {};
+  
+  const [deckWidth, setDeckWidth] = useState(initialDeck.width || 880);
+  const [deckHeight, setDeckHeight] = useState(initialDeck.height || 520);
+  const [deckName, setDeckName] = useState(venue?.name || 'Верхняя палуба «Рок Хит Нева»');
   
   // Element Scaling and Blueprint controls
-  const [elementsScale, setElementsScale] = useState(1.0); // 0.5 to 2.0
-  const [bgImage, setBgImage] = useState(null);
+  const [elementsScale, setElementsScale] = useState(initialDeck.elementsScale || 1.0); // 0.5 to 2.0
+  const [bgImage, setBgImage] = useState(initialDeck.bg_image || null);
   const [bgOpacity, setBgOpacity] = useState(0.85);
-  const [bgScale, setBgScale] = useState(1.0);
-  const [bgOffsetX, setBgOffsetX] = useState(0);
-  const [bgOffsetY, setBgOffsetY] = useState(0);
+  const [bgScale, setBgScale] = useState(initialDeck.bg_scale || 1.0);
+  const [bgOffsetX, setBgOffsetX] = useState(initialDeck.bg_offset_x || 0);
+  const [bgOffsetY, setBgOffsetY] = useState(initialDeck.bg_offset_y || 0);
 
   // Categories state
-  const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
-  const [activeCategoryId, setActiveCategoryId] = useState('vip_window');
+  const [categories, setCategories] = useState(initialDeck.categories && initialDeck.categories.length > 0 ? initialDeck.categories : DEFAULT_CATEGORIES);
+  const [activeCategoryId, setActiveCategoryId] = useState(categories[0].id);
   const [newCatName, setNewCatName] = useState('');
   const [newCatPrice, setNewCatPrice] = useState(2000);
   const [newCatColor, setNewCatColor] = useState('#8b5cf6');
@@ -91,7 +93,7 @@ export default function DeckBuilder() {
   const [toolMode, setToolMode] = useState('move');
 
   // Entrance Ticket Zones (Танцпол / Входные билеты / Сетка)
-  const [zones, setZones] = useState([
+  const [zones, setZones] = useState(initialDeck.zones || [
     {
       id: 'Z1',
       label: 'Танцпол у сцены',
@@ -105,7 +107,7 @@ export default function DeckBuilder() {
   ]);
 
   // Tables state
-  const [tables, setTables] = useState([
+  const [tables, setTables] = useState(initialDeck.tables || [
     {
       id: 'T1',
       label: 'Стол 1',
@@ -247,35 +249,6 @@ export default function DeckBuilder() {
   const [savedSuccess, setSavedSuccess] = useState(false);
   const svgRef = useRef(null);
   const fileInputRef = useRef(null);
-
-  // Load existing halls from storage on mount if available
-  useEffect(() => {
-    async function load() {
-      const halls = await getHalls();
-      const customHall = halls.find((h) => h.type === 'custom_svg' && (h.tables || h.zones));
-      if (customHall) {
-        setDeckName(customHall.name || 'Схема зала со столиками и танцполом');
-        if (customHall.elementsScale) setElementsScale(customHall.elementsScale);
-        if (customHall.categories && customHall.categories.length > 0) {
-          setCategories(customHall.categories);
-          setActiveCategoryId(customHall.categories[0].id);
-        }
-        if (customHall.tables) {
-          setTables(customHall.tables);
-        }
-        if (customHall.zones) {
-          setZones(customHall.zones);
-        }
-        if (customHall.bg_image) setBgImage(customHall.bg_image);
-        if (customHall.bg_scale) setBgScale(customHall.bg_scale);
-        if (customHall.bg_offset_x) setBgOffsetX(customHall.bg_offset_x);
-        if (customHall.bg_offset_y) setBgOffsetY(customHall.bg_offset_y);
-        if (customHall.width) setDeckWidth(customHall.width);
-        if (customHall.height) setDeckHeight(customHall.height);
-      }
-    }
-    load();
-  }, []);
 
   // Category helpers
   const getCategory = (catId) => {
@@ -640,13 +613,7 @@ export default function DeckBuilder() {
 
   // Save full hall schema
   const handleSave = () => {
-    const halls = JSON.parse(localStorage.getItem('halls') || '[]');
-    const hallId = 'a1b2c3d4-e5f6-7890-abcd-1234567890ef'; // Main table hall ID
-
-    const updatedHall = {
-      id: hallId,
-      name: deckName,
-      type: 'custom_svg',
+    const deckData = {
       width: deckWidth,
       height: deckHeight,
       elementsScale: elementsScale,
@@ -657,17 +624,12 @@ export default function DeckBuilder() {
       bg_scale: bgScale,
       bg_offset_x: bgOffsetX,
       bg_offset_y: bgOffsetY,
-      updated_at: new Date().toISOString()
     };
 
-    const existingIdx = halls.findIndex((h) => h.id === hallId);
-    if (existingIdx >= 0) {
-      halls[existingIdx] = updatedHall;
-    } else {
-      halls.push(updatedHall);
+    if (onSave) {
+      onSave(deckData);
     }
-
-    localStorage.setItem('halls', JSON.stringify(halls));
+    
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3000);
   };
@@ -707,6 +669,17 @@ export default function DeckBuilder() {
               <Upload size={15} />
               {bgImage ? 'Сменить план' : 'Загрузить план'}
             </button>
+
+            {onCancel && (
+              <button
+                onClick={onCancel}
+                className="btn btn-secondary"
+                style={{ padding: '8px 18px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', background: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1' }}
+              >
+                <X size={16} />
+                Отмена
+              </button>
+            )}
 
             <button
               onClick={handleSave}
