@@ -613,6 +613,36 @@ export default function DeckBuilder({ venue, onSave, onCancel }) {
 
   // Save full hall schema
   const handleSave = () => {
+    // Pricing and integrity validation
+    const zeroPriceCats = categories.filter(c => !c.price || Number(c.price) <= 0);
+    const zeroPriceZones = zones.filter(z => !z.price || Number(z.price) <= 0);
+    let unassignedSeats = 0;
+    tables.forEach(t => {
+      (t.seats || []).forEach(s => {
+        if (!s.categoryId) unassignedSeats++;
+      });
+    });
+
+    const issues = [];
+    if (zeroPriceCats.length > 0) {
+      issues.push(`Категории с ценой 0 ₽: ${zeroPriceCats.map(c => `«${c.name}»`).join(', ')}`);
+    }
+    if (zeroPriceZones.length > 0) {
+      issues.push(`Входные зоны с ценой 0 ₽: ${zeroPriceZones.map(z => `«${z.label}»`).join(', ')}`);
+    }
+    if (unassignedSeats > 0) {
+      issues.push(`Мест без назначенной категории: ${unassignedSeats}`);
+    }
+
+    if (issues.length > 0) {
+      const confirmProceed = window.confirm(
+        `⚠️ ВНИМАНИЕ: Предупреждение контроля цен схемы рассадки:\n\n` +
+        issues.map(i => `• ${i}`).join('\n') +
+        `\n\nВы уверены, что хотите сохранить схему с этими замечаниями?`
+      );
+      if (!confirmProceed) return;
+    }
+
     const deckData = {
       width: deckWidth,
       height: deckHeight,

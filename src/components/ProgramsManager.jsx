@@ -247,8 +247,8 @@ export const getSessionTimeRange = (startTimeStr, durationMinutes = 120) => {
   };
 };
 
-// 3. Ship Schedule Overlap Conflict Detector
-export const checkSessionConflict = (existingSessions, eventsList, candStartStr, candDurationMins, candVenueId) => {
+// 3. Ship Schedule Overlap and Turnaround Buffer Conflict Detector
+export const checkSessionConflict = (existingSessions, eventsList, candStartStr, candDurationMins, candVenueId, bufferMins = 20) => {
   if (!candStartStr) return null;
   const parts = candStartStr.split(' ');
   if (parts.length < 2) return null;
@@ -267,7 +267,7 @@ export const checkSessionConflict = (existingSessions, eventsList, candStartStr,
     if (exDate !== candDate) continue;
 
     const exProg = eventsList.find(e => e.id === ex.event_id);
-    const exDuration = exProg?.duration_minutes || 120;
+    const exDuration = ex.duration_minutes || exProg?.duration_minutes || 120;
     const [eH, eM] = exTime.split(':').map(Number);
     if (isNaN(eH) || isNaN(eM)) continue;
 
@@ -277,6 +277,7 @@ export const checkSessionConflict = (existingSessions, eventsList, candStartStr,
     // Overlap: interval [cStart, cEnd] intersects [exStart, exEnd]
     if (Math.max(cStart, exStart) < Math.min(cEnd, exEnd)) {
       return {
+        type: 'overlap',
         conflictingSession: ex,
         candTime,
         exTime,
@@ -284,8 +285,136 @@ export const checkSessionConflict = (existingSessions, eventsList, candStartStr,
         exTitle: ex.event_title
       };
     }
+
+    // Buffer check: gap < bufferMins
+    if (cStart >= exEnd && (cStart - exEnd) < bufferMins) {
+      return {
+        type: 'buffer',
+        gap: cStart - exEnd,
+        bufferMins,
+        conflictingSession: ex,
+        candTime,
+        exTime: `${exTime} → ${String(Math.floor(exEnd/60)).padStart(2, '0')}:${String(exEnd%60).padStart(2, '0')}`,
+        date: candDate,
+        exTitle: ex.event_title
+      };
+    }
+
+    if (exStart >= cEnd && (exStart - cEnd) < bufferMins) {
+      return {
+        type: 'buffer',
+        gap: exStart - cEnd,
+        bufferMins,
+        conflictingSession: ex,
+        candTime,
+        exTime: `${exTime}`,
+        date: candDate,
+        exTitle: ex.event_title
+      };
+    }
   }
   return null;
+};
+
+// 4. Musician Booking Conflict Detector
+export const checkMusicianConflict = (existingSessions, eventsList, candStartStr, candDurationMins, candidateMusicianNames) => {
+  if (!candStartStr || !candidateMusicianNames || candidateMusicianNames.length === 0) return null;
+  const parts = candStartStr.split(' ');
+  if (parts.length < 2) return null;
+  const [candDate, candTime] = parts;
+  const [cH, cM] = candTime.split(':').map(Number);
+  if (isNaN(cH) || isNaN(cM)) return null;
+
+  const cStart = cH * 60 + cM;
+  const cEnd = cStart + Number(candDurationMins);
+
+  for (const ex of existingSessions) {
+    if (!ex.musician_names || ex.musician_names.length === 0) continue;
+    const exParts = ex.start_time.split(' ');
+    if (exParts.length < 2) continue;
+    const [exDate, exTime] = exParts;
+    if (exDate !== candDate) continue;
+
+    const exProg = eventsList.find(e => e.id === ex.event_id);
+    const exDuration = ex.duration_minutes || exProg?.duration_minutes || 120;
+    const [eH, eM] = exTime.split(':').map(Number);
+    if (isNaN(eH) || isNaN(eM)) continue;
+
+    const exStart = eH * 60 + eM;
+    const exEnd = exStart + exDuration;
+
+    // Overlapping time
+    if (Math.max(cStart, exStart) < Math.min(cEnd, exEnd)) {
+      const overlappingMusicians = candidateMusicianNames.filter(m => ex.musician_names.includes(m));
+      if (overlappingMusicians.length > 0) {
+        return {
+          musicians: overlappingMusicians,
+          conflictingSession: ex,
+          candTime,
+          exTime,
+          date: candDate,
+          exTitle: ex.event_title,
+          exVenue: ex.venue_name
+        };
+      }
+    }
+  }
+  return null;
+};
+
+// 5. Deck Scheme Pricing & Integrity Validator
+export const validateDeckPricing = (deckData) => {
+  if (!deckData) return { isValid: true, issues: [] };
+  const issues = [];
+
+  const categories = deckData.categories || [];
+  if (categories.length === 0) {
+    issues.push('Нет ценовых категорий');
+  }
+
+  const zeroPriceCats = categories.filter(c => !c.price || Number(c.price) <= 0);
+  if (zeroPriceCats.length > 0) {
+    issues.push(`Категории с ценой 0 ₽: ${zeroPriceCats.map(c => `«${c.name}»`).join(', ')}`);
+  }
+
+  let unassignedSeats = 0;
+  if (deckData.tables && Array.isArray(deckData.tables)) {
+    deckData.tables.forEach(t => {
+      (t.seats || []).forEach(s => {
+        if (!s.categoryId) unassignedSeats++;
+      });
+    });
+  }
+  if (unassignedSeats > 0) {
+    issues.push(`${unassignedSeats} мест без назначенной категории`);
+  }
+
+  if (deckData.zones && Array.isArray(deckData.zones)) {
+    deckData.zones.forEach(z => {
+      if (!z.price || Number(z.price) <= 0) {
+        issues.push(`Зона «${z.label}» с ценой 0 ₽`);
+      }
+    });
+  }
+
+  return {
+    isValid: issues.length === 0,
+    issues
+  };
+};
+
+// 6. Ticketland Widget Code Validator
+export const getTicketlandStatus = (iframeCode) => {
+  if (!iframeCode || !iframeCode.trim()) {
+    return { status: 'none', label: 'Не настроен (своя касса)', color: '#64748b', bg: '#f1f5f9' };
+  }
+  if (iframeCode.includes('...')) {
+    return { status: 'draft', label: 'Черновик (содержит ...)', color: '#d97706', bg: '#fef3c7' };
+  }
+  if (iframeCode.includes('tlFrameContainer') || iframeCode.includes('ticketland.ru')) {
+    return { status: 'ok', label: 'Ticketland активен', color: '#16a34a', bg: '#dcfce7' };
+  }
+  return { status: 'custom', label: 'Сторонний билетер/iframe', color: '#2563eb', bg: '#eff6ff' };
 };
 
 export default function ProgramsManager({ defaultSection = 'events', onSelectEvent, navigateTo }) {
@@ -496,6 +625,15 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
 
     const cleanSlug = eventForm.slug.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
 
+    const tlStatus = getTicketlandStatus(eventForm.iframe_code);
+    if (tlStatus.status === 'draft') {
+      const confirmDraft = window.confirm(
+        '⚠️ ПРЕДУПРЕЖДЕНИЕ: Код билетера Ticketland содержит шаблонное многоточие "..." (черновик интеграции).\n\n' +
+        'Вы уверены, что хотите сохранить программу с черновиком кода билетера?'
+      );
+      if (!confirmDraft) return;
+    }
+
     if (editingEventId) {
       const updated = events.map(ev => ev.id === editingEventId ? {
         ...ev,
@@ -569,16 +707,36 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
       // Single event creation
       const start_time = `${scheduleForm.single_date} ${scheduleForm.single_time}`;
 
-      // Conflict validation
-      const conflict = checkSessionConflict(sessions, events, start_time, duration, vn.id);
-      if (conflict) {
-        const confirmOverlap = window.confirm(
-          `⚠️ ВНИМАНИЕ: Обнаружен конфликт расписания судна!\n\n` +
-          `Теплоход «${vn.name}» уже занят в дату ${conflict.date} рейсом «${conflict.exTitle}» (отправление ${conflict.exTime}).\n` +
-          `Новый рейс: ${start_time} (длительность ${duration} мин).\n\n` +
-          `Вы уверены, что хотите назначить рейс на это же время?`
+      // 1. Ship conflict validation (overlap or buffer)
+      const shipConflict = checkSessionConflict(sessions, events, start_time, duration, vn.id, 20);
+      if (shipConflict) {
+        if (shipConflict.type === 'overlap') {
+          const confirmOverlap = window.confirm(
+            `⚠️ ВНИМАНИЕ: Обнаружен прямой конфликт расписания судна!\n\n` +
+            `Теплоход «${vn.name}» уже занят в дату ${shipConflict.date} рейсом «${shipConflict.exTitle}» (${shipConflict.exTime}).\n` +
+            `Новый рейс: ${start_time} (длительность ${duration} мин).\n\n` +
+            `Вы уверены, что хотите назначить рейс на это же время?`
+          );
+          if (!confirmOverlap) return;
+        } else if (shipConflict.type === 'buffer') {
+          const confirmBuffer = window.confirm(
+            `⏱️ ПРЕДУПРЕЖДЕНИЕ: Малый межоборотный интервал судна!\n\n` +
+            `Между новым рейсом и рейсом «${shipConflict.exTitle}» интервал составляет всего ${shipConflict.gap} мин (рекомендуется минимум ${shipConflict.bufferMins} мин на высадку пассажиров и уборку).\n\n` +
+            `Продолжить сохранение рейса?`
+          );
+          if (!confirmBuffer) return;
+        }
+      }
+
+      // 2. Musician booking conflict validation
+      const musConflict = checkMusicianConflict(sessions, events, start_time, duration, musicianNames);
+      if (musConflict) {
+        const confirmMus = window.confirm(
+          `🎸 ВНИМАНИЕ: Конфликт занятости артистов!\n\n` +
+          `Музыкант(ы) ${musConflict.musicians.map(m => `«${m}»`).join(', ')} уже выступают на другом судне «${musConflict.exVenue}» (рейс «${musConflict.exTitle}», ${musConflict.exTime}).\n\n` +
+          `Вы уверены, что хотите назначить этих артистов?`
         );
-        if (!confirmOverlap) return;
+        if (!confirmMus) return;
       }
 
       const newSess = {
@@ -617,6 +775,8 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
       const newSessions = [];
       let count = 0;
       let conflictCount = 0;
+      let bufferCount = 0;
+      let musicianConflictCount = 0;
 
       let curr = new Date(startDate);
       while (curr <= endDate) {
@@ -629,10 +789,14 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
 
           for (const t of timeList) {
             const candStart = `${dateStr} ${t}`;
-            const conflict = checkSessionConflict(sessions, events, candStart, duration, vn.id);
-            if (conflict) {
-              conflictCount++;
+            const shipConflict = checkSessionConflict(sessions, events, candStart, duration, vn.id, 20);
+            if (shipConflict) {
+              if (shipConflict.type === 'overlap') conflictCount++;
+              else if (shipConflict.type === 'buffer') bufferCount++;
             }
+
+            const musConflict = checkMusicianConflict(sessions, events, candStart, duration, musicianNames);
+            if (musConflict) musicianConflictCount++;
 
             count++;
             newSessions.push({
@@ -657,11 +821,16 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
         return;
       }
 
-      if (conflictCount > 0) {
+      const warnings = [];
+      if (conflictCount > 0) warnings.push(`• Прямое наложение рейсов судна: ${conflictCount} пересечений`);
+      if (bufferCount > 0) warnings.push(`• Малый межоборотный интервал (< 20 мин): ${bufferCount} рейсов`);
+      if (musicianConflictCount > 0) warnings.push(`• Конфликт занятости музыкантов: ${musicianConflictCount} совпадений`);
+
+      if (warnings.length > 0) {
         const confirmAll = window.confirm(
-          `⚠️ ВНИМАНИЕ: Обнаружено ${conflictCount} пересечений по времени с уже существующими рейсами судна «${vn.name}»!\n\n` +
-          `Всего генерируется ${newSessions.length} рейсов.\n` +
-          `Продолжить генерацию с учетом возможных наложений?`
+          `⚠️ ВНИМАНИЕ: Замечания при генерации ${newSessions.length} рейсов:\n\n` +
+          warnings.join('\n') +
+          `\n\nПродолжить сохранение регулярного расписания?`
         );
         if (!confirmAll) return;
       }
@@ -1149,6 +1318,14 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
                         <strong style={{ color: '#059669', fontSize: '14px' }}>
                           от {ev.min_price || 1500} ₽
                         </strong>
+                        {(() => {
+                          const tl = getTicketlandStatus(ev.iframe_code);
+                          return (
+                            <span style={{ fontSize: '11px', background: tl.bg, color: tl.color, padding: '3px 8px', borderRadius: '4px', fontWeight: '600' }}>
+                              🎟️ {tl.label}
+                            </span>
+                          );
+                        })()}
                       </div>
                     </div>
 
@@ -1611,6 +1788,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
                           </div>
                           {(() => {
                             const capInfo = getVenueCapacityBreakdown(vn);
+                            const priceVal = validateDeckPricing(vn.deckData);
                             return (
                               <div style={{ marginTop: '8px', fontSize: '12px', color: '#475569', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                                 <span>Вместимость: <strong>{capInfo.total} пассажиров</strong></span>
@@ -1622,6 +1800,17 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
                                   <span style={{ fontSize: '11px', background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a', padding: '2px 8px', borderRadius: '12px' }}>
                                     ⚠️ Схема не нарисована (по умолчанию {vn.capacity} мест)
                                   </span>
+                                )}
+                                {vn.deckData && (
+                                  priceVal.isValid ? (
+                                    <span style={{ fontSize: '11px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '2px 6px', borderRadius: '6px', fontWeight: '600' }}>
+                                      💰 Цены настроены
+                                    </span>
+                                  ) : (
+                                    <span style={{ fontSize: '11px', background: '#fee2e2', color: '#dc2626', border: '1px solid #fca5a5', padding: '2px 6px', borderRadius: '6px', fontWeight: 'bold' }}>
+                                      ⚠️ {priceVal.issues[0]}
+                                    </span>
+                                  )
                                 )}
                               </div>
                             );
