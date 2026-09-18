@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import DeckBuilder from './DeckBuilder';
 import Afisha from './Afisha';
-import SitesAdmin from './SitesAdmin';
+import SitesAdmin, { DEFAULT_DOMAINS } from './SitesAdmin';
 
 const INITIAL_MUSICIANS = [
   {
@@ -239,6 +239,72 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
   const showNotification = (msg) => {
     setNotification(msg);
     setTimeout(() => setNotification(''), 3500);
+  };
+
+  // Widget Generator State
+  const [widgetSiteId, setWidgetSiteId] = useState(2); // default to rockhitneva.ru (id: 2)
+  const [widgetProgramId, setWidgetProgramId] = useState('');
+  const [widgetSessionId, setWidgetSessionId] = useState('');
+  const [sitesInitialDomainId, setSitesInitialDomainId] = useState(2);
+
+  const handleCreatePageWithWidget = () => {
+    if (!widgetSiteId) {
+      alert('Пожалуйста, выберите сайт (коммерческий проект), на котором будет создана страница с виджетом.');
+      return;
+    }
+
+    const savedCms = localStorage.getItem('cms_domains_v2');
+    const cmsDomains = savedCms ? JSON.parse(savedCms) : DEFAULT_DOMAINS;
+    const targetDomain = cmsDomains.find((d) => d.id === Number(widgetSiteId)) || cmsDomains[0];
+
+    if (!targetDomain) {
+      alert('Выбранный сайт не найден в базе CMS.');
+      return;
+    }
+
+    const selectedProg = events.find((e) => e.id === Number(widgetProgramId));
+    const selectedSess = sessions.find((s) => s.id === Number(widgetSessionId));
+
+    let pageTitle = 'Афиша и продажа билетов';
+    let pageSlug = 'afisha';
+    let iframeCode = '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/JHgCdar1f2RgfwwTnasWr9ScZXK_hHlR/"></div>';
+
+    if (selectedSess) {
+      pageTitle = `${selectedSess.event_title} (${selectedSess.start_time})`;
+      pageSlug = `${selectedProg?.slug || 'event'}-${selectedSess.id}`;
+      iframeCode = `<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/${pageSlug}/"></div>`;
+    } else if (selectedProg) {
+      pageTitle = selectedProg.title;
+      pageSlug = selectedProg.slug || `prog-${selectedProg.id}`;
+      iframeCode = selectedProg.iframe_code || `<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/${pageSlug}/"></div>`;
+    } else {
+      pageTitle = 'Главная афиша сезона';
+      pageSlug = `afisha-${Date.now().toString().slice(-4)}`;
+    }
+
+    const newPage = {
+      id: Date.now(),
+      title: pageTitle,
+      slug: pageSlug,
+      script_choice: 1,
+      iframe_code: iframeCode,
+      url: `https://spb-tickets-ru.storage.yandexcloud.net/sites/${targetDomain.name}/${pageSlug}/index.html`
+    };
+
+    const updatedDomains = cmsDomains.map((d) => {
+      if (d.id === targetDomain.id) {
+        const pages = d.pages || [];
+        const exists = pages.some((p) => p.slug === pageSlug);
+        const newPages = exists ? pages.map((p) => (p.slug === pageSlug ? { ...p, ...newPage, id: p.id } : p)) : [...pages, newPage];
+        return { ...d, pages: newPages };
+      }
+      return d;
+    });
+
+    localStorage.setItem('cms_domains_v2', JSON.stringify(updatedDomains));
+    setSitesInitialDomainId(targetDomain.id);
+    setCurrentSection('sites');
+    showNotification(`Страница «${pageTitle}» с виджетом успешно создана на сайте ${targetDomain.name}!`);
   };
 
   // -------------------------------------------------------------
@@ -646,7 +712,11 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
       }
       return true;
     })
-    .sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
+    .sort((a, b) => {
+      const timeA = a && a.start_time ? new Date(a.start_time).getTime() : 0;
+      const timeB = b && b.start_time ? new Date(b.start_time).getTime() : 0;
+      return timeA - timeB;
+    });
 
   const currentSelectedVenue = venues.find(v => v.id === Number(scheduleForm.venue_id)) || venues[0];
 
@@ -1091,8 +1161,8 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
 
                 <button
                   onClick={() => {
-                    const firstEv = events[0];
-                    if (firstEv) handleOpenScheduleModal(firstEv);
+                    const currentFilteredProg = events.find(e => e.id === Number(scheduleProgramFilter)) || events[0];
+                    if (currentFilteredProg) handleOpenScheduleModal(currentFilteredProg);
                   }}
                   className="btn btn-primary"
                   style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '8px', fontWeight: 'bold' }}
@@ -1488,50 +1558,85 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
               <Sparkles size={24} color="var(--color-primary)" />
               <div>
                 <h3 style={{ margin: 0, color: '#0f172a', fontSize: '18px' }}>
-                  Генератор виджета Афиши
+                  Генератор виджета Афиши & Создание страниц
                 </h3>
                 <div style={{ fontSize: '13px', color: '#64748b', marginTop: '2px' }}>
-                  Выберите контент (программу, мероприятие или коммерческий проект/сайт) для создания виджета на клиентской стороне
+                  Выберите целевой сайт и контент для автоматической генерации страницы с виджетом продажи билетов
                 </div>
               </div>
             </div>
 
-            <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0', marginBottom: '24px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+            <div style={{ background: '#f8fafc', padding: '24px', borderRadius: '12px', border: '1px solid #e2e8f0', marginBottom: '24px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '20px' }}>
+                <div>
+                  <label className="form-label" style={{ fontWeight: '700', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Globe size={15} color="var(--color-primary)" />
+                    Сайт (Коммерческий проект) <span style={{ color: '#ef4444' }}>*</span>
+                  </label>
+                  <select
+                    className="form-input"
+                    value={widgetSiteId}
+                    onChange={(e) => setWidgetSiteId(e.target.value)}
+                    required
+                    style={{ width: '100%', marginTop: '6px', borderColor: !widgetSiteId ? '#f87171' : '#cbd5e1', fontWeight: '500' }}
+                  >
+                    <option value="">-- Выберите сайт (Обязательно) --</option>
+                    {(() => {
+                      const savedCms = localStorage.getItem('cms_domains_v2');
+                      const list = savedCms ? JSON.parse(savedCms) : DEFAULT_DOMAINS;
+                      return list.map((d) => (
+                        <option key={d.id} value={d.id}>
+                          {d.name} ({d.title})
+                        </option>
+                      ));
+                    })()}
+                  </select>
+                </div>
+
                 <div>
                   <label className="form-label" style={{ fontWeight: '600' }}>Программа</label>
-                  <select className="form-input" style={{ width: '100%', marginTop: '4px' }}>
-                    <option value="">Все программы</option>
-                    {programs.map(p => (
+                  <select
+                    className="form-input"
+                    value={widgetProgramId}
+                    onChange={(e) => {
+                      setWidgetProgramId(e.target.value);
+                      setWidgetSessionId('');
+                    }}
+                    style={{ width: '100%', marginTop: '6px' }}
+                  >
+                    <option value="">Все программы (Сводная афиша)</option>
+                    {events.map((p) => (
                       <option key={p.id} value={p.id}>{p.title}</option>
                     ))}
                   </select>
                 </div>
+
                 <div>
-                  <label className="form-label" style={{ fontWeight: '600' }}>Мероприятие / Рейс</label>
-                  <select className="form-input" style={{ width: '100%', marginTop: '4px' }}>
-                    <option value="">Все рейсы</option>
-                    {events.map(e => (
-                      <option key={e.id} value={e.id}>{e.date} {e.time} - {e.program_title || 'Рейс'}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="form-label" style={{ fontWeight: '600' }}>Сайт (Коммерческий проект)</label>
-                  <select className="form-input" style={{ width: '100%', marginTop: '4px' }}>
-                    <option value="">Все сайты</option>
-                    <option value="rockhitneva">Рок Хит Нева (rockhitneva.ru)</option>
-                    <option value="aquasound">Аква Саунд (aquasound.club)</option>
-                    <option value="corp">Корпоративы</option>
+                  <label className="form-label" style={{ fontWeight: '600' }}>Конкретный рейс / Сеанс</label>
+                  <select
+                    className="form-input"
+                    value={widgetSessionId}
+                    onChange={(e) => setWidgetSessionId(e.target.value)}
+                    style={{ width: '100%', marginTop: '6px' }}
+                  >
+                    <option value="">Все доступные рейсы</option>
+                    {sessions
+                      .filter((s) => !widgetProgramId || s.event_id === Number(widgetProgramId))
+                      .map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.start_time} — {s.event_title}
+                        </option>
+                      ))}
                   </select>
                 </div>
               </div>
-              
-              <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', paddingTop: '12px', borderTop: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: '13px', color: '#64748b' }}>
+                  💡 При нажатии страница с виджетом будет создана на выбранном сайте и откроется в редакторе «Сайты & CMS».
+                </div>
                 <button
-                  onClick={() => {
-                    if (navigateTo) navigateTo('sites', '#sites');
-                  }}
+                  onClick={handleCreatePageWithWidget}
                   className="btn btn-primary"
                   style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 24px', borderRadius: '8px', fontWeight: 'bold' }}
                 >
@@ -1540,11 +1645,10 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
                 </button>
               </div>
             </div>
-            
+
             <h4 style={{ margin: '0 0 16px 0', color: '#334155' }}>Предварительный просмотр Афиши:</h4>
-            {/* Render the actual Afisha component so manager can see and filter it */}
             <div style={{ border: '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden' }}>
-               <Afisha onSelectEvent={onSelectEvent} />
+              <Afisha onSelectEvent={onSelectEvent} />
             </div>
           </div>
         )}
@@ -1552,7 +1656,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
         {/* 6. САЙТЫ & CMS */}
         {currentSection === 'sites' && (
           <div>
-            <SitesAdmin />
+            <SitesAdmin initialDomainId={sitesInitialDomainId} />
           </div>
         )}
       </div>
@@ -1650,6 +1754,39 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
             </div>
 
             <form onSubmit={handleSaveSchedule} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {/* 1. Program Selector (Explicit link between Session and Program) */}
+              <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+                <label className="form-label" style={{ fontWeight: 'bold', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px', color: '#0f172a' }}>
+                  <Music size={16} color="#2563eb" /> Программа (Репертуар) *
+                </label>
+                <select
+                  className="form-input"
+                  value={targetProgram.id}
+                  onChange={(e) => {
+                    const selected = events.find((ev) => ev.id === Number(e.target.value));
+                    if (selected) {
+                      setTargetProgram(selected);
+                      setScheduleForm(prev => ({
+                        ...prev,
+                        min_price: selected.min_price || prev.min_price,
+                        selected_musician_ids: selected.default_musician_ids || prev.selected_musician_ids
+                      }));
+                    }
+                  }}
+                  required
+                  style={{ width: '100%', fontWeight: '600', fontSize: '14px', background: '#ffffff' }}
+                >
+                  {events.map((ev) => (
+                    <option key={ev.id} value={ev.id}>
+                      {ev.title} ({ev.event_type || 'Концерт'}) — от {ev.min_price || 1500} ₽
+                    </option>
+                  ))}
+                </select>
+                <div style={{ fontSize: '11px', color: '#64748b', marginTop: '4px' }}>
+                  Каждый созданный рейс (сеанс) автоматически привязывается к этой программе по ID и отображается в её афише.
+                </div>
+              </div>
+
               {/* Type Switcher: Single vs Recurring */}
               <div>
                 <label className="form-label" style={{ fontWeight: 'bold', marginBottom: '8px', display: 'block', color: '#0f172a' }}>
