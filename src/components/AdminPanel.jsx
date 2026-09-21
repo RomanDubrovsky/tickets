@@ -72,12 +72,18 @@ export default function AdminPanel() {
     { id: 'exp_7', type: 'fixed', category: 'Маркетинг & Реклама', amount: 65000, date: '2026-09-12', eventName: null, desc: 'Яндекс Директ + VK Таргет' }
   ]);
 
-  // Settings & System Management State
-  const [piers, setPiers] = useState([
-    { id: 'pier_1', name: 'Дворцовая наб., 18 (Главный причал)', rate: 4500, address: 'Дворцовая набережная, 18', status: 'active', desc: 'Центральный причал отправления рок-круизов' },
-    { id: 'pier_2', name: 'Сенатская пристань (Медный всадник)', rate: 5000, address: 'Английская набережная, 2', status: 'active', desc: 'Точка посадки ночных джазовых программ' },
-    { id: 'pier_3', name: 'Набережная Фонтанки, 34', rate: 3500, address: 'наб. реки Фонтанки, 34 (Шереметевский дворец)', status: 'active', desc: 'Камерные прогулки по малым рекам и каналам' }
-  ]);
+  // Settings & System Management State (with localStorage persistence)
+  const [piers, setPiers] = useState(() => {
+    try {
+      const saved = localStorage.getItem('admin_piers');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return [
+      { id: 'pier_1', name: 'Дворцовая наб., 18 (Главный причал)', rate: 4500, address: 'Дворцовая набережная, 18', status: 'active', desc: 'Центральный причал отправления рок-круизов' },
+      { id: 'pier_2', name: 'Сенатская пристань (Медный всадник)', rate: 5000, address: 'Английская набережная, 2', status: 'active', desc: 'Точка посадки ночных джазовых программ' },
+      { id: 'pier_3', name: 'Набережная Фонтанки, 34', rate: 3500, address: 'наб. реки Фонтанки, 34 (Шереметевский дворец)', status: 'active', desc: 'Камерные прогулки по малым рекам и каналам' }
+    ];
+  });
   const [isPierModalOpen, setIsPierModalOpen] = useState(false);
   const [editingPier, setEditingPier] = useState(null);
   const [pierFormName, setPierFormName] = useState('');
@@ -85,12 +91,18 @@ export default function AdminPanel() {
   const [pierFormAddress, setPierFormAddress] = useState('');
   const [pierFormDesc, setPierFormDesc] = useState('');
 
-  const [employees, setEmployees] = useState([
-    { id: 'emp_1', name: 'Роман Дубровский', role: 'Владелец / Главный админ', email: 'director@rockhitneva.ru', phone: '+7 (921) 999-00-11', pin: '9900', status: 'active', permissions: 'Полный доступ (все модули, ДДС, P&L, настройки)' },
-    { id: 'emp_2', name: 'Анна Смирнова', role: 'Менеджер расписания', email: 'manager@rockhitneva.ru', phone: '+7 (921) 444-22-33', pin: '4521', status: 'active', permissions: 'Репертуар, сессии, флот, площадки' },
-    { id: 'emp_3', name: 'Дмитрий Соколов', role: 'Старший кассир причала', email: 'kassa1@rockhitneva.ru', phone: '+7 (921) 333-55-66', pin: '1234', status: 'active', permissions: 'Касса причала, продажа, возвраты' },
-    { id: 'emp_4', name: 'Михаил Ковалев', role: 'Контролер трапа', email: 'scanner@rockhitneva.ru', phone: '+7 (921) 777-88-99', pin: '7788', status: 'active', permissions: 'Мобильный PWA-сканер QR-билетов' }
-  ]);
+  const [employees, setEmployees] = useState(() => {
+    try {
+      const saved = localStorage.getItem('admin_employees');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return [
+      { id: 'emp_1', name: 'Роман Дубровский', role: 'Владелец / Главный админ', email: 'director@rockhitneva.ru', phone: '+7 (921) 999-00-11', pin: '9900', status: 'active', permissions: 'Полный доступ (все модули, ДДС, P&L, настройки)' },
+      { id: 'emp_2', name: 'Анна Смирнова', role: 'Менеджер расписания', email: 'manager@rockhitneva.ru', phone: '+7 (921) 444-22-33', pin: '4521', status: 'active', permissions: 'Репертуар, сессии, флот, площадки' },
+      { id: 'emp_3', name: 'Дмитрий Соколов', role: 'Старший кассир причала', email: 'kassa1@rockhitneva.ru', phone: '+7 (921) 333-55-66', pin: '1234', status: 'active', permissions: 'Касса причала, продажа, возвраты' },
+      { id: 'emp_4', name: 'Михаил Ковалев', role: 'Контролер трапа', email: 'scanner@rockhitneva.ru', phone: '+7 (921) 777-88-99', pin: '7788', status: 'active', permissions: 'Мобильный PWA-сканер QR-билетов' }
+    ];
+  });
   const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [empFormName, setEmpFormName] = useState('');
@@ -99,15 +111,40 @@ export default function AdminPanel() {
   const [empFormPhone, setEmpFormPhone] = useState('');
   const [empFormPin, setEmpFormPin] = useState('');
 
-  const [platformRules, setPlatformRules] = useState({
-    bookingHoldMinutes: 20,
-    turnaroundBufferMinutes: 30,
-    lowCapacityAlertThreshold: 30,
-    acquiringFeePercent: 2.3,
-    telegramAlertChatId: '@ships_director_bot',
-    autoReleaseUnpaid: true
+  const [platformRules, setPlatformRules] = useState(() => {
+    try {
+      const saved = localStorage.getItem('admin_platform_rules');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return {
+      bookingHoldMinutes: 20,
+      turnaroundBufferMinutes: 30,
+      lowCapacityAlertThreshold: 30,
+      acquiringFeePercent: 2.3,
+      telegramAlertChatId: '@ships_director_bot',
+      autoReleaseUnpaid: true
+    };
   });
   const [isRulesSavedToast, setIsRulesSavedToast] = useState(false);
+
+  // Sync state changes to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('admin_piers', JSON.stringify(piers));
+    } catch {}
+  }, [piers]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('admin_employees', JSON.stringify(employees));
+    } catch {}
+  }, [employees]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('admin_platform_rules', JSON.stringify(platformRules));
+    } catch {}
+  }, [platformRules]);
 
   // Pier Handlers
   const handleOpenAddPier = () => {
