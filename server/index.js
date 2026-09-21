@@ -27,7 +27,8 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
-// Start background workers
+// Start background workers and DB schemas
+lockManager.initTable(pool);
 startQuotaReleaseWorker(pool, 300000); // Check every 5 minutes
 startAlertWorker(pool, 600000); // Check every 10 minutes
 
@@ -59,16 +60,22 @@ app.get('/api/v1/events/:id/dynamic-price', async (req, res) => {
     const shipRes = await pool.query('SELECT capacity FROM ships WHERE id = $1', [event.ship_id]);
     const totalCapacity = shipRes.rowCount > 0 ? shipRes.rows[0].capacity : 80;
 
-    const pricing = calculateDynamicPrice(
-      parseFloat(event.price_standard),
-      totalCapacity,
-      bookedCount,
-      event.date,
-      event.time,
-      weather || 'clear'
-    );
+    const pricing = calculateDynamicPrice({
+      basePrice: parseFloat(event.price_standard),
+      capacity: totalCapacity,
+      bookedCount: bookedCount,
+      eventDate: event.date,
+      weather: weather || 'clear'
+    });
 
-    res.json({ success: true, data: pricing });
+    res.json({
+      success: true,
+      data: {
+        eventId: id,
+        basePrice: event.price_standard,
+        ...pricing
+      }
+    });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -94,17 +101,35 @@ app.post('/api/v1/events/:id/cancel', async (req, res) => {
   }
 });
 
+// --- CORE CRUD APIs ---
+
 // 1. Get all events
 app.get('/api/v1/events', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT * FROM events ORDER BY date DESC, time DESC');
+    const { rows } = await pool.query('SELECT * FROM events ORDER BY date ASC, time ASC');
     res.json({ success: true, data: rows });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// 1.1 Get all ships
+app.post('/api/v1/events', async (req, res) => {
+  const { ship_id, hall_id, program_id, name, description, date, time, price_standard, price_vip } = req.body;
+  try {
+    const query = `
+      INSERT INTO events (ship_id, hall_id, program_id, name, description, date, time, price_standard, price_vip, status)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'active')
+      RETURNING *;
+    `;
+    const values = [ship_id, hall_id, program_id, name, description, date, time, price_standard, price_vip];
+    const { rows } = await pool.query(query, values);
+    res.json({ success: true, data: rows[0] });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 1.1. Get ships
 app.get('/api/v1/ships', async (req, res) => {
   try {
     const { rows } = await pool.query('SELECT * FROM ships');
@@ -114,7 +139,7 @@ app.get('/api/v1/ships', async (req, res) => {
   }
 });
 
-// 1.2 Get all bookings
+// 1.2. Get all bookings
 app.get('/api/v1/bookings', async (req, res) => {
   try {
     const { rows } = await pool.query('SELECT * FROM bookings ORDER BY created_at DESC');
@@ -124,7 +149,44 @@ app.get('/api/v1/bookings', async (req, res) => {
   }
 });
 
-// 1.3 Get all agents
+app.post('/api/v1/bookings', async (req, res) => {
+  const { event_id, customer_name, customer_email, customer_phone, seat_number, seat_category, price_paid, status, agent_id, tickets_count } = req.body;
+  try {
+    const query = `
+      INSERT INTO bookings (event_id, customer_name, customer_email, customer_phone, seat_number, seat_category, price_paid, status, agent_id, tickets_count)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING *;
+    `;
+    const values = [
+      event_id, 
+      customer_name || 'Прямая продажа', 
+      customer_email || null, 
+      customer_phone || null, 
+      seat_number || null, 
+      seat_category || 'standard', 
+      price_paid || 1500, 
+      status || 'confirmed', 
+      agent_id || null, 
+      tickets_count || 1
+    ];
+    const { rows } = await pool.query(query, values);
+    res.json({ success: true, data: rows[0] });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 1.3. Get halls
+app.get('/api/v1/halls', async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT * FROM halls');
+    res.json({ success: true, data: rows });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 1.4. Get agents
 app.get('/api/v1/agents', async (req, res) => {
   try {
     const { rows } = await pool.query('SELECT * FROM agents');
@@ -150,8 +212,8 @@ app.get('/api/v1/tickets/availability', async (req, res) => {
     );
     const bookedSeats = bookingsRes.rows.map(b => b.seat_number);
 
-    // Find currently locked (held) seats in memory
-    const lockedSeats = lockManager.getLockedSeats(eventId);
+    // Find currently locked (held) seats in PostgreSQL
+    const lockedSeats = await lockManager.getLockedSeats(pool, eventId);
     const unavailableSeats = [...new Set([...bookedSeats, ...lockedSeats])];
 
     res.json({
@@ -176,7 +238,7 @@ app.post('/api/v1/tickets/hold', async (req, res) => {
     if (bookingsRes.rowCount > 0) return res.status(409).json({ success: false, message: 'Seat is booked' });
 
     const holdId = crypto.randomUUID();
-    const expiresAt = lockManager.holdSeat(eventId, seatId, holdId, 15);
+    const expiresAt = await lockManager.holdSeat(pool, eventId, seatId, holdId, 15);
 
     if (!expiresAt) return res.status(409).json({ success: false, message: 'Seat is held by another user' });
 
@@ -193,7 +255,7 @@ app.post('/api/v1/tickets/book', async (req, res) => {
     return res.status(400).json({ success: false, message: 'Missing params' });
   }
 
-  const lockReleased = lockManager.releaseHold(eventId, seatId, holdId);
+  const lockReleased = await lockManager.releaseHold(pool, eventId, seatId, holdId);
   if (!lockReleased) return res.status(400).json({ success: false, message: 'Invalid or expired holdId' });
 
   try {
@@ -412,6 +474,16 @@ app.get('/api/v1/admin/dashboard/yearly-summary', async (req, res) => {
       }
     ];
     res.json({ success: true, data });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Maintenance / Trigger Endpoint for Serverless Cloud Timer (Cron)
+app.get('/api/v1/cron/cleanup', async (req, res) => {
+  try {
+    await pool.query('DELETE FROM held_seats WHERE expires_at < NOW()');
+    res.json({ success: true, message: 'Expired holds cleaned up successfully', timestamp: new Date().toISOString() });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
