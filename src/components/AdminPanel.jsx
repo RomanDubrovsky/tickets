@@ -6,7 +6,8 @@ import {
   Percent, Shield, QrCode, RefreshCw, Sliders, ChevronRight, 
   Filter, Download, Eye, Trash2, Edit3, CreditCard, Wallet, 
   Fuel, Anchor, AlertCircle, Check, X, PieChart, Sparkles,
-  HelpCircle, UserCheck, Smartphone, Send, ArrowRight
+  HelpCircle, UserCheck, Smartphone, Send, ArrowRight,
+  Key, Save, ExternalLink, ShieldCheck, Lock, Unlock, Phone, Mail
 } from 'lucide-react';
 import { 
   getEvents, getShips, getBookings, getHalls, createEvent, createBooking,
@@ -20,6 +21,12 @@ export default function AdminPanel() {
   const [timeFilter, setTimeFilter] = useState('month'); // 'today', 'week', 'month', 'season'
 
   // Core Data
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return sessionStorage.getItem('admin_auth') === 'true';
+  });
+  const [passwordInput, setPasswordInput] = useState('');
+  const [authError, setAuthError] = useState('');
+
   const [events, setEvents] = useState([]);
   const [ships, setShips] = useState([]);
   const [bookings, setBookings] = useState([]);
@@ -65,6 +72,161 @@ export default function AdminPanel() {
     { id: 'exp_7', type: 'fixed', category: 'Маркетинг & Реклама', amount: 65000, date: '2026-09-12', eventName: null, desc: 'Яндекс Директ + VK Таргет' }
   ]);
 
+  // Settings & System Management State
+  const [piers, setPiers] = useState([
+    { id: 'pier_1', name: 'Дворцовая наб., 18 (Главный причал)', rate: 4500, address: 'Дворцовая набережная, 18', status: 'active', desc: 'Центральный причал отправления рок-круизов' },
+    { id: 'pier_2', name: 'Сенатская пристань (Медный всадник)', rate: 5000, address: 'Английская набережная, 2', status: 'active', desc: 'Точка посадки ночных джазовых программ' },
+    { id: 'pier_3', name: 'Набережная Фонтанки, 34', rate: 3500, address: 'наб. реки Фонтанки, 34 (Шереметевский дворец)', status: 'active', desc: 'Камерные прогулки по малым рекам и каналам' }
+  ]);
+  const [isPierModalOpen, setIsPierModalOpen] = useState(false);
+  const [editingPier, setEditingPier] = useState(null);
+  const [pierFormName, setPierFormName] = useState('');
+  const [pierFormRate, setPierFormRate] = useState(4500);
+  const [pierFormAddress, setPierFormAddress] = useState('');
+  const [pierFormDesc, setPierFormDesc] = useState('');
+
+  const [employees, setEmployees] = useState([
+    { id: 'emp_1', name: 'Роман Дубровский', role: 'Владелец / Главный админ', email: 'director@rockhitneva.ru', phone: '+7 (921) 999-00-11', pin: '9900', status: 'active', permissions: 'Полный доступ (все модули, ДДС, P&L, настройки)' },
+    { id: 'emp_2', name: 'Анна Смирнова', role: 'Менеджер расписания', email: 'manager@rockhitneva.ru', phone: '+7 (921) 444-22-33', pin: '4521', status: 'active', permissions: 'Репертуар, сессии, флот, площадки' },
+    { id: 'emp_3', name: 'Дмитрий Соколов', role: 'Старший кассир причала', email: 'kassa1@rockhitneva.ru', phone: '+7 (921) 333-55-66', pin: '1234', status: 'active', permissions: 'Касса причала, продажа, возвраты' },
+    { id: 'emp_4', name: 'Михаил Ковалев', role: 'Контролер трапа', email: 'scanner@rockhitneva.ru', phone: '+7 (921) 777-88-99', pin: '7788', status: 'active', permissions: 'Мобильный PWA-сканер QR-билетов' }
+  ]);
+  const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
+  const [editingEmployee, setEditingEmployee] = useState(null);
+  const [empFormName, setEmpFormName] = useState('');
+  const [empFormRole, setEmpFormRole] = useState('Менеджер расписания');
+  const [empFormEmail, setEmpFormEmail] = useState('');
+  const [empFormPhone, setEmpFormPhone] = useState('');
+  const [empFormPin, setEmpFormPin] = useState('');
+
+  const [platformRules, setPlatformRules] = useState({
+    bookingHoldMinutes: 20,
+    turnaroundBufferMinutes: 30,
+    lowCapacityAlertThreshold: 30,
+    acquiringFeePercent: 2.3,
+    telegramAlertChatId: '@ships_director_bot',
+    autoReleaseUnpaid: true
+  });
+  const [isRulesSavedToast, setIsRulesSavedToast] = useState(false);
+
+  // Pier Handlers
+  const handleOpenAddPier = () => {
+    setEditingPier(null);
+    setPierFormName('');
+    setPierFormRate(4500);
+    setPierFormAddress('');
+    setPierFormDesc('');
+    setIsPierModalOpen(true);
+  };
+
+  const handleOpenEditPier = (pier) => {
+    setEditingPier(pier);
+    setPierFormName(pier.name);
+    setPierFormRate(pier.rate);
+    setPierFormAddress(pier.address);
+    setPierFormDesc(pier.desc || '');
+    setIsPierModalOpen(true);
+  };
+
+  const handleSavePier = (e) => {
+    e.preventDefault();
+    if (!pierFormName) return;
+    if (editingPier) {
+      setPiers(piers.map(p => p.id === editingPier.id ? { ...p, name: pierFormName, rate: Number(pierFormRate), address: pierFormAddress, desc: pierFormDesc } : p));
+    } else {
+      const newPier = {
+        id: `pier_${Date.now()}`,
+        name: pierFormName,
+        rate: Number(pierFormRate),
+        address: pierFormAddress,
+        desc: pierFormDesc,
+        status: 'active'
+      };
+      setPiers([...piers, newPier]);
+    }
+    setIsPierModalOpen(false);
+  };
+
+  const handleDeletePier = (id) => {
+    if (confirm('Вы уверены, что хотите удалить этот причал?')) {
+      setPiers(piers.filter(p => p.id !== id));
+    }
+  };
+
+  // Employee Handlers
+  const handleOpenAddEmployee = () => {
+    setEditingEmployee(null);
+    setEmpFormName('');
+    setEmpFormRole('Менеджер расписания');
+    setEmpFormEmail('');
+    setEmpFormPhone('');
+    setEmpFormPin(String(Math.floor(1000 + Math.random() * 9000)));
+    setIsEmployeeModalOpen(true);
+  };
+
+  const handleOpenEditEmployee = (emp) => {
+    setEditingEmployee(emp);
+    setEmpFormName(emp.name);
+    setEmpFormRole(emp.role);
+    setEmpFormEmail(emp.email);
+    setEmpFormPhone(emp.phone);
+    setEmpFormPin(emp.pin);
+    setIsEmployeeModalOpen(true);
+  };
+
+  const handleSaveEmployee = (e) => {
+    e.preventDefault();
+    if (!empFormName) return;
+
+    const rolePermissionsMap = {
+      'Владелец / Главный админ': 'Полный доступ (все модули, ДДС, P&L, настройки)',
+      'Менеджер расписания': 'Репертуар, сессии, флот, площадки',
+      'Старший кассир причала': 'Касса причала, продажа, возвраты',
+      'Контролер трапа': 'Мобильный PWA-сканер QR-билетов'
+    };
+
+    if (editingEmployee) {
+      setEmployees(employees.map(emp => emp.id === editingEmployee.id ? {
+        ...emp,
+        name: empFormName,
+        role: empFormRole,
+        email: empFormEmail,
+        phone: empFormPhone,
+        pin: empFormPin,
+        permissions: rolePermissionsMap[empFormRole] || 'Базовый доступ'
+      } : emp));
+    } else {
+      const newEmp = {
+        id: `emp_${Date.now()}`,
+        name: empFormName,
+        role: empFormRole,
+        email: empFormEmail,
+        phone: empFormPhone,
+        pin: empFormPin,
+        status: 'active',
+        permissions: rolePermissionsMap[empFormRole] || 'Базовый доступ'
+      };
+      setEmployees([...employees, newEmp]);
+    }
+    setIsEmployeeModalOpen(false);
+  };
+
+  const handleToggleEmployeeStatus = (id) => {
+    setEmployees(employees.map(emp => emp.id === id ? { ...emp, status: emp.status === 'active' ? 'blocked' : 'active' } : emp));
+  };
+
+  const handleDeleteEmployee = (id) => {
+    if (confirm('Удалить сотрудника из системы?')) {
+      setEmployees(employees.filter(emp => emp.id !== id));
+    }
+  };
+
+  const handleSaveRules = (e) => {
+    e.preventDefault();
+    setIsRulesSavedToast(true);
+    setTimeout(() => setIsRulesSavedToast(false), 3500);
+  };
+
   // Load live data from database
   const loadData = async () => {
     try {
@@ -97,9 +259,31 @@ export default function AdminPanel() {
     }
   };
 
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (passwordInput === 'solodka') {
+      setIsAuthenticated(true);
+      sessionStorage.setItem('admin_auth', 'true');
+      setAuthError('');
+      loadData();
+    } else {
+      setAuthError('Неверный пароль администратора');
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    sessionStorage.removeItem('admin_auth');
+    setPasswordInput('');
+  };
+
   useEffect(() => {
-    loadData();
-  }, []);
+    if (isAuthenticated) {
+      loadData();
+    } else {
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
 
   // System Alarms / Points of Attention calculation
   const systemAlerts = useMemo(() => {
@@ -274,6 +458,66 @@ export default function AdminPanel() {
       return matchesSearch && matchesStatus;
     });
   }, [bookings, searchQuery, statusFilter]);
+
+  if (!isAuthenticated) {
+    return (
+      <div style={{ maxWidth: '440px', margin: '80px auto', padding: '0 20px' }}>
+        <div className="glass" style={{ padding: '36px', borderRadius: '20px', textAlign: 'center', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}>
+          <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+            <Shield size={32} color="#ffffff" />
+          </div>
+          <h2 style={{ fontSize: '22px', fontWeight: 'bold', marginBottom: '8px' }}>Вход для администратора</h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '24px' }}>
+            Доступ к финансовым отчетам, флоту и бронированиям
+          </p>
+
+          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div>
+              <input
+                type="password"
+                placeholder="Введите пароль администратора"
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+                autoFocus
+                className="input-field"
+                style={{
+                  width: '100%',
+                  padding: '14px 16px',
+                  borderRadius: '12px',
+                  border: authError ? '1px solid #ef4444' : '1px solid var(--border-color)',
+                  background: 'rgba(255,255,255,0.05)',
+                  color: 'var(--text-main)',
+                  fontSize: '15px',
+                  outline: 'none',
+                  textAlign: 'center'
+                }}
+              />
+              {authError && (
+                <div style={{ color: '#ef4444', fontSize: '12px', marginTop: '8px', fontWeight: '500' }}>
+                  {authError}
+                </div>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn-primary"
+              style={{
+                width: '100%',
+                padding: '14px',
+                borderRadius: '12px',
+                fontSize: '15px',
+                fontWeight: 'bold',
+                cursor: 'pointer'
+              }}
+            >
+              Войти в панель управления
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -466,6 +710,30 @@ export default function AdminPanel() {
             Маржа: <b style={{ color: '#60a5fa' }}>{kpis.marginPercent.toFixed(1)}%</b>
           </div>
         </div>
+
+        {/* Logout button */}
+        <button
+          onClick={handleLogout}
+          style={{
+            marginTop: '16px',
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            padding: '10px',
+            borderRadius: '10px',
+            border: '1px solid var(--border-color)',
+            background: 'rgba(239, 68, 68, 0.08)',
+            color: '#f87171',
+            fontSize: '13px',
+            fontWeight: '500',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+        >
+          <span>Выйти из пульта</span>
+        </button>
       </aside>
 
       {/* ============================================================ */}
@@ -1635,80 +1903,378 @@ export default function AdminPanel() {
         )}
 
         {/* ============================================================ */}
-        {/* СЕКЦИЯ 6: ⚙️ НАСТРОЙКИ (ТЕПЛОХОДЫ, ПРИЧАЛЫ, ТАРИФЫ, ДОСТУПЫ) */}
+        {/* СЕКЦИЯ 6: ⚙️ НАСТРОЙКИ (ПРИЧАЛЫ, СОТРУДНИКИ, ПРАВИЛА, ФЛОТ) */}
         {/* ============================================================ */}
         {activeNav === 'settings' && (
           <div>
-            <div className="glass" style={{ padding: '20px 24px', borderRadius: '16px', marginBottom: '24px' }}>
-              <h1 style={{ fontSize: '26px', margin: 0 }}>⚙️ Системные настройки и флот</h1>
-              <p style={{ margin: '4px 0 0', color: 'var(--text-secondary)', fontSize: '13px' }}>
-                Управление характеристиками судов, точками посадки, тарифами и ролями сотрудников.
-              </p>
+            <div className="glass" style={{ padding: '20px 24px', borderRadius: '16px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+              <div>
+                <h1 style={{ fontSize: '26px', margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  ⚙️ Системные настройки и администрирование
+                </h1>
+                <p style={{ margin: '4px 0 0', color: 'var(--text-secondary)', fontSize: '13px' }}>
+                  Управление ставками причальных сборов, доступом сотрудников, технологическими буферами и параметрами автоматики.
+                </p>
+              </div>
+
+              {isRulesSavedToast && (
+                <div style={{ background: '#10b981', color: '#ffffff', padding: '8px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px', animation: 'fadeIn 0.3s' }}>
+                  <CheckCircle2 size={16} />
+                  Параметры платформы успешно сохранены!
+                </div>
+              )}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '20px', marginBottom: '24px' }}>
               
-              {/* Флот */}
-              <div className="glass" style={{ padding: '24px', borderRadius: '16px' }}>
-                <h3 style={{ margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Ship size={18} color="#60a5fa" />
-                  Управление судами флота
-                </h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {ships.map(s => (
-                    <div key={s.id} style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>
-                        <div style={{ fontWeight: 'bold' }}>{s.name}</div>
-                        <small style={{ color: 'var(--text-muted)' }}>Вместимость: {s.capacity} пассажиров</small>
+              {/* 1. ПРИЧАЛЫ И ТОЧКИ ПОСАДКИ */}
+              <div className="glass" style={{ padding: '24px', borderRadius: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px', fontSize: '17px' }}>
+                      <Anchor size={18} color="#10b981" />
+                      Причалы и причальные сборы
+                    </h3>
+                    <button 
+                      onClick={handleOpenAddPier}
+                      className="btn btn-primary"
+                      style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      <Plus size={14} /> Добавить причал
+                    </button>
+                  </div>
+                  
+                  <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px' }}>
+                    Ставка причального сбора автоматически учитывается в прямых переменных расходах (COGS) каждого рейса в P&L и ДДС.
+                  </p>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {piers.map(pier => (
+                      <div 
+                        key={pier.id}
+                        style={{ 
+                          padding: '12px 14px', 
+                          background: 'rgba(255,255,255,0.03)', 
+                          borderRadius: '10px', 
+                          border: '1px solid var(--border-color)',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <div>
+                          <div style={{ fontWeight: 'bold', fontSize: '14px' }}>{pier.name}</div>
+                          <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                            {pier.address}
+                          </div>
+                          <div style={{ fontSize: '11px', color: '#fbbf24', marginTop: '4px', fontWeight: '600' }}>
+                            Сбор: {pier.rate.toLocaleString('ru-RU')} ₽ / рейс
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '6px' }}>
+                          <button 
+                            onClick={() => handleOpenEditPier(pier)}
+                            className="btn btn-secondary" 
+                            style={{ padding: '6px 8px' }}
+                            title="Редактировать причал"
+                          >
+                            <Edit3 size={14} />
+                          </button>
+                          <button 
+                            onClick={() => handleDeletePier(pier.id)}
+                            className="btn btn-secondary" 
+                            style={{ padding: '6px 8px', color: '#f87171' }}
+                            title="Удалить причал"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
                       </div>
-                      <button className="btn btn-secondary" style={{ padding: '4px 10px', fontSize: '11px' }}>
-                        Схема палубы
-                      </button>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Причалы */}
-              <div className="glass" style={{ padding: '24px', borderRadius: '16px' }}>
-                <h3 style={{ margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Anchor size={18} color="#10b981" />
-                  Причалы и точки посадки
-                </h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  {[
-                    { name: 'Дворцовая наб., 18 (Главный причал)', rate: '4 500 ₽/рейс' },
-                    { name: 'Сенатская пристань (Медный всадник)', rate: '5 000 ₽/рейс' },
-                    { name: 'Набережная Фонтанки, 34', rate: '3 500 ₽/рейс' }
-                  ].map((p, idx) => (
-                    <div key={idx} style={{ padding: '10px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
-                      <span>{p.name}</span>
-                      <b style={{ color: '#fbbf24' }}>{p.rate}</b>
-                    </div>
-                  ))}
+              {/* 2. СОТРУДНИКИ И РОЛИ ДОСТУПА */}
+              <div className="glass" style={{ padding: '24px', borderRadius: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px', fontSize: '17px' }}>
+                      <UserCheck size={18} color="#f59e0b" />
+                      Сотрудники и права доступа
+                    </h3>
+                    <button 
+                      onClick={handleOpenAddEmployee}
+                      className="btn btn-primary"
+                      style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      <Plus size={14} /> Добавить сотрудника
+                    </button>
+                  </div>
+
+                  <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px' }}>
+                    Назначение ролей, контактных данных и ПИН-кодов для быстрой авторизации на кассе причала и мобильном сканере.
+                  </p>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {employees.map(emp => (
+                      <div 
+                        key={emp.id}
+                        style={{ 
+                          padding: '12px 14px', 
+                          background: emp.status === 'blocked' ? 'rgba(239, 68, 68, 0.05)' : 'rgba(255,255,255,0.03)', 
+                          borderRadius: '10px', 
+                          border: `1px solid ${emp.status === 'blocked' ? 'rgba(239, 68, 68, 0.3)' : 'var(--border-color)'}`,
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontWeight: 'bold', fontSize: '14px', color: emp.status === 'blocked' ? '#f87171' : 'var(--text-main)' }}>
+                              {emp.name}
+                            </span>
+                            <span style={{ 
+                              fontSize: '10px', 
+                              padding: '2px 6px', 
+                              borderRadius: '4px', 
+                              background: emp.role.includes('Владелец') ? 'rgba(59, 130, 246, 0.2)' : 'rgba(245, 158, 11, 0.2)',
+                              color: emp.role.includes('Владелец') ? '#93c5fd' : '#fbbf24',
+                              fontWeight: 'bold'
+                            }}>
+                              {emp.role}
+                            </span>
+                          </div>
+                          <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '3px' }}>
+                            {emp.email} • {emp.phone}
+                          </div>
+                          <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span>Права: <b>{emp.permissions}</b></span>
+                            <span style={{ background: 'rgba(0,0,0,0.3)', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace', color: '#6ee7b7' }}>
+                              PIN: {emp.pin}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '6px' }}>
+                          <button 
+                            onClick={() => handleToggleEmployeeStatus(emp.id)}
+                            className="btn btn-secondary" 
+                            style={{ padding: '6px 8px', color: emp.status === 'active' ? '#34d399' : '#f87171' }}
+                            title={emp.status === 'active' ? 'Заблокировать доступ' : 'Разблокировать'}
+                          >
+                            {emp.status === 'active' ? <Lock size={14} /> : <Unlock size={14} />}
+                          </button>
+                          <button 
+                            onClick={() => handleOpenEditEmployee(emp)}
+                            className="btn btn-secondary" 
+                            style={{ padding: '6px 8px' }}
+                            title="Редактировать сотрудника"
+                          >
+                            <Edit3 size={14} />
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteEmployee(emp.id)}
+                            className="btn btn-secondary" 
+                            style={{ padding: '6px 8px', color: '#f87171' }}
+                            title="Удалить"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Доступы */}
+            </div>
+
+            {/* 3. ГЛОБАЛЬНЫЕ БИЗНЕС-ПРАВИЛА И СПРАВОЧНИК ФЛОТА */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '20px' }}>
+              
+              {/* Параметры платформы */}
               <div className="glass" style={{ padding: '24px', borderRadius: '16px' }}>
-                <h3 style={{ margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <UserCheck size={18} color="#f59e0b" />
-                  Права доступа и роли
+                <h3 style={{ margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '17px' }}>
+                  <Sliders size={18} color="#60a5fa" />
+                  Глобальные бизнес-правила платформы
                 </h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 10px', background: 'rgba(0,0,0,0.2)', borderRadius: '6px' }}>
-                    <span>Владелец / Главный админ</span>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>Полный доступ</span>
+
+                <form onSubmit={handleSaveRules} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                        Таймаут удержания брони (Холд)
+                      </label>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <input 
+                          type="number" 
+                          min="5" 
+                          max="60" 
+                          value={platformRules.bookingHoldMinutes}
+                          onChange={(e) => setPlatformRules({ ...platformRules, bookingHoldMinutes: Number(e.target.value) })}
+                          className="input-field"
+                          style={{ width: '100%' }}
+                        />
+                        <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>мин</span>
+                      </div>
+                      <small style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Через сколько минут неоплаченное место возвращается в продажу</small>
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                        Технологический буфер стоянки
+                      </label>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <input 
+                          type="number" 
+                          min="15" 
+                          max="120" 
+                          value={platformRules.turnaroundBufferMinutes}
+                          onChange={(e) => setPlatformRules({ ...platformRules, turnaroundBufferMinutes: Number(e.target.value) })}
+                          className="input-field"
+                          style={{ width: '100%' }}
+                        />
+                        <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>мин</span>
+                      </div>
+                      <small style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Минимальный интервал между рейсами для уборки и посадки</small>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 10px', background: 'rgba(0,0,0,0.2)', borderRadius: '6px' }}>
-                    <span>Менеджер расписания</span>
-                    <span>Только Операционка</span>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                        Порог алерта низкой загрузки
+                      </label>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <input 
+                          type="number" 
+                          min="10" 
+                          max="80" 
+                          value={platformRules.lowCapacityAlertThreshold}
+                          onChange={(e) => setPlatformRules({ ...platformRules, lowCapacityAlertThreshold: Number(e.target.value) })}
+                          className="input-field"
+                          style={{ width: '100%' }}
+                        />
+                        <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>%</span>
+                      </div>
+                      <small style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Подсвечивать рейс желтым/красным за 48ч до отхода</small>
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                        Комиссия интернет-эквайринга
+                      </label>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <input 
+                          type="number" 
+                          step="0.1" 
+                          min="0.5" 
+                          max="5.0" 
+                          value={platformRules.acquiringFeePercent}
+                          onChange={(e) => setPlatformRules({ ...platformRules, acquiringFeePercent: Number(e.target.value) })}
+                          className="input-field"
+                          style={{ width: '100%' }}
+                        />
+                        <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>%</span>
+                      </div>
+                      <small style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Учитывается в переменных расходах при каждой оплате</small>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 10px', background: 'rgba(0,0,0,0.2)', borderRadius: '6px' }}>
-                    <span>Кассир причала</span>
-                    <span>Только Продажи & Сканер</span>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                      Telegram Chat ID для мгновенных алертов руководству
+                    </label>
+                    <input 
+                      type="text" 
+                      value={platformRules.telegramAlertChatId}
+                      onChange={(e) => setPlatformRules({ ...platformRules, telegramAlertChatId: e.target.value })}
+                      className="input-field"
+                      style={{ width: '100%' }}
+                      placeholder="@channel_name или -100123456789"
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
+                    <button 
+                      type="submit" 
+                      className="btn btn-primary"
+                      style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px' }}
+                    >
+                      <Save size={16} /> Сохранить параметры платформы
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Справочник флота с быстрой ссылкой в раздел Менеджера */}
+              <div className="glass" style={{ padding: '24px', borderRadius: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                    <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px', fontSize: '17px' }}>
+                      <Ship size={18} color="#60a5fa" />
+                      Флот компании
+                    </h3>
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{ships.length} судна</span>
+                  </div>
+
+                  <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '16px' }}>
+                    Оперативное управление теплоходами, расписанием программ и конструктором схем палуб централизованно выполняется в рабочем месте <b>Менеджера</b>.
+                  </p>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
+                    {ships.map(s => (
+                      <div 
+                        key={s.id} 
+                        style={{ 
+                          padding: '12px 14px', 
+                          background: 'rgba(255,255,255,0.03)', 
+                          borderRadius: '10px', 
+                          border: '1px solid var(--border-color)', 
+                          display: 'flex', 
+                          justifyContent: 'space-between', 
+                          alignItems: 'center' 
+                        }}
+                      >
+                        <div>
+                          <div style={{ fontWeight: 'bold', fontSize: '14px' }}>{s.name}</div>
+                          <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                            Вместимость: <b>{s.capacity}</b> пассажиров
+                          </div>
+                        </div>
+                        <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', fontWeight: 'bold' }}>
+                          В строю
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 </div>
+
+                <a 
+                  href="#venues"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    padding: '12px',
+                    background: 'rgba(59, 130, 246, 0.15)',
+                    border: '1px solid rgba(59, 130, 246, 0.4)',
+                    color: '#93c5fd',
+                    borderRadius: '10px',
+                    fontWeight: 'bold',
+                    fontSize: '13px',
+                    textDecoration: 'none',
+                    textAlign: 'center',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <span>Перейти в управление флотом и схемами (Менеджер)</span>
+                  <ExternalLink size={15} />
+                </a>
               </div>
 
             </div>
@@ -1824,6 +2390,228 @@ export default function AdminPanel() {
                   className="btn btn-primary"
                 >
                   Создать рейс
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================ */}
+      {/* МОДАЛЬНОЕ ОКНО ДОБАВЛЕНИЯ / РЕДАКТИРОВАНИЯ ПРИЧАЛА */}
+      {/* ============================================================ */}
+      {isPierModalOpen && (
+        <div className="modal-backdrop">
+          <div className="glass modal-content" style={{ maxWidth: '480px', width: '90%', padding: '24px', borderRadius: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2 style={{ margin: 0, fontSize: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Anchor size={20} color="#10b981" />
+                {editingPier ? 'Редактировать причал' : 'Добавить новый причал'}
+              </h2>
+              <button 
+                onClick={() => setIsPierModalOpen(false)}
+                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSavePier} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                  Название причала
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="например, Дворцовая наб., 18 (Главный причал)"
+                  value={pierFormName}
+                  onChange={(e) => setPierFormName(e.target.value)}
+                  className="input-field"
+                  style={{ width: '100%' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                  Точный адрес посадки
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="например, Дворцовая набережная, 18"
+                  value={pierFormAddress}
+                  onChange={(e) => setPierFormAddress(e.target.value)}
+                  className="input-field"
+                  style={{ width: '100%' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                  Ставка причального сбора (₽ за 1 швартовку / рейс)
+                </label>
+                <input
+                  type="number"
+                  required
+                  min="0"
+                  step="500"
+                  value={pierFormRate}
+                  onChange={(e) => setPierFormRate(e.target.value)}
+                  className="input-field"
+                  style={{ width: '100%' }}
+                />
+                <small style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Автоматически подставляется в расчет прямых затрат рейса</small>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                  Примечание / Описание
+                </label>
+                <input
+                  type="text"
+                  placeholder="например, Центральный причал для рок-концертов"
+                  value={pierFormDesc}
+                  onChange={(e) => setPierFormDesc(e.target.value)}
+                  className="input-field"
+                  style={{ width: '100%' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px' }}>
+                <button 
+                  type="button" 
+                  onClick={() => setIsPierModalOpen(false)}
+                  className="btn btn-secondary"
+                >
+                  Отмена
+                </button>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary"
+                >
+                  {editingPier ? 'Сохранить изменения' : 'Создать причал'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================ */}
+      {/* МОДАЛЬНОЕ ОКНО ДОБАВЛЕНИЯ / РЕДАКТИРОВАНИЯ СОТРУДНИКА */}
+      {/* ============================================================ */}
+      {isEmployeeModalOpen && (
+        <div className="modal-backdrop">
+          <div className="glass modal-content" style={{ maxWidth: '500px', width: '90%', padding: '24px', borderRadius: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2 style={{ margin: 0, fontSize: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <UserCheck size={20} color="#f59e0b" />
+                {editingEmployee ? 'Редактировать сотрудника' : 'Добавить сотрудника'}
+              </h2>
+              <button 
+                onClick={() => setIsEmployeeModalOpen(false)}
+                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEmployee} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                  ФИО сотрудника
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="например, Анна Смирнова"
+                  value={empFormName}
+                  onChange={(e) => setEmpFormName(e.target.value)}
+                  className="input-field"
+                  style={{ width: '100%' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                  Роль и уровень доступа
+                </label>
+                <select
+                  value={empFormRole}
+                  onChange={(e) => setEmpFormRole(e.target.value)}
+                  className="input-field"
+                  style={{ width: '100%' }}
+                >
+                  <option value="Владелец / Главный админ">Владелец / Главный админ (Полный доступ)</option>
+                  <option value="Менеджер расписания">Менеджер расписания (Репертуар, сессии, флот)</option>
+                  <option value="Старший кассир причала">Старший кассир причала (Касса причала, билеты)</option>
+                  <option value="Контролер трапа">Контролер трапа (Мобильный сканер)</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                    Email (Логин)
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="email@rockhitneva.ru"
+                    value={empFormEmail}
+                    onChange={(e) => setEmpFormEmail(e.target.value)}
+                    className="input-field"
+                    style={{ width: '100%' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                    Телефон
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="+7 (921) 000-00-00"
+                    value={empFormPhone}
+                    onChange={(e) => setEmpFormPhone(e.target.value)}
+                    className="input-field"
+                    style={{ width: '100%' }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                  4-значный PIN-код быстрого входа
+                </label>
+                <input
+                  type="text"
+                  maxLength="4"
+                  required
+                  placeholder="4 цифры"
+                  value={empFormPin}
+                  onChange={(e) => setEmpFormPin(e.target.value)}
+                  className="input-field"
+                  style={{ width: '100%', fontFamily: 'monospace', fontSize: '16px', letterSpacing: '4px', textAlign: 'center' }}
+                />
+                <small style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Для быстрой смены кассиров на причале или контролера на трапе</small>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px' }}>
+                <button 
+                  type="button" 
+                  onClick={() => setIsEmployeeModalOpen(false)}
+                  className="btn btn-secondary"
+                >
+                  Отмена
+                </button>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary"
+                >
+                  {editingEmployee ? 'Сохранить изменения' : 'Добавить сотрудника'}
                 </button>
               </div>
             </form>
