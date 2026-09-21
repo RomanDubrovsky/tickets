@@ -8,8 +8,7 @@ RUN cd server && npm install --production
 
 # Copy server code
 COPY server/ ./server/
-# Copy the env file if needed (usually env vars are injected via Yandex Cloud directly)
-COPY .env ./
+# (Removed .env copy)
 
 EXPOSE 3001
 
