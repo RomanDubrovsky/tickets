@@ -1,0 +1,59 @@
+name: Deploy Backend to Yandex Cloud Serverless
+
+on:
+  push:
+    branches:
+      - main
+      - feature/yandex-cloud-backend
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Authenticate with Yandex Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: cr.yandex
+          username: json_key
+          password: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          provenance: false
+          tags: |
+            cr.yandex/crpker9b2haj9r7ehmup/ships-api:${{ github.sha }}
+            cr.yandex/crpker9b2haj9r7ehmup/ships-api:latest
+
+      - name: Install Yandex Cloud CLI
+        run: |
+          curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+          echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
+
+      - name: Deploy to Yandex Serverless Containers
+        env:
+          YC_SA_JSON: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+          DB_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          echo "$YC_SA_JSON" > key.json
+          yc config set service-account-key key.json
+          yc config set folder-id b1g35of4fqk3cee0phue
+          
+          yc serverless container revision deploy \
+            --container-name ships-api \
+            --image cr.yandex/crpker9b2haj9r7ehmup/ships-api:${{ github.sha }} \
+            --cores 1 \
+            --memory 512MB \
+            --concurrency 8 \
+            --execution-timeout 30s \
+            --service-account-id ajea08ejar7sjlo0muuq \
+            --environment DATABASE_URL="${DB_URL}"

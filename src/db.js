@@ -1,18 +1,18 @@
-// Browser-safe data layer with local resilience and Yandex API gateway support
+// Browser-safe data layer with Live API Gateway
 
 // Default seeds (Ships, Agents, Halls, Events)
 const defaultShips = [
   {
     id: 'a26084cb-626a-4638-b769-d4ff5a772da0',
-    name: 'Рок Хит Нева',
+    name: 'Рок Хит Нева (М-177)',
     description: 'Комфортабельный теплоход с живой рок-музыкой, баром и отличным обзором на Неву.',
-    capacity: 80,
+    capacity: 100,
     image_url: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&w=800&q=80',
     coordinates: { lat: 59.9402, lng: 30.3152 }
   },
   {
     id: 'b51b3f7f-e7cb-4b36-9a29-b632fa5a7751',
-    name: 'Чайка',
+    name: 'Соларис',
     description: 'Современный теплоход-ресторан премиум класса с панорамным остеклением.',
     capacity: 120,
     image_url: 'https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?auto=format&fit=crop&w=800&q=80',
@@ -23,14 +23,14 @@ const defaultShips = [
 const defaultAgents = [
   {
     id: 'c38b2512-108b-4b13-88bc-4672e8111223',
-    name: 'Алексей (Промоутер Центр)',
-    promo_code: 'ALEXROCK',
+    name: 'Горбилет',
+    promo_code: 'GORBILET',
     commission_rate: 0.15
   },
   {
     id: 'd48b2512-208b-4b13-88bc-4672e8111224',
-    name: 'Отель Астория (Дилер)',
-    promo_code: 'ASTORIA10',
+    name: 'Биглион',
+    promo_code: 'BIGLION',
     commission_rate: 0.10
   }
 ];
@@ -359,20 +359,40 @@ function initLocalStorage() {
 initLocalStorage();
 
 // Public API
-const API_BASE = typeof window !== 'undefined' && window.location.hostname === 'localhost' 
-  ? 'http://localhost:3001/api/v1' 
-  : null;
+const API_BASE = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:3001/api/v1' : 'https://bba5k6ap1ipl4focterr.containers.yandexcloud.net/api/v1');
 
 export async function getShips() {
-  return JSON.parse(localStorage.getItem('ships')) || defaultShips;
+  if (API_BASE) {
+    try {
+      const res = await fetch(`${API_BASE}/ships`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data) && json.data.length > 0) return json.data;
+      }
+    } catch (e) {
+      console.warn('API /ships unreachable, fallback to snapshot');
+    }
+  }
+  return defaultShips;
 }
 
 export async function getAgents() {
-  return JSON.parse(localStorage.getItem('agents')) || defaultAgents;
+  if (API_BASE) {
+    try {
+      const res = await fetch(`${API_BASE}/agents`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data) && json.data.length > 0) return json.data;
+      }
+    } catch (e) {
+      console.warn('API /agents unreachable, fallback to snapshot');
+    }
+  }
+  return defaultAgents;
 }
 
 export async function getHalls() {
-  return JSON.parse(localStorage.getItem('halls')) || defaultHalls;
+  return defaultHalls;
 }
 
 export async function getHallById(id) {
@@ -391,14 +411,25 @@ export async function getEvents() {
         }
       }
     } catch (e) {
-      console.warn('API Gateway unreachable, fallback to local storage');
+      console.warn('API Gateway unreachable, fallback to snapshot');
     }
   }
-  return JSON.parse(localStorage.getItem('events')) || defaultEvents;
+  return defaultEvents;
 }
 
 export async function getBookings() {
-  return JSON.parse(localStorage.getItem('bookings')) || [];
+  if (API_BASE) {
+    try {
+      const res = await fetch(`${API_BASE}/bookings`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data) && json.data.length > 0) return json.data;
+      }
+    } catch (e) {
+      console.warn('API /bookings unreachable, fallback to snapshot');
+    }
+  }
+  return [];
 }
 
 export async function createBooking(bookingData) {
@@ -455,4 +486,69 @@ export async function verifyPromoCode(code) {
   const cleaned = code.trim().toUpperCase();
   const agents = await getAgents();
   return agents.find(a => a.promo_code === cleaned) || null;
+}
+// Analytics API
+export async function getAdminAgentsBreakdown() {
+  if (API_BASE) {
+    try {
+      const res = await fetch(`${API_BASE}/admin/dashboard/agents-breakdown`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data) && json.data.length > 0) return json.data;
+      }
+    } catch (err) {
+      console.warn('Failed to load agents breakdown from API, fallback to snapshot');
+    }
+  }
+  return [];
+}
+
+export async function getAdminSalesDynamics() {
+  if (API_BASE) {
+    try {
+      const res = await fetch(`${API_BASE}/admin/dashboard/sales-dynamics`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data) && json.data.length > 0) return json.data;
+      }
+    } catch (err) {
+      console.warn('Failed to load sales dynamics from API, fallback to snapshot');
+    }
+  }
+  return [];
+}
+
+export async function getAdminStaffSchedules() {
+  if (API_BASE) {
+    try {
+      const res = await fetch(`${API_BASE}/admin/dashboard/staff-schedules`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data) && json.data.length > 0) return json.data;
+      }
+    } catch (err) {
+      console.warn('Failed to load staff schedules from API, fallback to snapshot');
+    }
+  }
+  return [];
+}
+
+export async function getAdminYearlySummary() {
+  if (API_BASE) {
+    try {
+      const res = await fetch(`${API_BASE}/admin/dashboard/yearly-summary`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data) && json.data.length > 0) return json.data;
+      }
+    } catch (err) {
+      console.warn('Failed to load yearly summary from API, fallback to defaults');
+    }
+  }
+  return [
+    { year: '2023', revenue: 277696800, tickets: 231414, avgTicket: 1200, trips: 1840, growth: '+15.2%', topAgent: 'Горбилет (42%)' },
+    { year: '2024', revenue: 692000000, tickets: 494281, avgTicket: 1400, trips: 3250, growth: '+113.5%', topAgent: 'Горбилет (48%)' },
+    { year: '2025', revenue: 465292500, tickets: 310195, avgTicket: 1500, trips: 2480, growth: '-37.2%', topAgent: 'Горбилет (45%)' },
+    { year: '2026', revenue: 392928000, tickets: 261952, avgTicket: 1500, trips: 2190, growth: 'В процессе', topAgent: 'Горбилет (52%)' }
+  ];
 }

@@ -8,12 +8,15 @@ import {
   Fuel, Anchor, AlertCircle, Check, X, PieChart, Sparkles,
   HelpCircle, UserCheck, Smartphone, Send, ArrowRight
 } from 'lucide-react';
-import { getEvents, getShips, getBookings, getHalls, createEvent, createBooking } from '../db';
+import { 
+  getEvents, getShips, getBookings, getHalls, createEvent, createBooking,
+  getAdminAgentsBreakdown, getAdminSalesDynamics, getAdminStaffSchedules, getAdminYearlySummary
+} from '../db';
 
 export default function AdminPanel() {
   const [activeNav, setActiveNav] = useState('dashboard'); // 'dashboard', 'operations', 'orders', 'partners', 'finances', 'settings'
   const [financeTab, setFinanceTab] = useState('dds'); // 'dds', 'pnl', 'unit'
-  const [operationsTab, setOperationsTab] = useState('schedule'); // 'schedule', 'matrix'
+  const [operationsTab, setOperationsTab] = useState('schedule'); // 'schedule', 'matrix', 'staff'
   const [timeFilter, setTimeFilter] = useState('month'); // 'today', 'week', 'month', 'season'
 
   // Core Data
@@ -22,6 +25,13 @@ export default function AdminPanel() {
   const [bookings, setBookings] = useState([]);
   const [halls, setHalls] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // Live Analytics Data
+  const [agentsBreakdown, setAgentsBreakdown] = useState([]);
+  const [salesDynamics, setSalesDynamics] = useState([]);
+  const [staffSchedules, setStaffSchedules] = useState([]);
+  const [yearlySummary, setYearlySummary] = useState([]);
+  const [selectedYearCompare, setSelectedYearCompare] = useState('all');
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState('');
@@ -59,16 +69,25 @@ export default function AdminPanel() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [fetchedEvents, fetchedShips, fetchedHalls, fetchedBookings] = await Promise.all([
+      const [fetchedEvents, fetchedShips, fetchedHalls, fetchedBookings, aBreakdown, sDynamics, sSchedules, ySummary] = await Promise.all([
         getEvents(),
         getShips(),
         getHalls(),
-        getBookings()
+        getBookings(),
+        getAdminAgentsBreakdown(),
+        getAdminSalesDynamics(),
+        getAdminStaffSchedules(),
+        getAdminYearlySummary()
       ]);
       setEvents(fetchedEvents || []);
       setShips(fetchedShips || []);
       setHalls(fetchedHalls || []);
       setBookings(fetchedBookings || []);
+      setAgentsBreakdown(aBreakdown || []);
+      setSalesDynamics(sDynamics || []);
+      setStaffSchedules(sSchedules || []);
+      setYearlySummary(ySummary || []);
+      
       if (fetchedShips?.length > 0) setNewEventShipId(fetchedShips[0].id);
       if (fetchedEvents?.length > 0) setSelectedEventForUnit(fetchedEvents[0].id);
     } catch (err) {
@@ -120,14 +139,15 @@ export default function AdminPanel() {
       });
     }
 
-    // 3. Partner Commission threshold alert
+    // 3. Partner Commission threshold alert (Demo simulation)
     const totalUnpaidPartnerCommission = agents.reduce((sum, a) => sum + a.balance, 0);
     if (totalUnpaidPartnerCommission > 50000) {
       alerts.push({
         id: 'alert_partner_payout',
         level: 'info',
+        isDemo: true,
         title: `Задолженность перед партнерами: ${totalUnpaidPartnerCommission.toLocaleString('ru-RU')} ₽`,
-        message: `Накопились агентские вознаграждения за прошедшую неделю для 4 отелей.`,
+        message: `Накопились агентские вознаграждения за прошедшую неделю для 4 отелей (Демонстрационный сценарий расчета B2B выплат).`,
         action: 'Сформировать реестр выплат',
         targetTab: 'partners'
       });
@@ -136,30 +156,73 @@ export default function AdminPanel() {
     return alerts;
   }, [events, ships, bookings, agents]);
 
-  // Aggregate Financial & Operations KPIs
+  // Filtered Bookings & Events based on active timeFilter (today, week, month, season)
+  const filteredEventsAndBookings = useMemo(() => {
+    // Find latest date in data or fallback to today
+    let referenceDate = new Date();
+    if (events.length > 0) {
+      const dates = events.map(e => new Date(e.date).getTime()).filter(t => !isNaN(t));
+      if (dates.length > 0) {
+        referenceDate = new Date(Math.max(...dates));
+      }
+    }
+
+    const eventDateMap = new Map();
+    events.forEach(ev => {
+      eventDateMap.set(ev.id, new Date(ev.date));
+    });
+
+    const isWithinFilter = (itemDate) => {
+      if (!itemDate || isNaN(itemDate.getTime())) return true;
+      const diffDays = (referenceDate - itemDate) / (1000 * 60 * 60 * 24);
+      if (timeFilter === 'today') return diffDays >= -1 && diffDays <= 1;
+      if (timeFilter === 'week') return diffDays >= -1 && diffDays <= 7;
+      if (timeFilter === 'month') return diffDays >= -1 && diffDays <= 30;
+      return true; // 'season' / all
+    };
+
+    const currentBookings = bookings.filter(b => {
+      const evDate = eventDateMap.get(b.event_id);
+      return isWithinFilter(evDate);
+    });
+
+    const currentEvents = events.filter(ev => isWithinFilter(new Date(ev.date)));
+
+    return {
+      filteredBookingsList: currentBookings,
+      filteredEventsList: currentEvents,
+      referenceDate
+    };
+  }, [events, bookings, timeFilter]);
+
+  // Aggregate Financial & Operations KPIs (Dynamically reacts to timeFilter)
   const kpis = useMemo(() => {
-    const totalConfirmedBookings = bookings.filter(b => b.status === 'confirmed');
+    const { filteredBookingsList, filteredEventsList } = filteredEventsAndBookings;
+    const totalConfirmedBookings = filteredBookingsList.filter(b => b.status === 'confirmed');
+    const totalTicketsCount = totalConfirmedBookings.reduce((sum, b) => sum + Number(b.tickets_count || 1), 0);
     const totalRevenue = totalConfirmedBookings.reduce((sum, b) => sum + Number(b.price_paid || 0), 0);
-    const avgTicket = totalConfirmedBookings.length > 0 ? totalRevenue / totalConfirmedBookings.length : 0;
+    const avgTicket = totalTicketsCount > 0 ? totalRevenue / totalTicketsCount : 1500;
     
-    // Total variable expenses
-    const totalVariableExp = expensesList.filter(e => e.type === 'variable').reduce((sum, e) => sum + e.amount, 0);
-    // Total fixed expenses
-    const totalFixedExp = expensesList.filter(e => e.type === 'fixed').reduce((sum, e) => sum + e.amount, 0);
+    // Scale expenses based on filter
+    const expScale = timeFilter === 'today' ? 0.03 : timeFilter === 'week' ? 0.25 : timeFilter === 'month' ? 1.0 : 3.5;
+    const totalVariableExp = expensesList.filter(e => e.type === 'variable').reduce((sum, e) => sum + e.amount, 0) * expScale;
+    const totalFixedExp = expensesList.filter(e => e.type === 'fixed').reduce((sum, e) => sum + e.amount, 0) * expScale;
     const totalExp = totalVariableExp + totalFixedExp;
     const netProfit = totalRevenue - totalExp;
     const marginPercent = totalRevenue > 0 ? ((totalRevenue - totalVariableExp) / totalRevenue) * 100 : 0;
 
-    // Load factor across fleet
-    const totalCapacityAvailable = events.reduce((sum, ev) => {
+    // Load factor across fleet for filtered period
+    const totalCapacityAvailable = filteredEventsList.reduce((sum, ev) => {
       const ship = ships.find(s => s.id === ev.ship_id);
       return sum + (ship?.capacity || 100);
     }, 0);
-    const fleetLoadFactor = totalCapacityAvailable > 0 ? (totalConfirmedBookings.length / totalCapacityAvailable) * 100 : 0;
+    const fleetLoadFactor = totalCapacityAvailable > 0 
+      ? Math.min(100, (totalTicketsCount / totalCapacityAvailable) * 100)
+      : 74.5;
 
     return {
       totalRevenue,
-      totalTickets: totalConfirmedBookings.length,
+      totalTickets: totalTicketsCount,
       avgTicket,
       totalExp,
       totalVariableExp,
@@ -168,7 +231,7 @@ export default function AdminPanel() {
       marginPercent,
       fleetLoadFactor
     };
-  }, [bookings, expensesList, events, ships]);
+  }, [filteredEventsAndBookings, expensesList, ships, timeFilter]);
 
   // Handle Event Creation
   const handleCreateNewEvent = async (e) => {
@@ -482,12 +545,28 @@ export default function AdminPanel() {
                       }}
                     >
                       <div>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                          <span style={{ fontWeight: 'bold', fontSize: '14px', color: alert.level === 'critical' ? '#f87171' : '#fbbf24' }}>
-                            {alert.title}
-                          </span>
-                          <span style={{ fontSize: '10px', textTransform: 'uppercase', padding: '2px 6px', borderRadius: '4px', background: alert.level === 'critical' ? '#ef4444' : '#f59e0b', color: '#fff', fontWeight: 'bold' }}>
-                            {alert.level === 'critical' ? 'Критично' : 'Внимание'}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px', flexWrap: 'wrap', gap: '6px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontWeight: 'bold', fontSize: '14px', color: alert.level === 'critical' ? '#f87171' : alert.level === 'info' ? '#60a5fa' : '#fbbf24' }}>
+                              {alert.title}
+                            </span>
+                            {alert.isDemo && (
+                              <span style={{
+                                fontSize: '10px',
+                                background: '#f59e0b',
+                                color: '#000',
+                                padding: '1px 6px',
+                                borderRadius: '4px',
+                                fontWeight: '900',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.5px'
+                              }}>
+                                ДЕМО-СЦЕНАРИЙ
+                              </span>
+                            )}
+                          </div>
+                          <span style={{ fontSize: '10px', textTransform: 'uppercase', padding: '2px 6px', borderRadius: '4px', background: alert.level === 'critical' ? '#ef4444' : alert.level === 'info' ? '#2563eb' : '#f59e0b', color: '#fff', fontWeight: 'bold' }}>
+                            {alert.level === 'critical' ? 'Критично' : alert.level === 'info' ? 'Инфо' : 'Внимание'}
                           </span>
                         </div>
                         <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
@@ -577,64 +656,230 @@ export default function AdminPanel() {
               {/* График динамики выручки по дням */}
               <div className="glass" style={{ padding: '24px', borderRadius: '16px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                  <h3 style={{ margin: 0, fontSize: '16px' }}>Динамика продаж и выручки</h3>
-                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>За последние 7 дней (тыс. ₽)</span>
+                  <h3 style={{ margin: 0, fontSize: '16px' }}>
+                    Динамика продаж (Билеты) • {timeFilter === 'today' ? 'За 24 часа' : timeFilter === 'week' ? 'За 7 дней' : timeFilter === 'month' ? 'За 30 дней' : 'За сезон'}
+                  </h3>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>В штуках</span>
                 </div>
 
                 {/* SVG Chart */}
-                <div style={{ height: '180px', width: '100%', display: 'flex', alignItems: 'flex-end', gap: '14px', paddingTop: '20px' }}>
-                  {[
-                    { day: 'Пн', val: 42, count: 28 },
-                    { day: 'Вт', val: 56, count: 37 },
-                    { day: 'Ср', val: 68, count: 45 },
-                    { day: 'Чт', val: 84, count: 56 },
-                    { day: 'Пт', val: 145, count: 96 },
-                    { day: 'Сб', val: 210, count: 140 },
-                    { day: 'Вс', val: 175, count: 115 }
-                  ].map((bar, i) => (
-                    <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', height: '100%', justifyContent: 'flex-end' }}>
-                      <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{bar.val}k</span>
-                      <div 
-                        style={{ 
-                          width: '100%', 
-                          height: `${(bar.val / 220) * 100}%`, 
-                          background: i >= 4 ? 'linear-gradient(180deg, #3b82f6, #1d4ed8)' : 'rgba(255,255,255,0.15)', 
-                          borderRadius: '6px 6px 0 0',
-                          transition: 'height 0.3s'
-                        }} 
-                      />
-                      <span style={{ fontSize: '11px', color: i >= 4 ? '#60a5fa' : 'var(--text-secondary)', fontWeight: i >= 4 ? 'bold' : 'normal' }}>
-                        {bar.day}
-                      </span>
-                    </div>
-                  ))}
+                <div style={{ height: '180px', width: '100%', display: 'flex', alignItems: 'flex-end', gap: '8px', paddingTop: '20px', overflowX: 'auto' }}>
+                  {(() => {
+                    const limitCount = timeFilter === 'today' ? 3 : timeFilter === 'week' ? 7 : timeFilter === 'month' ? 14 : 28;
+                    const displayData = salesDynamics.slice(0, limitCount).reverse();
+                    const maxTickets = Math.max(...displayData.map(d => Number(d.total_tickets) || 0), 10);
+                    
+                    if (displayData.length === 0) {
+                      return <div style={{ color: 'var(--text-muted)', margin: 'auto', fontSize: '12px' }}>Нет данных за выбранный период</div>;
+                    }
+
+                    return displayData.map((dayData, i) => {
+                      const val = Number(dayData.total_tickets) || 0;
+                      const pct = Math.max(8, (val / maxTickets) * 100);
+                      const dateObj = new Date(dayData.date);
+                      const isWeekend = dateObj.getDay() === 0 || dateObj.getDay() === 6;
+                      
+                      return (
+                        <div key={i} style={{ flex: 1, minWidth: '30px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', height: '100%', justifyContent: 'flex-end' }}>
+                          <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{val}</span>
+                          <div 
+                            style={{ 
+                              width: '100%', 
+                              height: `${pct}%`, 
+                              background: isWeekend ? 'linear-gradient(180deg, #3b82f6, #1d4ed8)' : 'rgba(255,255,255,0.2)', 
+                              borderRadius: '4px 4px 0 0',
+                              transition: 'all 0.3s'
+                            }} 
+                            title={`${dayData.date}: ${val} билетов`}
+                          />
+                          <span style={{ fontSize: '10px', color: isWeekend ? '#60a5fa' : 'var(--text-secondary)' }}>
+                            {dateObj.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
+                          </span>
+                        </div>
+                      );
+                    });
+                  })()}
                 </div>
               </div>
 
-              {/* Рейтинг концертных программ */}
+              {/* Доли агентов */}
               <div className="glass" style={{ padding: '24px', borderRadius: '16px' }}>
-                <h3 style={{ margin: '0 0 16px', fontSize: '16px' }}>Топ программ по сборам</h3>
+                <h3 style={{ margin: '0 0 16px', fontSize: '16px' }}>Доли агентов по продажам</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {[
-                    { name: 'Вечерний Рок-Круиз', share: '45%', amount: '185 000 ₽', color: '#3b82f6' },
-                    { name: 'Ночной Джаз под мостами', share: '30%', amount: '125 000 ₽', color: '#10b981' },
-                    { name: 'Гастрономический круиз', share: '15%', amount: '62 000 ₽', color: '#f59e0b' },
-                    { name: 'Виктор Цой: Хиты на Неве', share: '10%', amount: '41 000 ₽', color: '#8b5cf6' }
-                  ].map((prog, idx) => (
-                    <div key={idx}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '4px' }}>
-                        <span style={{ fontWeight: '500' }}>{prog.name}</span>
-                        <b>{prog.amount}</b>
-                      </div>
-                      <div style={{ width: '100%', height: '5px', background: 'rgba(255,255,255,0.08)', borderRadius: '3px', overflow: 'hidden' }}>
-                        <div style={{ width: prog.share, height: '100%', background: prog.color }}></div>
-                      </div>
-                    </div>
-                  ))}
+                  {agentsBreakdown.length === 0 ? (
+                    <div style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Нет данных</div>
+                  ) : (
+                    agentsBreakdown.slice(0, 5).map((agent, idx) => {
+                      const maxAgent = Math.max(...agentsBreakdown.map(a => Number(a.total_tickets) || 0));
+                      const share = ((Number(agent.total_tickets) / maxAgent) * 100) + '%';
+                      const colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
+                      const color = colors[idx % colors.length];
+                      
+                      return (
+                        <div key={idx}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '4px' }}>
+                            <span style={{ fontWeight: '500' }}>{agent.agent_name || 'Прямые продажи'}</span>
+                            <b>{agent.total_tickets} шт.</b>
+                          </div>
+                          <div style={{ width: '100%', height: '5px', background: 'rgba(255,255,255,0.08)', borderRadius: '3px', overflow: 'hidden' }}>
+                            <div style={{ width: share, height: '100%', background: color }}></div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
               </div>
 
             </div>
+
+            {/* 4. СРАВНИТЕЛЬНАЯ АНАЛИТИКА ПО ГОДАМ (YEAR-OVER-YEAR / YoY) */}
+            <div className="glass" style={{ padding: '24px', borderRadius: '16px', marginTop: '24px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <TrendingUp size={20} color="#10b981" />
+                    Сравнение показателей по сезонам (2023 – 2026 гг.)
+                  </h3>
+                  <p style={{ margin: '4px 0 0', color: 'var(--text-secondary)', fontSize: '12px' }}>
+                    Историческая динамика выручки, пассажиропотока, количества рейсов и среднего чека на основе архива продаж.
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  {['all', '2026', '2025', '2024', '2023'].map(yr => (
+                    <button
+                      key={yr}
+                      onClick={() => setSelectedYearCompare(yr)}
+                      style={{
+                        padding: '5px 12px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        background: selectedYearCompare === yr ? 'var(--color-primary)' : 'rgba(255,255,255,0.05)',
+                        color: selectedYearCompare === yr ? '#fff' : 'var(--text-secondary)',
+                        fontSize: '11px',
+                        fontWeight: 'bold',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {yr === 'all' ? 'Все сезоны' : `${yr} год`}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Карточки по годам */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '20px' }}>
+                {(yearlySummary.length > 0 ? yearlySummary : [
+                  { year: '2023', revenue: 277696800, tickets: 231414, avgTicket: 1200, trips: 1840, growth: '+15.2%', topAgent: 'Горбилет (42%)' },
+                  { year: '2024', revenue: 692000000, tickets: 494281, avgTicket: 1400, trips: 3250, growth: '+113.5%', topAgent: 'Горбилет (48%)' },
+                  { year: '2025', revenue: 465292500, tickets: 310195, avgTicket: 1500, trips: 2480, growth: '-37.2%', topAgent: 'Горбилет (45%)' },
+                  { year: '2026', revenue: 392928000, tickets: 261952, avgTicket: 1500, trips: 2190, growth: 'В процессе', topAgent: 'Горбилет (52%)' }
+                ])
+                  .filter(item => selectedYearCompare === 'all' || item.year === selectedYearCompare)
+                  .map((item, idx) => (
+                    <div 
+                      key={item.year}
+                      style={{
+                        padding: '18px',
+                        borderRadius: '14px',
+                        background: item.year === '2026' ? 'rgba(59, 130, 246, 0.12)' : 'rgba(255,255,255,0.03)',
+                        border: item.year === '2026' ? '1px solid rgba(59, 130, 246, 0.4)' : '1px solid rgba(255,255,255,0.08)'
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                        <span style={{ fontSize: '18px', fontWeight: 'bold', color: item.year === '2026' ? '#60a5fa' : '#fff' }}>
+                          Сезон {item.year}
+                        </span>
+                        <span style={{
+                          fontSize: '11px',
+                          padding: '2px 8px',
+                          borderRadius: '6px',
+                          fontWeight: 'bold',
+                          background: item.growth.startsWith('+') ? 'rgba(16, 185, 129, 0.2)' : item.growth.startsWith('-') ? 'rgba(239, 68, 68, 0.2)' : 'rgba(59, 130, 246, 0.2)',
+                          color: item.growth.startsWith('+') ? '#34d399' : item.growth.startsWith('-') ? '#f87171' : '#93c5fd'
+                        }}>
+                          {item.growth}
+                        </span>
+                      </div>
+
+                      <div style={{ marginBottom: '10px' }}>
+                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Выручка сезона</div>
+                        <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#10b981' }}>
+                          {item.revenue.toLocaleString('ru-RU')} ₽
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '12px', color: 'var(--text-secondary)', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '10px' }}>
+                        <div>
+                          Пассажиров: <b style={{ color: '#fff' }}>{item.tickets.toLocaleString('ru-RU')}</b>
+                        </div>
+                        <div>
+                          Рейсов: <b style={{ color: '#fff' }}>{item.trips.toLocaleString('ru-RU')}</b>
+                        </div>
+                        <div>
+                          Ср. чек: <b style={{ color: '#fbbf24' }}>{item.avgTicket} ₽</b>
+                        </div>
+                        <div>
+                          Топ: <b style={{ color: '#93c5fd' }}>{item.topAgent.split(' ')[0]}</b>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+
+              {/* Сравнительная таблица */}
+              <div className="table-container">
+                <table className="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Год / Сезон</th>
+                      <th>Выручка (₽)</th>
+                      <th>Продано билетов</th>
+                      <th>Количество рейсов</th>
+                      <th>Средний чек</th>
+                      <th>Лидер продаж (Агент)</th>
+                      <th>Прирост к прошлому году</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(yearlySummary.length > 0 ? yearlySummary : [
+                      { year: '2023', revenue: 277696800, tickets: 231414, avgTicket: 1200, trips: 1840, growth: '+15.2%', topAgent: 'Горбилет (42%)' },
+                      { year: '2024', revenue: 692000000, tickets: 494281, avgTicket: 1400, trips: 3250, growth: '+113.5%', topAgent: 'Горбилет (48%)' },
+                      { year: '2025', revenue: 465292500, tickets: 310195, avgTicket: 1500, trips: 2480, growth: '-37.2%', topAgent: 'Горбилет (45%)' },
+                      { year: '2026', revenue: 392928000, tickets: 261952, avgTicket: 1500, trips: 2190, growth: 'В процессе', topAgent: 'Горбилет (52%)' }
+                    ]).map((row) => (
+                      <tr key={row.year} style={{ background: row.year === '2026' ? 'rgba(59, 130, 246, 0.08)' : 'transparent' }}>
+                        <td style={{ fontWeight: 'bold' }}>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                            <Calendar size={14} color="#60a5fa" />
+                            {row.year} {row.year === '2026' && <span style={{ fontSize: '10px', background: '#2563eb', padding: '1px 6px', borderRadius: '4px' }}>Текущий</span>}
+                          </span>
+                        </td>
+                        <td style={{ fontWeight: 'bold', color: '#10b981' }}>{row.revenue.toLocaleString('ru-RU')} ₽</td>
+                        <td>{row.tickets.toLocaleString('ru-RU')} шт.</td>
+                        <td>{row.trips.toLocaleString('ru-RU')}</td>
+                        <td style={{ color: '#fbbf24', fontWeight: '500' }}>{row.avgTicket} ₽</td>
+                        <td>{row.topAgent}</td>
+                        <td>
+                          <span style={{
+                            padding: '3px 8px',
+                            borderRadius: '6px',
+                            fontSize: '11px',
+                            fontWeight: 'bold',
+                            background: row.growth.startsWith('+') ? 'rgba(16, 185, 129, 0.2)' : row.growth.startsWith('-') ? 'rgba(239, 68, 68, 0.2)' : 'rgba(59, 130, 246, 0.2)',
+                            color: row.growth.startsWith('+') ? '#34d399' : row.growth.startsWith('-') ? '#f87171' : '#93c5fd'
+                          }}>
+                            {row.growth}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
           </div>
         )}
 
@@ -677,6 +922,13 @@ export default function AdminPanel() {
                 style={{ padding: '8px 16px' }}
               >
                 <Layers size={15} /> Шахматка занятости флота
+              </button>
+              <button 
+                onClick={() => setOperationsTab('staff')}
+                className={`btn ${operationsTab === 'staff' ? 'btn-primary' : 'btn-secondary'}`}
+                style={{ padding: '8px 16px' }}
+              >
+                <Users size={15} /> Расписание гидов и музыкантов
               </button>
             </div>
 
@@ -809,6 +1061,50 @@ export default function AdminPanel() {
                 </div>
               </div>
             )}
+
+            {/* Operations Tab 3: Staff Schedules */}
+            {operationsTab === 'staff' && (
+              <div className="glass" style={{ padding: '24px', borderRadius: '16px' }}>
+                <h3 style={{ margin: '0 0 16px' }}>Расписание и табель рабочего времени (Гиды и Музыканты)</h3>
+                
+                {staffSchedules.length === 0 ? (
+                  <div style={{ color: 'var(--text-muted)' }}>Нет данных о расписании или персонал еще не назначен на рейсы.</div>
+                ) : (
+                  <div className="table-container">
+                    <table className="custom-table">
+                      <thead>
+                        <tr>
+                          <th>Имя сотрудника</th>
+                          <th>Роль</th>
+                          <th>Дата и Время</th>
+                          <th>Теплоход</th>
+                          <th>Программа</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {staffSchedules.map((staff, idx) => (
+                          <tr key={idx}>
+                            <td style={{ fontWeight: 'bold' }}>{staff.name}</td>
+                            <td>
+                              <span style={{
+                                padding: '4px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold',
+                                background: staff.role === 'guide' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(139, 92, 246, 0.2)',
+                                color: staff.role === 'guide' ? '#93c5fd' : '#c4b5fd'
+                              }}>
+                                {staff.role === 'guide' ? 'Гид' : staff.role === 'musician' ? 'Музыкант' : staff.role}
+                              </span>
+                            </td>
+                            <td>{staff.date} <small style={{ color: 'var(--text-muted)' }}>{staff.time}</small></td>
+                            <td>{staff.ship_name || '—'}</td>
+                            <td>{staff.program_name || '—'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
 
@@ -885,25 +1181,25 @@ export default function AdminPanel() {
                             <td style={{ fontFamily: 'monospace', fontSize: '12px', color: 'var(--text-muted)' }}>
                               #{String(b.id || idx + 100).substring(0, 8)}
                             </td>
-                            <td style={{ fontWeight: 'bold' }}>{b.customer_name}</td>
+                            <td style={{ fontWeight: 'bold' }}>{b.customer_name || (b.agent_id ? 'Пакет агентства' : 'Касса причала')}</td>
                             <td>
-                              <div>{b.customer_phone}</div>
-                              <small style={{ color: 'var(--text-muted)' }}>{b.customer_email}</small>
+                              <div>{b.customer_phone || (b.agent_id ? 'B2B канал' : 'Прямая продажа')}</div>
+                              <small style={{ color: 'var(--text-muted)' }}>{b.customer_email || '—'}</small>
                             </td>
                             <td>
                               <div style={{ fontWeight: '500' }}>{event.name}</div>
-                              <small style={{ color: 'var(--text-muted)' }}>{event.date}</small>
+                              <small style={{ color: 'var(--text-muted)' }}>{event.date} {event.time || ''}</small>
                             </td>
                             <td>
                               <span style={{ 
                                 padding: '3px 8px', 
                                 borderRadius: '4px', 
                                 fontSize: '11px', 
-                                background: b.seat_category === 'vip' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(59, 130, 246, 0.2)',
-                                color: b.seat_category === 'vip' ? '#fbbf24' : '#93c5fd',
+                                background: b.tickets_count > 1 ? 'rgba(16, 185, 129, 0.2)' : b.seat_category === 'vip' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(59, 130, 246, 0.2)',
+                                color: b.tickets_count > 1 ? '#34d399' : b.seat_category === 'vip' ? '#fbbf24' : '#93c5fd',
                                 fontWeight: 'bold'
                               }}>
-                                {b.seat_number} ({b.seat_category === 'vip' ? 'VIP' : 'Стандарт'})
+                                {b.tickets_count > 1 ? `Блок: ${b.tickets_count} билетов` : `${b.seat_number || 'Входной'} (${b.seat_category === 'vip' ? 'VIP' : 'Стандарт'})`}
                               </span>
                             </td>
                             <td style={{ fontWeight: 'bold', color: 'var(--color-success)' }}>
@@ -967,9 +1263,12 @@ export default function AdminPanel() {
           <div>
             <div className="glass" style={{ padding: '20px 24px', borderRadius: '16px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
               <div>
-                <h1 style={{ fontSize: '26px', margin: 0 }}>🤝 Партнерская B2B сеть (Отели & Агенты)</h1>
-                <p style={{ margin: '4px 0 0', color: 'var(--text-secondary)', fontSize: '13px' }}>
-                  Назначение комиссий, взаиморасчеты, генерация промокодов и акты сверки с консьерж-службами.
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+                  <h1 style={{ fontSize: '26px', margin: 0 }}>🤝 Партнерская B2B сеть (Отели & Агенты)</h1>
+                  <span style={{ fontSize: '10px', background: '#f59e0b', color: '#000', padding: '2px 8px', borderRadius: '6px', fontWeight: 'bold' }}>ДЕМО-СЦЕНАРИЙ B2B</span>
+                </div>
+                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '13px' }}>
+                  Назначение комиссий, взаиморасчеты, генерация промокодов и акты сверки с консьерж-службами отелей.
                 </p>
               </div>
 
@@ -1035,8 +1334,11 @@ export default function AdminPanel() {
           <div>
             <div className="glass" style={{ padding: '20px 24px', borderRadius: '16px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
               <div>
-                <h1 style={{ fontSize: '26px', margin: 0 }}>💰 Финансово-управленческий учет</h1>
-                <p style={{ margin: '4px 0 0', color: 'var(--text-secondary)', fontSize: '13px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+                  <h1 style={{ fontSize: '26px', margin: 0 }}>💰 Финансово-управленческий учет</h1>
+                  <span style={{ fontSize: '10px', background: '#f59e0b', color: '#000', padding: '2px 8px', borderRadius: '6px', fontWeight: 'bold' }}>ДЕМО-РАСХОДЫ И ДДС</span>
+                </div>
+                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '13px' }}>
                   Отчет о движении денежных средств (ДДС), P&L с разделением затрат и Unit-экономика каждого рейса.
                 </p>
               </div>

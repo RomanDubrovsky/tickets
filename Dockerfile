@@ -2,14 +2,16 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install dependencies
-COPY package*.json ./
-RUN npm install --production
+# Copy server package.json and install
+COPY server/package*.json ./server/
+RUN cd server && npm install --production
 
-# Copy source code and server
-COPY . .
+# Copy server code
+COPY server/ ./server/
+# Copy the env file if needed (usually env vars are injected via Yandex Cloud directly)
+COPY .env ./
 
-ENV PORT=3001
 EXPOSE 3001
 
+# The PORT env variable will be provided by Yandex Serverless, but fallback is 3001
 CMD ["node", "server/index.js"]
