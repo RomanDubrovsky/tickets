@@ -2,8 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { 
   Plus, Trash2, Save, Layout, Layers, Check, Upload, Tag, Palette, 
   MousePointer, BoxSelect, Paintbrush, Copy, RefreshCw, ZoomIn, ZoomOut, Eye,
-  Sliders, Move, Ticket, Sparkles, Grid, X
+  Sliders, Move, Ticket, Sparkles, Grid, X, Ship, ChevronDown
 } from 'lucide-react';
+import { SHIP_BLUEPRINTS, PRESET_SHIP_DECKS } from '../data/ship_blueprints';
 
 const PRESET_COLORS = [
   '#f59e0b', // Amber / Gold (VIP)
@@ -599,6 +600,73 @@ export default function DeckBuilder({ venue, onSave, onCancel }) {
     );
   };
 
+  // Apply ship scheme from Library
+  const applyShipBlueprint = (blueprintId) => {
+    const bp = SHIP_BLUEPRINTS.find(b => b.id === blueprintId);
+    if (!bp) return;
+
+    const preset = PRESET_SHIP_DECKS[blueprintId];
+    if (preset) {
+      const confirmLoad = window.confirm(
+        `Загрузить готовую схему и расстановку для «${bp.shipName}»?\n\n` +
+        `Это обновит подложку чертежа, столики (${preset.tables?.length || 0} шт.) и зоны танцпола.`
+      );
+      if (!confirmLoad) return;
+
+      setDeckWidth(preset.width || bp.width);
+      setDeckHeight(preset.height || bp.height);
+      setElementsScale(preset.elementsScale || bp.elementsScale || 1.0);
+      setBgImage(preset.bg_image || bp.bg_image);
+      setBgScale(preset.bg_scale || 1.0);
+      setBgOffsetX(preset.bg_offset_x || 0);
+      setBgOffsetY(preset.bg_offset_y || 0);
+      
+      if (preset.categories && preset.categories.length > 0) {
+        setCategories(preset.categories);
+        setActiveCategoryId(preset.categories[0].id);
+      }
+
+      if (preset.zones) {
+        setZones(preset.zones);
+      }
+
+      if (preset.tables) {
+        // Expand seats array for each table
+        const initializedTables = preset.tables.map(t => {
+          const sCount = t.seatsCount || 4;
+          const sType = t.type || 'rect';
+          const seats = Array.from({ length: sCount }, (_, i) => ({
+            id: `${t.id}-${i + 1}`,
+            seatNumber: i + 1,
+            categoryId: t.categoryId || 'standard_table'
+          }));
+          return {
+            ...t,
+            seatsCount: sCount,
+            type: sType,
+            width: t.width || 68,
+            height: t.height || 42,
+            radius: t.radius || 24,
+            seats: seats
+          };
+        });
+        setTables(initializedTables);
+      }
+      setSelectedTableId(null);
+      setSelectedSeatId(null);
+      setSelectedZoneId(null);
+      return;
+    }
+
+    // Fallback: just load blueprint image and dimensions
+    setDeckWidth(bp.width);
+    setDeckHeight(bp.height);
+    setBgImage(bp.bg_image);
+    setBgScale(bp.bg_scale || 1.0);
+    setBgOffsetX(0);
+    setBgOffsetY(0);
+  };
+
   // Blueprint background image upload
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -689,7 +757,40 @@ export default function DeckBuilder({ venue, onSave, onCancel }) {
             </span>
           </div>
 
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+            {/* Quick Ship Scheme Selector */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#1e40af', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Ship size={14} /> Шаблон судна:
+              </span>
+              <select
+                onChange={(e) => {
+                  if (e.target.value) {
+                    applyShipBlueprint(e.target.value);
+                    e.target.value = '';
+                  }
+                }}
+                defaultValue=""
+                style={{
+                  padding: '7px 12px',
+                  borderRadius: '6px',
+                  border: '1px solid #bfdbfe',
+                  background: '#eff6ff',
+                  color: '#1d4ed8',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >
+                <option value="" disabled>📋 Выбрать схему корабля...</option>
+                {SHIP_BLUEPRINTS.map(bp => (
+                  <option key={bp.id} value={bp.id}>
+                    🚢 {bp.shipName}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" style={{ display: 'none' }} />
             <button
               onClick={() => fileInputRef.current?.click()}
@@ -697,7 +798,7 @@ export default function DeckBuilder({ venue, onSave, onCancel }) {
               style={{ padding: '8px 14px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}
             >
               <Upload size={15} />
-              {bgImage ? 'Сменить план' : 'Загрузить план'}
+              {bgImage ? 'Свой чертеж' : 'Загрузить план'}
             </button>
 
             {onCancel && (

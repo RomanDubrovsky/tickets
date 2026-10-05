@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Anchor, Calendar, Shield, Percent, Ticket, QrCode, Layout, Globe, HelpCircle, Music, Sparkles } from 'lucide-react';
+import { Anchor, Calendar, Shield, Percent, Ticket, QrCode, Layout, Globe, HelpCircle, Music, Sparkles, Smartphone, BookOpen } from 'lucide-react';
 import Afisha from './components/Afisha';
 import BookingDetails from './components/BookingDetails';
 import AdminPanel from './components/AdminPanel';
@@ -10,7 +10,9 @@ import ScannerApp from './components/ScannerApp';
 import DeckBuilder from './components/DeckBuilder';
 import SitesAdmin from './components/SitesAdmin';
 import ProgramsManager from './components/ProgramsManager';
+import PromoApp from './components/PromoApp';
 import HelpModal from './components/HelpModal';
+import ClientDocsPortal from './components/ClientDocsPortal';
 
 export default function App() {
   const [currentView, setCurrentView] = useState('programs'); // 'programs', 'sessions', 'venues', 'sites', 'builder', 'afisha', 'booking', 'admin', 'agent', 'seller', 'widget', 'scanner'
@@ -25,6 +27,8 @@ export default function App() {
         setCurrentView('widget');
       } else if (hash === '#scanner') {
         setCurrentView('scanner');
+      } else if (hash === '#occupancy') {
+        setCurrentView('occupancy');
       } else if (hash === '#builder') {
         setCurrentView('builder');
       } else if (hash === '#sites') {
@@ -39,10 +43,14 @@ export default function App() {
         setCurrentView('afisha');
       } else if (hash === '#agent' || hash === '#hotels') {
         setCurrentView('agent');
+      } else if (hash === '#promo') {
+        setCurrentView('promo');
       } else if (hash === '#seller') {
         setCurrentView('seller');
       } else if (hash === '#admin') {
         setCurrentView('admin');
+      } else if (hash === '#docs' || hash === '#help' || hash === '#client-docs') {
+        setCurrentView('docs');
       }
     };
     window.addEventListener('hashchange', handleHashChange);
@@ -78,6 +86,8 @@ export default function App() {
         return <ProgramsManager defaultSection="venues" />;
       case 'sites':
         return <ProgramsManager defaultSection="sites" />;
+      case 'occupancy':
+        return <ProgramsManager defaultSection="occupancy" />;
       case 'builder':
         return <DeckBuilder />;
       case 'widget':
@@ -94,8 +104,12 @@ export default function App() {
         return <AdminPanel />;
       case 'agent':
         return <AgentPanel />;
+      case 'promo':
+        return <PromoApp />;
       case 'seller':
         return <SellerPanel onBack={handleBackToAfisha} />;
+      case 'docs':
+        return <ClientDocsPortal onNavigateToSection={(target) => navigateTo(target, `#${target}`)} />;
       default:
         return <ProgramsManager defaultSection="events" />;
     }
@@ -143,7 +157,17 @@ export default function App() {
                 Отели & Партнеры
               </button>
 
-              {/* 4. Администратор */}
+              {/* 4. Промоутеры PWA (Полевые продажи на набережных) */}
+              <button
+                className={`nav-link ${currentView === 'promo' ? 'active' : ''}`}
+                onClick={() => navigateTo('promo', '#promo')}
+                title="Мобильный терминал промоутера (PWA для набережных и причалов)"
+              >
+                <Smartphone size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
+                Промоутеры PWA
+              </button>
+
+              {/* 5. Администратор */}
               <button
                 className={`nav-link ${currentView === 'admin' ? 'active' : ''}`}
                 onClick={() => navigateTo('admin', '#admin')}
@@ -151,6 +175,38 @@ export default function App() {
               >
                 <Shield size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
                 Администратор
+              </button>
+
+              {/* 6. База знаний / Документация для заказчика (с ИИ) */}
+              <button
+                className={`nav-link ${currentView === 'docs' ? 'active' : ''}`}
+                onClick={() => navigateTo('docs', '#docs')}
+                title="Интерактивная база знаний для заказчика с ИИ-поиском и надиктовыванием ТЗ"
+                style={{
+                  background: currentView === 'docs' 
+                    ? 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)' 
+                    : '#ffffff',
+                  border: currentView === 'docs' 
+                    ? '2px solid #7c3aed' 
+                    : '2px solid #8b5cf6',
+                  color: currentView === 'docs' ? '#ffffff' : '#6d28d9',
+                  borderRadius: '24px',
+                  padding: '7px 16px',
+                  fontWeight: '800',
+                  fontSize: '13px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '7px',
+                  cursor: 'pointer',
+                  marginLeft: '8px',
+                  boxShadow: currentView === 'docs' 
+                    ? '0 4px 14px rgba(124, 58, 237, 0.4)' 
+                    : '0 2px 8px rgba(139, 92, 246, 0.15)',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <Sparkles size={16} color={currentView === 'docs' ? '#fde047' : '#7c3aed'} />
+                <span style={{ letterSpacing: '0.2px' }}>База знаний (ИИ)</span>
               </button>
 
               {/* Contextual Help Trigger Button */}

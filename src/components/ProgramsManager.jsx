@@ -7,6 +7,8 @@ import {
 import DeckBuilder from './DeckBuilder';
 import Afisha from './Afisha';
 import SitesAdmin, { DEFAULT_DOMAINS } from './SitesAdmin';
+import ShipOccupancyMonitor from './ShipOccupancyMonitor';
+import { SHIP_BLUEPRINTS, PRESET_SHIP_DECKS } from '../data/ship_blueprints';
 
 const INITIAL_MUSICIANS = [
   {
@@ -130,17 +132,73 @@ const INITIAL_EVENTS = [
 const INITIAL_VENUES = [
   {
     id: 1,
-    name: 'Теплоход «Рок Хит Нева»',
+    name: 'Теплоход «Москва 125» (Rock Hit Neva)',
+    ship_model: 'Москва-125',
     pier_address: 'Санкт-Петербург, ст. м. Спортивная, причал Набережная Макарова, 34',
-    capacity: 120,
-    description: 'Двухпалубный комфортабельный рок-теплоход с закрытым теплым салоном, сценой и открытой верхней палубой'
+    capacity: 130,
+    description: 'Двухпалубный рок-теплоход с VIP-зоной у сцены, закрытым теплым салоном, панорамными окнами и верхней открытой палубой.',
+    blueprint_id: 'bp_m125_classic',
+    deckData: PRESET_SHIP_DECKS.bp_m125_classic
   },
   {
     id: 2,
-    name: 'Теплоход «Акватория Звука»',
-    pier_address: 'Санкт-Петербург, ст. м. Спортивная, причал Набережная Макарова, 34',
-    capacity: 100,
-    description: 'Музыкальный теплоход-клуб с баром, живым звуком и панорамным обзором разводных мостов'
+    name: 'Теплоход «Москва 177» (Флагман)',
+    ship_model: 'Москва-177',
+    pier_address: 'Санкт-Петербург, ст. м. Горьковская, причал Кронверкская набережная',
+    capacity: 140,
+    description: 'Концертный флагман: Главная палуба с Невским баром и Президентской кают-компанией, Верхняя палуба со сценой, VIP-партером и танцполом.',
+    blueprint_id: 'bp_m177',
+    deckData: PRESET_SHIP_DECKS.bp_m177
+  },
+  {
+    id: 3,
+    name: 'Теплоход «Москва 201»',
+    ship_model: 'Москва-201',
+    pier_address: 'Санкт-Петербург, ст. м. Адмиралтейская, Дворцовая пристань',
+    capacity: 130,
+    description: 'Просторный двухпалубный теплоход с VIP-диванами в носовой части, панорамным залом диванов на двоих, баром и открытой кормой.',
+    blueprint_id: 'bp_m201',
+    deckData: PRESET_SHIP_DECKS.bp_m201
+  },
+  {
+    id: 4,
+    name: 'Теплоход «Солярис» (Премиум)',
+    ship_model: 'Солярис',
+    pier_address: 'Санкт-Петербург, Сенатская пристань, Английская наб., 2',
+    capacity: 110,
+    description: 'Комфортабельный лайнер премиум-класса с капитанским VIP-партером у сцены, уютным баром и открытой верхней палубой.',
+    blueprint_id: 'bp_solaris',
+    deckData: PRESET_SHIP_DECKS.bp_solaris
+  },
+  {
+    id: 5,
+    name: 'Теплоход «Москва 177» (Танцевальный/Клубный)',
+    ship_model: 'Москва-177',
+    pier_address: 'Санкт-Петербург, ст. м. Горьковская, причал Кронверкская набережная',
+    capacity: 150,
+    description: 'Клубная компоновка судна: большой центральный танцпол, панорамные VIP-диваны по обоим бортам и расширенный бар.',
+    blueprint_id: 'bp_m177_dance',
+    deckData: PRESET_SHIP_DECKS.bp_m177_dance
+  },
+  {
+    id: 6,
+    name: 'МТС Live Холл (Основной концертный зал)',
+    ship_model: 'МТС Live Холл',
+    pier_address: 'Санкт-Петербург, Приморский пр., 80',
+    capacity: 2500,
+    description: 'Масштабный концертный комплекс: Сцена, VIP-партер, танцевальный партер, амфитеатр и комфортабельные двухъярусные VIP-ложи.',
+    blueprint_id: 'bp_mts_hall_1',
+    deckData: PRESET_SHIP_DECKS.bp_mts_hall_1
+  },
+  {
+    id: 7,
+    name: 'МТС Live Холл (Балкон и бельэтаж)',
+    ship_model: 'МТС Live Холл',
+    pier_address: 'Санкт-Петербург, Приморский пр., 80',
+    capacity: 1800,
+    description: 'Ярусы балкона и бельэтажа с превосходной акустикой и панорамным обзором главной сцены.',
+    blueprint_id: 'bp_mts_hall_2',
+    deckData: PRESET_SHIP_DECKS.bp_mts_hall_2
   }
 ];
 
@@ -428,12 +486,12 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
   });
 
   const [venues, setVenues] = useState(() => {
-    const saved = localStorage.getItem('pm_venues_v4');
+    const saved = localStorage.getItem('pm_venues_v6');
     return saved ? JSON.parse(saved) : INITIAL_VENUES;
   });
 
   const [sessions, setSessions] = useState(() => {
-    const saved = localStorage.getItem('pm_sessions_v4');
+    const saved = localStorage.getItem('pm_sessions_v6');
     return saved ? JSON.parse(saved) : INITIAL_SESSIONS;
   });
 
@@ -449,12 +507,12 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
 
   const saveVenues = (data) => {
     setVenues(data);
-    localStorage.setItem('pm_venues_v4', JSON.stringify(data));
+    localStorage.setItem('pm_venues_v6', JSON.stringify(data));
   };
 
   const saveSessions = (data) => {
     setSessions(data);
-    localStorage.setItem('pm_sessions_v4', JSON.stringify(data));
+    localStorage.setItem('pm_sessions_v6', JSON.stringify(data));
   };
 
   const saveMusicians = (data) => {
@@ -479,7 +537,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
       return;
     }
 
-    const savedCms = localStorage.getItem('cms_domains_v2');
+    const savedCms = localStorage.getItem('cms_domains_v6');
     const cmsDomains = savedCms ? JSON.parse(savedCms) : DEFAULT_DOMAINS;
     const targetDomain = cmsDomains.find((d) => d.id === Number(widgetSiteId)) || cmsDomains[0];
 
@@ -508,29 +566,49 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
       pageSlug = `afisha-${Date.now().toString().slice(-4)}`;
     }
 
+    const domainBase = targetDomain.cloud_url || `https://${targetDomain.name}/`;
+    const cleanBase = domainBase.endsWith('/') ? domainBase : `${domainBase}/`;
+    const fullPageUrl = `${cleanBase}${pageSlug}/`;
+
     const newPage = {
       id: Date.now(),
       title: pageTitle,
       slug: pageSlug,
       script_choice: 1,
       iframe_code: iframeCode,
-      url: `https://spb-tickets-ru.storage.yandexcloud.net/sites/${targetDomain.name}/${pageSlug}/index.html`
+      url: fullPageUrl
     };
 
     const updatedDomains = cmsDomains.map((d) => {
       if (d.id === targetDomain.id) {
         const pages = d.pages || [];
         const exists = pages.some((p) => p.slug === pageSlug);
-        const newPages = exists ? pages.map((p) => (p.slug === pageSlug ? { ...p, ...newPage, id: p.id } : p)) : [...pages, newPage];
+        const newPages = exists ? pages.map((p) => (p.slug === pageSlug ? { ...p, ...newPage, id: p.id } : p)) : [newPage, ...pages];
         return { ...d, pages: newPages };
       }
       return d;
     });
 
-    localStorage.setItem('cms_domains_v2', JSON.stringify(updatedDomains));
+    localStorage.setItem('cms_domains_v6', JSON.stringify(updatedDomains));
     setSitesInitialDomainId(targetDomain.id);
     setCurrentSection('sites');
     showNotification(`Страница «${pageTitle}» с виджетом успешно создана на сайте ${targetDomain.name}!`);
+
+    // Call live server CMS API to immediately compile on disk
+    try {
+      fetch('https://rockhitneva.ru/api/cms/pages/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          domain_id: targetDomain.id,
+          domain_name: targetDomain.name,
+          title: pageTitle,
+          slug: pageSlug,
+          iframe_code: iframeCode,
+          script_choice: 1
+        })
+      }).catch(e => console.error('Failed to sync landing with CMS:', e));
+    } catch(e) {}
   };
 
   // -------------------------------------------------------------
@@ -547,9 +625,10 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
     iframe_code: ''
   });
 
-  // 2. UNIFIED Event Session Creation Modal (Single Event OR Recurring Schedule + Musicians + Venue Creation)
+  // 2. UNIFIED Event Session Creation & Editing Modal (Single Event OR Recurring Schedule + Hot Swap Ship / Scheme)
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [targetProgram, setTargetProgram] = useState(null);
+  const [editingSessionId, setEditingSessionId] = useState(null);
   const [scheduleMode, setScheduleMode] = useState('recurring'); // 'single' or 'recurring'
   const [scheduleForm, setScheduleForm] = useState({
     venue_id: 1,
@@ -675,9 +754,10 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
   };
 
   // -------------------------------------------------------------
-  // UNIFIED SCHEDULE CREATION (Inside Program)
+  // UNIFIED SCHEDULE CREATION & SESSION EDITING (Hot Swap Ship & Scheme)
   // -------------------------------------------------------------
   const handleOpenScheduleModal = (prog) => {
+    setEditingSessionId(null);
     setTargetProgram(prog);
     setScheduleMode('recurring');
     setScheduleForm({
@@ -690,6 +770,34 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
       days_of_week: [5, 6, 0], // Fri, Sat, Sun
       times: '19:00, 21:30',
       selected_musician_ids: prog.default_musician_ids || []
+    });
+    setScheduleModalOpen(true);
+  };
+
+  const handleOpenEditSession = (session) => {
+    const prog = events.find(e => e.id === session.event_id) || {
+      id: session.event_id,
+      title: session.event_title,
+      duration_minutes: session.duration_minutes || 120,
+      min_price: session.min_price || 1800
+    };
+    setEditingSessionId(session.id);
+    setTargetProgram(prog);
+    setScheduleMode('single');
+
+    const [sDate, sTime] = (session.start_time || '').split(' ');
+    const currentMusicians = musicians.filter(m => (session.musician_names || []).includes(m.name)).map(m => m.id);
+
+    setScheduleForm({
+      venue_id: session.venue_id,
+      min_price: session.min_price || prog.min_price || 1800,
+      single_date: sDate || '2026-05-01',
+      single_time: sTime || '19:30',
+      date_from: sDate || '2026-05-01',
+      date_to: sDate || '2026-09-30',
+      days_of_week: [5, 6, 0],
+      times: sTime || '19:00',
+      selected_musician_ids: currentMusicians
     });
     setScheduleModalOpen(true);
   };
@@ -739,20 +847,46 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
         if (!confirmMus) return;
       }
 
-      const newSess = {
-        id: Date.now(),
-        event_id: targetProgram.id,
-        event_title: targetProgram.title,
-        venue_id: vn ? vn.id : 1,
-        venue_name: vn ? vn.name : 'Теплоход',
-        pier_address: vn ? vn.pier_address : 'Причал Наб. Макарова, 34',
-        start_time: start_time,
-        duration_minutes: duration,
-        min_price: Number(scheduleForm.min_price),
-        musician_names: musicianNames
-      };
-      saveSessions([...sessions, newSess]);
-      showNotification(`Рейс на ${start_time} успешно добавлен в расписание!`);
+      if (editingSessionId) {
+        // Hot-swap ship / venue / scheme or update session
+        const oldSession = sessions.find(s => s.id === editingSessionId);
+        const shipSwapped = oldSession && oldSession.venue_id !== vn.id;
+
+        const updated = sessions.map(s => s.id === editingSessionId ? {
+          ...s,
+          event_id: targetProgram.id,
+          event_title: targetProgram.title,
+          venue_id: vn ? vn.id : 1,
+          venue_name: vn ? vn.name : 'Теплоход',
+          pier_address: vn ? vn.pier_address : 'Причал Наб. Макарова, 34',
+          start_time: start_time,
+          duration_minutes: duration,
+          min_price: Number(scheduleForm.min_price),
+          musician_names: musicianNames
+        } : s);
+
+        saveSessions(updated);
+        if (shipSwapped) {
+          showNotification(`🔄 Теплоход и схема рейса успешно заменены на «${vn.name}»! Номера купленных билетов и места сохранены.`);
+        } else {
+          showNotification(`Рейс ${start_time} успешно обновлен!`);
+        }
+      } else {
+        const newSess = {
+          id: Date.now(),
+          event_id: targetProgram.id,
+          event_title: targetProgram.title,
+          venue_id: vn ? vn.id : 1,
+          venue_name: vn ? vn.name : 'Теплоход',
+          pier_address: vn ? vn.pier_address : 'Причал Наб. Макарова, 34',
+          start_time: start_time,
+          duration_minutes: duration,
+          min_price: Number(scheduleForm.min_price),
+          musician_names: musicianNames
+        };
+        saveSessions([...sessions, newSess]);
+        showNotification(`Рейс на ${start_time} успешно добавлен в расписание!`);
+      }
     } else {
       // Recurring schedule creation (Mass generator)
       if (new Date(scheduleForm.date_to) < new Date(scheduleForm.date_from)) {
@@ -1220,6 +1354,40 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
           </div>
         </div>
 
+        {/* Section 7: Монитор заполненности (ship.xlsx) */}
+        <div
+          onClick={() => setCurrentSection('occupancy')}
+          style={{
+            marginTop: '10px',
+            padding: '14px 16px',
+            borderRadius: '10px',
+            background: currentSection === 'occupancy' ? '#eff6ff' : '#f8fafc',
+            border: currentSection === 'occupancy' ? '1px solid #3b82f6' : '1px solid #e2e8f0',
+            cursor: 'pointer',
+            transition: 'all 0.15s',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Anchor size={18} color={currentSection === 'occupancy' ? '#2563eb' : '#64748b'} />
+            <span style={{ fontWeight: currentSection === 'occupancy' ? 'bold' : '600', color: currentSection === 'occupancy' ? '#1d4ed8' : '#334155', fontSize: '14px' }}>
+              🚢 Заполненность рейсов
+            </span>
+          </div>
+          <span style={{
+            fontSize: '11px',
+            background: '#10b981',
+            color: '#ffffff',
+            padding: '2px 6px',
+            borderRadius: '10px',
+            fontWeight: 'bold'
+          }}>
+            ship.xlsx
+          </span>
+        </div>
+
         <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid #e2e8f0' }}>
           <div style={{ fontSize: '12px', color: '#64748b', lineHeight: '1.5' }}>
             💡 <strong>Единый процесс:</strong> Создавайте программы и сразу назначайте на них рейсы, выбирая или добавляя на лету нужные <strong>теплоходы, причалы и музыкантов</strong>.
@@ -1588,8 +1756,29 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
                           </div>
                         </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <strong style={{ color: '#059669', fontSize: '15px' }}>{s.min_price || 1500} ₽</strong>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <strong style={{ color: '#059669', fontSize: '15px', marginRight: '6px' }}>{s.min_price || 1500} ₽</strong>
+                        
+                        <button
+                          onClick={() => handleOpenEditSession(s)}
+                          title="Заменить судно / изменить схему или время рейса"
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            padding: '6px 12px',
+                            background: '#eff6ff',
+                            color: '#2563eb',
+                            border: '1px solid #bfdbfe',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <Edit3 size={13} /> Заменить судно / изменить
+                        </button>
+
                         <button
                           onClick={() => handleDeleteSession(s.id)}
                           title="Удалить рейс"
@@ -1935,7 +2124,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
                   >
                     <option value="">-- Выберите сайт (Обязательно) --</option>
                     {(() => {
-                      const savedCms = localStorage.getItem('cms_domains_v2');
+                      const savedCms = localStorage.getItem('cms_domains_v6');
                       const list = savedCms ? JSON.parse(savedCms) : DEFAULT_DOMAINS;
                       return list.map((d) => (
                         <option key={d.id} value={d.id}>
@@ -2010,6 +2199,13 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
         {currentSection === 'sites' && (
           <div>
             <SitesAdmin initialDomainId={sitesInitialDomainId} />
+          </div>
+        )}
+
+        {/* 7. МОНИТОР ЗАПОЛНЕННОСТИ (SHIP.XLSX) */}
+        {currentSection === 'occupancy' && (
+          <div>
+            <ShipOccupancyMonitor />
           </div>
         )}
       </div>
@@ -2094,13 +2290,15 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
       {scheduleModalOpen && targetProgram && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.65)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
           <div style={{ background: '#ffffff', borderRadius: '16px', width: '100%', maxWidth: '680px', maxHeight: '90vh', overflowY: 'auto', border: '1px solid #e2e8f0', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }}>
-            <div style={{ padding: '18px 24px', background: '#2563eb', color: 'white', borderRadius: '16px 16px 0 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ padding: '18px 24px', background: editingSessionId ? '#1e40af' : '#2563eb', color: 'white', borderRadius: '16px 16px 0 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <h4 style={{ margin: 0, fontSize: '17px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Calendar size={18} /> Назначить рейсы (Создать мероприятие)
+                  {editingSessionId ? <Anchor size={18} /> : <Calendar size={18} />} 
+                  {editingSessionId ? 'Замена судна и схемы / Редактирование рейса' : 'Назначить рейсы (Создать мероприятие)'}
                 </h4>
                 <div style={{ fontSize: '12px', color: '#bfdbfe', marginTop: '2px' }}>
                   Программа: <strong>{targetProgram.title}</strong>
+                  {editingSessionId && ' • (Горячая замена сохраняет номера билетов и места пассажиров)'}
                 </div>
               </div>
               <button onClick={() => setScheduleModalOpen(false)} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '8px', padding: '6px', color: 'white', cursor: 'pointer' }}><X size={18} /></button>
@@ -2425,7 +2623,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '12px' }}>
                 <button type="button" onClick={() => setScheduleModalOpen(false)} style={{ padding: '8px 16px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '8px', cursor: 'pointer' }}>Отмена</button>
                 <button type="submit" className="btn btn-primary" style={{ padding: '8px 24px', borderRadius: '8px', fontWeight: 'bold' }}>
-                  {scheduleMode === 'single' ? 'Создать рейс' : 'Сгенерировать регулярные рейсы'}
+                  {editingSessionId ? '🔄 Сохранить изменения / Заменить судно' : (scheduleMode === 'single' ? 'Создать рейс' : 'Сгенерировать регулярные рейсы')}
                 </button>
               </div>
             </form>
