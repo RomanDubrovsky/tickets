@@ -12,6 +12,7 @@ import React, { useState, useEffect, useRef } from 'react';
  * - Multi-seat selection support with glowing emerald highlighting
  */
 export default function RockHitNevaVesselScheme({
+  schemeSvgUrl = '/ships_schemes/rock_hit_neva_scheme.svg',
   seatColorMap = {},
   selectedSeat = null,
   selectedSeats = [],
@@ -26,9 +27,9 @@ export default function RockHitNevaVesselScheme({
 
   // Fetch or load the pristine SVG template
   useEffect(() => {
-    fetch('/ships_schemes/rock_hit_neva_scheme.svg')
+    fetch(schemeSvgUrl)
       .then((res) => {
-        if (!res.ok) throw new Error('Failed to load scheme SVG');
+        if (!res.ok) throw new Error(`Failed to load scheme SVG: ${schemeSvgUrl}`);
         return res.text();
       })
       .then((text) => {
@@ -66,7 +67,7 @@ export default function RockHitNevaVesselScheme({
       .catch((err) => {
         console.error('Error loading vessel scheme SVG:', err);
       });
-  }, []);
+  }, [schemeSvgUrl]);
 
   // Update default status text when selection changes
   const updateDefaultStatus = () => {

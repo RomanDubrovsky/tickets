@@ -5,6 +5,41 @@ import { SHIP_BLUEPRINTS, PRESET_SHIP_DECKS } from '../data/ship_blueprints';
 import HallRenderer from './HallRenderer';
 import RockHitNevaVesselScheme from './RockHitNevaVesselScheme';
 
+const ASTRA_SCHEMES_MAP = {
+  bp_rock_hit_neva: {
+    svg: '/ships_schemes/rock_hit_neva_scheme.svg',
+    name: '«Рок Хит Нева»'
+  },
+  bp_m201: {
+    svg: '/ships_schemes/moskva_201_scheme.svg',
+    name: '«Москва-201»'
+  },
+  bp_m177: {
+    svg: '/ships_schemes/moskva_177_scheme.svg',
+    name: '«Москва-177»'
+  },
+  bp_m125_classic: {
+    svg: '/ships_schemes/moskva_125_classic_scheme.svg',
+    name: '«Москва-125 (Инженерная)»'
+  },
+  bp_m125_styled: {
+    svg: '/ships_schemes/moskva_125_styled_scheme.svg',
+    name: '«Москва-125 (Стилизованная)»'
+  },
+  bp_m125_stylized: {
+    svg: '/ships_schemes/moskva_125_styled_scheme.svg',
+    name: '«Москва-125 (Стилизованная)»'
+  },
+  bp_solaris: {
+    svg: '/ships_schemes/solaris_scheme.svg',
+    name: '«Солярис»'
+  },
+  bp_m177_dance: {
+    svg: '/ships_schemes/moskva_177_dance_scheme.svg',
+    name: '«Москва-177 (Танцевальная)»'
+  }
+};
+
 export default function BookingDetails({ event: passedEvent, onBack }) {
   // Resilient fallback event in case direct URL #booking was visited
   const event = passedEvent || (() => {
@@ -300,9 +335,10 @@ export default function BookingDetails({ event: passedEvent, onBack }) {
             </select>
           </div>
 
-          {activeBlueprintId === 'bp_rock_hit_neva' ? (
+          {ASTRA_SCHEMES_MAP[activeBlueprintId] ? (
             <div style={{ width: '100%', maxWidth: '440px', margin: '0 auto', overflow: 'visible' }}>
               <RockHitNevaVesselScheme
+                schemeSvgUrl={ASTRA_SCHEMES_MAP[activeBlueprintId].svg}
                 readOnly={false}
                 selectedSeats={selectedSeats}
                 seatColorMap={rockHitSeatColorMap}
@@ -315,9 +351,12 @@ export default function BookingDetails({ event: passedEvent, onBack }) {
                   }
                   const isVip = seatNum <= 9 || seatNum >= 63;
                   const price = isVip ? (event.price_vip || 2500) : (event.price_standard || 1500);
-                  const deckLabel = isVip 
-                    ? (seatNum <= 9 ? 'VIP Носовая панорама' : 'VIP Кормовая панорама') 
-                    : (seatNum <= 36 ? 'Нижняя палуба (Салон)' : 'Верхняя палуба');
+                  let deckLabel = 'Нижняя палуба (Салон)';
+                  if (isVip) {
+                    deckLabel = seatNum <= 9 ? 'VIP Носовая панорама' : 'VIP Кормовая панорама';
+                  } else if (seatNum > 36) {
+                    deckLabel = 'Верхняя открытая палуба';
+                  }
                   const seatObj = {
                     id: seatId,
                     seatNumber: seatNum,
