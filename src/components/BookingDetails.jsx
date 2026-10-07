@@ -342,29 +342,31 @@ export default function BookingDetails({ event: passedEvent, onBack }) {
                 readOnly={false}
                 selectedSeats={selectedSeats}
                 seatColorMap={rockHitSeatColorMap}
-                onSeatClick={(seatNum) => {
+                onSeatClick={(seatNum, seatData) => {
                   const seatId = `seat-${seatNum}`;
                   const isOcc = occupiedSeats.includes(seatId) || occupiedSeats.includes(String(seatNum)) || occupiedSeats.includes(`S-${seatNum}`);
                   if (isOcc) {
                     alert(`Место №${seatNum} уже занято.`);
                     return;
                   }
-                  const isVip = seatNum <= 9 || seatNum >= 63;
-                  const price = isVip ? (event.price_vip || 2500) : (event.price_standard || 1500);
-                  let deckLabel = 'Нижняя палуба (Салон)';
-                  if (isVip) {
-                    deckLabel = seatNum <= 9 ? 'VIP Носовая панорама' : 'VIP Кормовая панорама';
-                  } else if (seatNum > 36) {
-                    deckLabel = 'Верхняя открытая палуба';
+                  const isVip = seatData?.categoryName?.toLowerCase().includes('vip') || (seatNum <= 9 || seatNum >= 63);
+                  const price = seatData?.price || (isVip ? (event.price_vip || 2500) : (event.price_standard || 1500));
+                  let deckLabel = seatData?.tableLabel || 'Нижняя палуба (Салон)';
+                  if (!seatData?.tableLabel) {
+                    if (isVip) {
+                      deckLabel = seatNum <= 9 ? 'VIP Носовая панорама' : 'VIP Кормовая панорама';
+                    } else if (seatNum > 36) {
+                      deckLabel = 'Верхняя открытая палуба';
+                    }
                   }
                   const seatObj = {
                     id: seatId,
                     seatNumber: seatNum,
-                    tableId: isVip ? 'VIP' : 'Салон',
+                    tableId: seatData?.tableLabel || (isVip ? 'VIP' : 'Салон'),
                     tableLabel: deckLabel,
                     type: isVip ? 'vip' : 'standard',
-                    categoryId: isVip ? 'vip_window' : 'standard',
-                    categoryName: isVip ? 'VIP Панорама' : 'Стандартный стол',
+                    categoryId: seatData?.categoryId || (isVip ? 'vip_window' : 'standard'),
+                    categoryName: seatData?.categoryName || (isVip ? 'VIP Панорама' : 'Стандартный стол'),
                     price: price
                   };
                   handleToggleSeat(seatObj);

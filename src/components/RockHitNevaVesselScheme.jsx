@@ -148,21 +148,35 @@ export default function RockHitNevaVesselScheme({
         g.classList.remove('is-selected');
       }
 
+      const attrTable = g.getAttribute('data-table-label');
+      const attrCat = g.getAttribute('data-category-name');
+      const attrPrice = g.getAttribute('data-price');
+      const attrCatId = g.getAttribute('data-category-id');
+      const isVip = attrCat ? attrCat.toLowerCase().includes('vip') : (num <= 9 || num >= 63);
+      const seatPrice = attrPrice ? parseInt(attrPrice, 10) : (isVip ? 2500 : 1500);
+      const deckName = attrTable || (isVip ? (num <= 9 ? 'VIP Нос' : 'VIP Корма') : (num <= 36 ? 'Нижняя палуба' : 'Верхняя палуба'));
+      const catName = attrCat || (isVip ? 'VIP Панорама' : 'Стандарт');
+
       // Clean existing listeners to prevent duplicates
       g.onclick = (e) => {
         e.stopPropagation();
         e.preventDefault();
         if (onSeatClick) {
-          onSeatClick(num, { seatNumber: num, color: seatFill, channelVal: deckCells[seatNum] });
+          onSeatClick(num, {
+            seatNumber: num,
+            color: seatFill,
+            tableLabel: deckName,
+            categoryName: catName,
+            categoryId: attrCatId || (isVip ? 'vip_front' : 'standard'),
+            price: seatPrice,
+            channelVal: deckCells[seatNum]
+          });
         }
       };
 
       g.onmouseenter = () => {
         if (!statusRef.current) return;
-        const isVip = num <= 9 || num >= 63;
-        const price = isVip ? 2500 : 1500;
         const isOcc = mappedColor === '#94a3b8' || (seatColorMap[num] && seatColorMap[num] !== '#93c5fd' && seatColorMap[num] !== '#10b981');
-        const deckName = isVip ? (num <= 9 ? 'VIP Нос' : 'VIP Корма') : (num <= 36 ? 'Нижняя палуба' : 'Верхняя палуба');
         
         const badgeBg = isSelected ? '#dcfce7' : isOcc ? '#fee2e2' : '#eff6ff';
         const badgeBorder = isSelected ? '#86efac' : isOcc ? '#fca5a5' : '#bfdbfe';
@@ -171,7 +185,7 @@ export default function RockHitNevaVesselScheme({
 
         statusRef.current.innerHTML = `
           <span style="display:inline-flex;align-items:center;background:${badgeBg};padding:4px 12px;border-radius:18px;border:1px solid ${badgeBorder};color:${badgeColor};font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">
-            📍 Место №${num} (${deckName}) — ${price} ₽ [${statusNote}]
+            📍 <strong>${deckName}, Место №${num}</strong> — ${catName} (${seatPrice} ₽) [${statusNote}]
           </span>
         `;
       };
