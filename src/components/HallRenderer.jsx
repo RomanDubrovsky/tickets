@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { computeSeatPositions } from './DeckBuilder';
 import { Ticket, Users, CheckCircle2 } from 'lucide-react';
 
@@ -18,9 +18,14 @@ export default function HallRenderer({
   selectedSeats = [],
   setSelectedSeats,
   onToggleSeat,
-  occupiedSeats = []
+  onSeatClick,
+  occupiedSeats = [],
+  orientation = 'vertical', // 'vertical' (bow up) or 'horizontal' (bow right)
+  isReportMode = false,
+  seatColorMap = {},
+  readOnly = false
 }) {
-  const [hoveredSeat, setHoveredSeat] = useState(null);
+  const statusRef = useRef(null);
 
   if (!hall) return null;
 
@@ -31,7 +36,7 @@ export default function HallRenderer({
     ? [selectedSeat]
     : [];
 
-  const isSeatSelected = (seatId) => activeSelectedList.some((s) => s.id === seatId);
+  const isSeatSelected = (seatId) => activeSelectedList.some((s) => s.id === seatId || s.seatNumber === seatId || String(s.seatNumber) === String(seatId) || String(s.id) === String(seatId));
 
   const categories = hall.categories && hall.categories.length > 0 ? hall.categories : DEFAULT_CATEGORIES;
   const getCategory = (catId) => {
@@ -39,6 +44,11 @@ export default function HallRenderer({
   };
 
   const handleSeatClick = (tableOrZone, seat) => {
+    if (onSeatClick) {
+      onSeatClick(tableOrZone, seat);
+      return;
+    }
+    if (readOnly) return;
     if (occupiedSeats.includes(seat.id)) return;
     const cat = getCategory(seat.categoryId);
     const price = cat.price || (seat.categoryId === 'vip_window' || seat.categoryId === 'stage_front' ? event?.price_vip : event?.price_standard) || 1500;
@@ -190,19 +200,59 @@ export default function HallRenderer({
   const height = hall.height || 520;
   const elementsScale = hall.elementsScale || 1.0;
 
-  if (hasTables || hasZones) {
-    const totalSelectedSum = activeSelectedList.reduce((acc, s) => acc + (s.price || 1500), 0);
+  const totalSelectedSum = activeSelectedList.reduce((acc, s) => acc + (s.price || 1500), 0);
+  const isVertical = orientation === 'vertical';
+  // For vertical: SVG viewBox is (0, 0, height, width), bow pointing upwards
+  const svgViewBox = isVertical ? `0 0 ${height} ${width}` : `0 0 ${width} ${height}`;
 
+  const updateStatusBar = (info) => {
+    if (!statusRef.current) return;
+    if (!info) {
+      if (activeSelectedList && activeSelectedList.length > 0) {
+        statusRef.current.innerHTML = `
+          <span style="display:inline-flex;align-items:center;background:#f0fdf4;padding:4px 14px;border-radius:20px;border:1px solid #bbf7d0;color:#166534;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">
+            ✓ Выбрано мест: <strong>${activeSelectedList.length} шт.</strong> (${totalSelectedSum} ₽) — нажмите для изменения
+          </span>
+        `;
+      } else {
+        statusRef.current.innerHTML = `
+          <span style="color:#64748b;font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">
+            Нажмите на любые свободные места за столиками для выбора (можно выбрать несколько)
+          </span>
+        `;
+      }
+      return;
+    }
+
+    const badgeBg = info.isSelected ? '#dcfce7' : info.isOccupied ? '#fee2e2' : '#eff6ff';
+    const badgeBorder = info.isSelected ? '#86efac' : info.isOccupied ? '#fca5a5' : '#bfdbfe';
+    const badgeColor = info.isSelected ? '#15803d' : info.isOccupied ? '#991b1b' : '#1e40af';
+    const statusNote = info.isOccupied ? '⛔ Занято' : info.isSelected ? '✓ Выбрано' : '🟢 Нажмите для выбора';
+
+    statusRef.current.innerHTML = `
+      <span style="display:inline-flex;align-items:center;background:${badgeBg};padding:4px 14px;border-radius:20px;border:1px solid ${badgeBorder};color:${badgeColor};font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">
+        📍 <strong>${info.tableLabel}, Место ${info.seatNumber}</strong> — ${info.categoryName} (${info.price} ₽) [${statusNote}]
+      </span>
+    `;
+  };
+
+  useEffect(() => {
+    updateStatusBar(null);
+  }, [activeSelectedList.length, totalSelectedSum]);
+
+  if (hasTables || hasZones) {
     return (
       <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '16px' }}>
         {/* Hover info strip with stable fixed height to prevent layout shift / jitter */}
         <div
+          ref={statusRef}
           style={{
-            height: '42px',
-            minHeight: '42px',
-            maxHeight: '42px',
+            height: '36px',
+            minHeight: '36px',
+            maxHeight: '36px',
+            lineHeight: '36px',
             marginBottom: '12px',
-            fontSize: '13px',
+            fontSize: '12px',
             textAlign: 'center',
             color: '#334155',
             fontWeight: '500',
@@ -211,39 +261,55 @@ export default function HallRenderer({
             justifyContent: 'center',
             gap: '8px',
             overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
             boxSizing: 'border-box'
           }}
         >
-          {hoveredSeat ? (
-            <span style={{ display: 'inline-flex', alignItems: 'center', background: '#eff6ff', padding: '6px 14px', borderRadius: '20px', border: '1px solid #bfdbfe', lineHeight: '1.2' }}>
-              📍 <strong>{hoveredSeat.tableLabel}, Место {hoveredSeat.seatNumber}</strong> — {hoveredSeat.categoryName} ({hoveredSeat.price} ₽)
-              {hoveredSeat.isOccupied ? ' 🔴 (Занято)' : ' 🟢 (Нажмите, чтобы выбрать / снять)'}
-            </span>
-          ) : activeSelectedList.length > 0 ? (
-            <span style={{ display: 'inline-flex', alignItems: 'center', background: '#f0fdf4', padding: '6px 14px', borderRadius: '20px', border: '1px solid #bbf7d0', color: '#166534', lineHeight: '1.2' }}>
-              ✓ Выбрано мест: <strong>{activeSelectedList.length} шт.</strong> ({totalSelectedSum} ₽) — нажмите на кресло, чтобы добавить или снять
-            </span>
-          ) : (
-            <span style={{ color: '#64748b', display: 'inline-flex', alignItems: 'center', lineHeight: '1.2' }}>
-              Нажмите на любые свободные места за столиками для выбора (можно выбрать несколько)
-            </span>
-          )}
+          <span style={{ color: '#64748b', fontSize: '12px', fontWeight: '500', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>
+            Нажмите на любые свободные места за столиками для выбора (можно выбрать несколько)
+          </span>
         </div>
 
         {/* Interactive SVG Floorplan */}
-        <div style={{ overflowX: 'auto' }}>
+        <div style={{ overflowX: 'auto', display: 'flex', justifyContent: 'center' }}>
           <svg
-            viewBox={`0 0 ${width} ${height}`}
+            viewBox={svgViewBox}
             style={{
               display: 'block',
-              width: '100%',
-              maxHeight: '520px',
+              width: isVertical ? '100%' : '100%',
+              maxWidth: isVertical ? '500px' : '100%',
+              maxHeight: isVertical ? 'calc(100vh - 220px)' : '520px',
               margin: '0 auto',
               background: '#f8fafc',
               borderRadius: '8px',
               border: '1px solid #cbd5e1'
             }}
           >
+            {/* Style definitions for smooth hover and selection */}
+            <defs>
+              <style>{`
+                .hr-chair {
+                  cursor: pointer;
+                  pointer-events: auto;
+                }
+                .hr-chair circle {
+                  transition: stroke 0.12s ease, opacity 0.12s ease;
+                }
+                .hr-chair:hover circle:not([fill="transparent"]) {
+                  stroke: #0284c7 !important;
+                  stroke-width: 2.2px !important;
+                }
+                .hr-chair.is-selected circle:not([fill="transparent"]) {
+                  fill: #10b981 !important;
+                  stroke: #047857 !important;
+                  stroke-width: 2.2px !important;
+                }
+              `}</style>
+            </defs>
+
+            {/* Wrapper group for vertical rotation if vertical orientation requested */}
+            <g transform={isVertical ? `rotate(-90) translate(-${width}, 0)` : undefined}>
             {/* Background Blueprint / Hull Outline */}
             {hall.bg_image ? (
               <g
@@ -261,40 +327,148 @@ export default function HallRenderer({
                 />
               </g>
             ) : (
-              <g pointerEvents="none">
+              <g pointerEvents="none" className="ship-deck-vector-base">
+                <defs>
+                  <linearGradient id="hrDeckGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#f8fafc" />
+                    <stop offset="50%" stopColor="#f1f5f9" />
+                    <stop offset="100%" stopColor="#e2e8f0" />
+                  </linearGradient>
+                  <linearGradient id="hrHullBorderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#94a3b8" />
+                    <stop offset="50%" stopColor="#64748b" />
+                    <stop offset="100%" stopColor="#475569" />
+                  </linearGradient>
+                  <linearGradient id="hrSceneGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#1e293b" />
+                    <stop offset="100%" stopColor="#334155" />
+                  </linearGradient>
+                  <linearGradient id="hrBarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#0f172a" />
+                    <stop offset="100%" stopColor="#1e293b" />
+                  </linearGradient>
+                  <filter id="hrDeckShadow" x="-5%" y="-5%" width="110%" height="110%">
+                    <feDropShadow dx="0" dy="8" stdDeviation="12" floodColor="#0f172a" floodOpacity="0.06" />
+                  </filter>
+                </defs>
+
+                {/* Outer Hull with Bulwark */}
                 <path
-                  d={`M 60,30 L ${width - 90},30 Q ${width - 10},${height / 2} ${width - 90},${height - 30} L 60,${height - 30} Q 15,${height / 2} 60,30 Z`}
+                  d={`M 55,20 L ${width - 140},20 C ${width - 50},20 ${width - 5},${height * 0.28} ${width - 5},${height / 2} C ${width - 5},${height * 0.72} ${width - 50},${height - 20} ${width - 140},${height - 20} L 55,${height - 20} C 30,${height - 20} 20,${height * 0.75} 20,${height / 2} C 20,${height * 0.25} 30,20 55,20 Z`}
                   fill="#ffffff"
-                  stroke="#94a3b8"
-                  strokeWidth="2"
-                  strokeDasharray="5 3"
+                  stroke="url(#hrHullBorderGrad)"
+                  strokeWidth="3.5"
+                  filter="url(#hrDeckShadow)"
                 />
-                {/* Stage banner */}
-                <rect x="75" y={height / 2 - 55} width="40" height="110" rx="8" fill="#e2e8f0" stroke="#cbd5e1" />
+
+                {/* Inner Deck Walking Surface */}
+                <path
+                  d={`M 65,30 L ${width - 145},30 C ${width - 60},30 ${width - 18},${height * 0.29} ${width - 18},${height / 2} C ${width - 18},${height * 0.71} ${width - 60},${height - 30} ${width - 145},${height - 30} L 65,${height - 30} C 42,${height - 30} 32,${height * 0.73} 32,${height / 2} C 32,${height * 0.27} 42,30 65,30 Z`}
+                  fill="url(#hrDeckGrad)"
+                  stroke="#cbd5e1"
+                  strokeWidth="1"
+                />
+
+                {/* Planking deck lines */}
+                <line x1="160" y1="35" x2="160" y2={height - 35} stroke="#e2e8f0" strokeWidth="1" strokeDasharray="4 4" />
+                <line x1={width - 220} y1="35" x2={width - 220} y2={height - 35} stroke="#e2e8f0" strokeWidth="1" strokeDasharray="4 4" />
+
+                {/* Bow Panoramic Lounge Area (Right side / Bow) */}
+                <path
+                  d={`M ${width - 215},35 C ${width - 130},35 ${width - 24},${height * 0.3} ${width - 24},${height / 2} C ${width - 24},${height * 0.7} ${width - 130},${height - 35} ${width - 215},${height - 35} Z`}
+                  fill="#f0fdf4"
+                  opacity="0.4"
+                  stroke="#86efac"
+                  strokeWidth="1"
+                  strokeDasharray="3 3"
+                />
                 <text
-                  x="95"
+                  x={width - 100}
                   y={height / 2 + 4}
-                  fill="#475569"
-                  fontSize="11"
+                  fill="#15803d"
+                  fontSize="10"
                   fontWeight="bold"
-                  transform={`rotate(-90, 95, ${height / 2})`}
+                  letterSpacing="1"
                   textAnchor="middle"
+                  transform={isVertical ? `rotate(90, ${width - 100}, ${height / 2 + 4})` : undefined}
                 >
-                  СЦЕНА / ПАНОРАМА
+                  НОС / ПАНОРАМА
                 </text>
 
-                {/* Stern bar */}
-                <rect x={width - 75} y={height / 2 - 45} width="25" height="90" rx="6" fill="#e2e8f0" stroke="#cbd5e1" />
+                {/* Professional Concert Stage (Left side / Saloon) */}
+                <g filter="url(#hrDeckShadow)">
+                  <rect 
+                    x="70" 
+                    y={height / 2 - 65} 
+                    width="55" 
+                    height="130" 
+                    rx="10" 
+                    fill="url(#hrSceneGrad)" 
+                    stroke="#475569" 
+                    strokeWidth="1.5" 
+                  />
+                  <rect 
+                    x="74" 
+                    y={height / 2 - 61} 
+                    width="47" 
+                    height="122" 
+                    rx="7" 
+                    fill="none" 
+                    stroke="rgba(255,255,255,0.2)" 
+                    strokeWidth="1" 
+                  />
+                  <text
+                    x="98"
+                    y={height / 2 + 4}
+                    fill="#f8fafc"
+                    fontSize="11"
+                    fontWeight="bold"
+                    letterSpacing="2"
+                    transform={isVertical ? undefined : `rotate(-90, 98, ${height / 2})`}
+                    textAnchor="middle"
+                  >
+                    🎸 СЦЕНА
+                  </text>
+                </g>
+
+                {/* Ship Bar & Promenade */}
+                <g>
+                  <rect 
+                    x="135" 
+                    y={height - 75} 
+                    width="60" 
+                    height="38" 
+                    rx="6" 
+                    fill="url(#hrBarGrad)" 
+                    stroke="#334155" 
+                    strokeWidth="1" 
+                  />
+                  <text
+                    x="165"
+                    y={height - 52}
+                    fill="#f8fafc"
+                    fontSize="9"
+                    fontWeight="bold"
+                    letterSpacing="1"
+                    textAnchor="middle"
+                    transform={isVertical ? `rotate(90, 165, ${height - 52})` : undefined}
+                  >
+                    🍹 БАР
+                  </text>
+                </g>
+
+                {/* Stern Promenade (Leftmost) */}
                 <text
-                  x={width - 62}
+                  x="42"
                   y={height / 2 + 4}
-                  fill="#64748b"
+                  fill="#94a3b8"
                   fontSize="9"
                   fontWeight="bold"
-                  transform={`rotate(90, ${width - 62}, ${height / 2})`}
+                  letterSpacing="1"
+                  transform={isVertical ? undefined : `rotate(-90, 42, ${height / 2})`}
                   textAnchor="middle"
                 >
-                  БАР / ВХОД
+                  КОРМА
                 </text>
               </g>
             )}
@@ -355,22 +529,23 @@ export default function HallRenderer({
                     const cy = 34 + r * cellH + cellH / 2;
 
                     const isOccupied = occupiedSeats.includes(ticketId);
-                    const isSelected = selectedSeat && selectedSeat.id === ticketId;
+                    const isSelected = isSeatSelected(ticketId);
 
-                    let seatFill = cat.color;
+                    let seatFill = (isReportMode && seatColorMap[ticketId]) ? seatColorMap[ticketId] : cat.color;
                     let seatStroke = '#ffffff';
 
-                    if (isOccupied) {
+                    if (isOccupied && (!isReportMode || !seatColorMap[ticketId])) {
                       seatFill = '#cbd5e1';
                       seatStroke = '#94a3b8';
                     } else if (isSelected) {
-                      seatFill = '#16a34a';
-                      seatStroke = '#ffffff';
+                      seatFill = '#10b981';
+                      seatStroke = '#047857';
                     }
 
                     return (
                       <g
                         key={ticketId}
+                        className={`hr-chair ${isSelected ? 'is-selected' : ''}`}
                         transform={`translate(${cx}, ${cy})`}
                         onClick={() =>
                           handleSeatClick(
@@ -379,16 +554,17 @@ export default function HallRenderer({
                           )
                         }
                         onMouseEnter={() =>
-                          setHoveredSeat({
+                          updateStatusBar({
                             tableLabel: zone.label || zone.id,
                             seatNumber: ticketNum,
                             categoryName: cat.name,
                             price: price,
-                            isOccupied: isOccupied
+                            isOccupied: isOccupied,
+                            isSelected: isSelected
                           })
                         }
-                        onMouseLeave={() => setHoveredSeat(null)}
-                        style={{ cursor: isOccupied ? 'not-allowed' : 'pointer' }}
+                        onMouseLeave={() => updateStatusBar(null)}
+                        style={{ cursor: isOccupied ? (isReportMode ? 'pointer' : 'not-allowed') : 'pointer' }}
                       >
                         {/* Invisible hit-area buffer */}
                         <circle cx="0" cy="0" r="12" fill="transparent" />
@@ -400,17 +576,18 @@ export default function HallRenderer({
                           stroke={seatStroke}
                           strokeWidth={isSelected ? '2' : '1'}
                           style={{
-                            transition: 'all 0.15s',
-                            filter: isSelected ? 'drop-shadow(0 0 5px #16a34a)' : 'drop-shadow(0 1px 2px rgba(0,0,0,0.1))'
+                            transition: 'stroke 0.12s, fill 0.12s'
                           }}
                         />
                         <text
                           x="0"
                           y="2.5"
+                          transform={isVertical ? 'rotate(90)' : undefined}
                           fill={isOccupied ? '#64748b' : '#ffffff'}
                           fontSize="6.5"
                           fontWeight="bold"
                           textAnchor="middle"
+                          dominantBaseline="central"
                           pointerEvents="none"
                         >
                           {ticketNum}
@@ -462,52 +639,56 @@ export default function HallRenderer({
                   )}
 
                   {/* Table Label */}
-                  <text x="0" y="-1" fill="#0f172a" fontSize={Math.max(8, 11 * tblScale)} fontWeight="bold" textAnchor="middle" pointerEvents="none">
-                    {table.id}
-                  </text>
-                  <text x="0" y={11 * tblScale} fill="#64748b" fontSize={Math.max(6, 8 * tblScale)} textAnchor="middle" pointerEvents="none">
-                    {table.seats?.length || table.seatsCount} мест
-                  </text>
+                  <g transform={isVertical ? 'rotate(90)' : undefined}>
+                    <text x="0" y={isVertical ? -4 : -1} fill="#0f172a" fontSize={Math.max(8, 11 * tblScale)} fontWeight="bold" textAnchor="middle" pointerEvents="none">
+                      {table.id}
+                    </text>
+                    <text x="0" y={isVertical ? 8 * tblScale : 11 * tblScale} fill="#64748b" fontSize={Math.max(6, 8 * tblScale)} textAnchor="middle" pointerEvents="none">
+                      {table.seats?.length || table.seatsCount} мест
+                    </text>
+                  </g>
 
                   {/* Individual Clickable Seats */}
                   {(table.seats || []).map((seat, seatIdx) => {
                     const pos = positions[seatIdx] || { relX: 0, relY: 0 };
                     const cat = getCategory(seat.categoryId);
                     const isOccupied = occupiedSeats.includes(seat.id);
-                    const isSelected = selectedSeat && selectedSeat.id === seat.id;
+                    const isSelected = isSeatSelected(seat.id);
                     const price = cat.price || 1500;
 
-                    let seatFill = cat.color;
+                    let seatFill = (isReportMode && seatColorMap[seat.id]) ? seatColorMap[seat.id] : cat.color;
                     let seatStroke = '#ffffff';
                     let strokeWidth = '1.5';
 
-                    if (isOccupied) {
+                    if (isOccupied && (!isReportMode || !seatColorMap[seat.id])) {
                       seatFill = '#cbd5e1';
                       seatStroke = '#94a3b8';
                     } else if (isSelected) {
-                      seatFill = '#16a34a';
-                      seatStroke = '#ffffff';
-                      strokeWidth = '2.5';
+                      seatFill = '#10b981';
+                      seatStroke = '#047857';
+                      strokeWidth = '2.2';
                     }
 
-                    const chairRadius = (isSelected ? 12 : 10) * tblScale;
+                    const chairRadius = (isSelected ? 9 : 7.5) * tblScale;
 
                     return (
                       <g
                         key={seat.id}
+                        className={`hr-chair ${isSelected ? 'is-selected' : ''}`}
                         transform={`translate(${pos.relX}, ${pos.relY})`}
                         onClick={() => handleSeatClick(table, seat)}
                         onMouseEnter={() =>
-                          setHoveredSeat({
+                          updateStatusBar({
                             tableLabel: table.label || table.id,
                             seatNumber: seat.seatNumber,
                             categoryName: cat.name,
                             price: price,
-                            isOccupied: isOccupied
+                            isOccupied: isOccupied,
+                            isSelected: isSelected
                           })
                         }
-                        onMouseLeave={() => setHoveredSeat(null)}
-                        style={{ cursor: isOccupied ? 'not-allowed' : 'pointer' }}
+                        onMouseLeave={() => updateStatusBar(null)}
+                        style={{ cursor: isOccupied ? (isReportMode ? 'pointer' : 'not-allowed') : 'pointer' }}
                       >
                         {/* Invisible hit-area buffer to prevent hover flickering */}
                         <circle cx="0" cy="0" r={chairRadius + 4} fill="transparent" />
@@ -520,18 +701,19 @@ export default function HallRenderer({
                           stroke={seatStroke}
                           strokeWidth={strokeWidth}
                           style={{
-                            transition: 'transform 0.15s, r 0.15s',
-                            filter: isSelected ? 'drop-shadow(0 0 6px #16a34a)' : 'drop-shadow(0 1px 2px rgba(0,0,0,0.15))'
+                            transition: 'stroke 0.12s, fill 0.12s'
                           }}
                         />
-                        {/* Seat Number */}
+                        {/* Seat Number (with counter-rotation for readability in vertical mode) */}
                         <text
                           x="0"
                           y={3 * tblScale}
+                          transform={isVertical ? 'rotate(90)' : undefined}
                           fill={isOccupied ? '#64748b' : '#ffffff'}
                           fontSize={Math.max(6, 8 * tblScale)}
                           fontWeight="bold"
                           textAnchor="middle"
+                          dominantBaseline="central"
                           pointerEvents="none"
                         >
                           {seat.seatNumber}
@@ -542,6 +724,7 @@ export default function HallRenderer({
                 </g>
               );
             })}
+            </g>
           </svg>
         </div>
 
@@ -627,7 +810,7 @@ export default function HallRenderer({
       >
         {seats.map((seat) => {
           const isOccupied = occupiedSeats.includes(seat.id);
-          const isSelected = selectedSeat && selectedSeat.id === seat.id;
+          const isSelected = isSeatSelected(seat.id);
           const isVip = seat.type === 'vip';
 
           let bgColor = '#eff6ff';

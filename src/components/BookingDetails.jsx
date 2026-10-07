@@ -1,9 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Anchor, CreditCard, ChevronLeft, CheckCircle, Percent, Trash2, X, Ticket } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Calendar, Clock, Anchor, CreditCard, ChevronLeft, CheckCircle, Percent, Trash2, X, Ticket, Ship } from 'lucide-react';
 import { createBooking, verifyPromoCode, getBookings, getHallById, getHalls } from '../db';
+import { SHIP_BLUEPRINTS, PRESET_SHIP_DECKS } from '../data/ship_blueprints';
 import HallRenderer from './HallRenderer';
+import RockHitNevaVesselScheme from './RockHitNevaVesselScheme';
 
-export default function BookingDetails({ event, onBack }) {
+export default function BookingDetails({ event: passedEvent, onBack }) {
+  // Resilient fallback event in case direct URL #booking was visited
+  const event = passedEvent || (() => {
+    try {
+      const stored = localStorage.getItem('selected_booking_event');
+      if (stored) return JSON.parse(stored);
+    } catch (e) {}
+    return {
+      id: 1,
+      name: 'Рок-хиты с симфоническим оркестром на теплоходе «Рок Хит Нева»',
+      title: 'Рок-хиты с симфоническим оркестром на теплоходе «Рок Хит Нева»',
+      date: '2026-05-01',
+      time: '23:55:00',
+      price_standard: 1500,
+      price_vip: 2500,
+      location: 'Причал Набережная Макарова, 34'
+    };
+  })();
+
+  const safeOnBack = typeof onBack === 'function' ? onBack : () => {
+    window.location.hash = '#afisha';
+  };
+
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
@@ -17,6 +41,15 @@ export default function BookingDetails({ event, onBack }) {
   const [bookedSeatsSummary, setBookedSeatsSummary] = useState([]);
   const [occupiedSeats, setOccupiedSeats] = useState([]);
   const [hall, setHall] = useState(null);
+  const [activeBlueprintId, setActiveBlueprintId] = useState('bp_rock_hit_neva');
+
+  const rockHitSeatColorMap = useMemo(() => {
+    return occupiedSeats.reduce((acc, s) => {
+      const num = String(s).replace(/^seat-|^S-|^T\d+-S/, '');
+      acc[num] = '#94a3b8'; // Grey out occupied seats
+      return acc;
+    }, {});
+  }, [occupiedSeats]);
 
   // Check for referral code in URL on load (e.g. ?promo=ALEXROCK)
   useEffect(() => {
@@ -31,9 +64,26 @@ export default function BookingDetails({ event, onBack }) {
   // Fetch hall and occupied seats for this event
   useEffect(() => {
     async function loadEventData() {
-      // 1. Load Hall
+      // 1. Detect ship / blueprint
+      const evTitle = ((event && (event.name || event.title)) || '').toLowerCase();
+      const evDesc = ((event && event.description) || '').toLowerCase();
+      let initBp = 'bp_rock_hit_neva';
+      if (evTitle.includes('201') || evDesc.includes('201')) {
+        initBp = 'bp_m201';
+      } else if (evTitle.includes('солярис') || evDesc.includes('солярис') || evTitle.includes('solaris')) {
+        initBp = 'bp_solaris';
+      } else if (evTitle.includes('125') || evDesc.includes('125')) {
+        initBp = 'bp_m125_classic';
+      } else if (evTitle.includes('177') || evDesc.includes('177')) {
+        initBp = 'bp_m177';
+      }
+      setActiveBlueprintId(initBp);
+
+      // 2. Load Hall
       let h = null;
-      if (event.hall_id) {
+      if (initBp !== 'bp_rock_hit_neva' && PRESET_SHIP_DECKS[initBp]) {
+        h = PRESET_SHIP_DECKS[initBp];
+      } else if (event && event.hall_id) {
         h = await getHallById(event.hall_id);
       }
       if (!h) {
@@ -42,15 +92,27 @@ export default function BookingDetails({ event, onBack }) {
       }
       setHall(h);
 
-      // 2. Load Bookings
-      const allBookings = await getBookings();
-      const filtered = allBookings
-        .filter((b) => b.event_id === event.id && b.status !== 'cancelled')
-        .map((b) => b.seat_number);
-      setOccupiedSeats(filtered);
+      // 3. Load Bookings
+      if (event && event.id) {
+        const allBookings = await getBookings();
+        const filtered = allBookings
+          .filter((b) => b.event_id === event.id && b.status !== 'cancelled')
+          .map((b) => b.seat_number);
+        setOccupiedSeats(filtered);
+      }
     }
     loadEventData();
-  }, [event.id, event.hall_id]);
+  }, [event?.id, event?.hall_id, event?.name, event?.title]);
+
+  const handleSwitchBlueprint = (bpId) => {
+    setActiveBlueprintId(bpId);
+    if (bpId !== 'bp_rock_hit_neva') {
+      const targetDeck = PRESET_SHIP_DECKS[bpId] || PRESET_SHIP_DECKS[bpId === 'bp_m125_styled' ? 'bp_m125_stylized' : bpId];
+      if (targetDeck) {
+        setHall(targetDeck);
+      }
+    }
+  };
 
   const handleApplyPromo = async (codeToVerify) => {
     const code = codeToVerify || promoCode;
@@ -168,14 +230,14 @@ export default function BookingDetails({ event, onBack }) {
           </div>
         </div>
 
-        <button className="btn btn-primary" onClick={onBack}>Вернуться к афише</button>
+        <button className="btn btn-primary" onClick={safeOnBack}>Вернуться к афише</button>
       </div>
     );
   }
 
   return (
     <div>
-      <button className="btn btn-secondary" onClick={onBack} style={{ marginBottom: '20px' }}>
+      <button className="btn btn-secondary" onClick={safeOnBack} style={{ marginBottom: '20px' }}>
         <ChevronLeft size={16} /> Назад к афише
       </button>
 
@@ -209,14 +271,77 @@ export default function BookingDetails({ event, onBack }) {
             Кликните по свободным креслам за столиками или в зоне танцпола. Вы можете выбрать сразу несколько мест.
           </p>
 
-          <HallRenderer
-            hall={hall}
-            event={event}
-            selectedSeats={selectedSeats}
-            setSelectedSeats={setSelectedSeats}
-            onToggleSeat={handleToggleSeat}
-            occupiedSeats={occupiedSeats}
-          />
+          {/* Ship Blueprint Switcher Bar */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '16px', background: '#f8fafc', padding: '8px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#475569', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Ship size={14} color="#0284c7" /> Схема судна:
+            </span>
+            <select
+              value={activeBlueprintId}
+              onChange={(e) => handleSwitchBlueprint(e.target.value)}
+              style={{
+                fontSize: '12px',
+                padding: '4px 8px',
+                borderRadius: '6px',
+                border: '1px solid #cbd5e1',
+                background: '#ffffff',
+                fontWeight: '600',
+                color: '#0f172a',
+                cursor: 'pointer'
+              }}
+            >
+              <option value="bp_rock_hit_neva">🚢 Рок Хит Нева (2 палубы — 70 мест)</option>
+              <option value="bp_m177">🚢 Москва-177 (Флагман)</option>
+              <option value="bp_m125_classic">🚢 Москва-125 (Инженерная)</option>
+              <option value="bp_m125_styled">🚢 Москва-125 (Стилизованная)</option>
+              <option value="bp_m201">🚢 Москва-201 (VIP диваны)</option>
+              <option value="bp_solaris">🚢 Солярис (Премиум-класс)</option>
+              <option value="bp_m177_dance">🚢 Москва-177 (Танцевальная)</option>
+            </select>
+          </div>
+
+          {activeBlueprintId === 'bp_rock_hit_neva' ? (
+            <div style={{ width: '100%', maxWidth: '440px', margin: '0 auto', overflow: 'visible' }}>
+              <RockHitNevaVesselScheme
+                readOnly={false}
+                selectedSeats={selectedSeats}
+                seatColorMap={rockHitSeatColorMap}
+                onSeatClick={(seatNum) => {
+                  const seatId = `seat-${seatNum}`;
+                  const isOcc = occupiedSeats.includes(seatId) || occupiedSeats.includes(String(seatNum)) || occupiedSeats.includes(`S-${seatNum}`);
+                  if (isOcc) {
+                    alert(`Место №${seatNum} уже занято.`);
+                    return;
+                  }
+                  const isVip = seatNum <= 9 || seatNum >= 63;
+                  const price = isVip ? (event.price_vip || 2500) : (event.price_standard || 1500);
+                  const deckLabel = isVip 
+                    ? (seatNum <= 9 ? 'VIP Носовая панорама' : 'VIP Кормовая панорама') 
+                    : (seatNum <= 36 ? 'Нижняя палуба (Салон)' : 'Верхняя палуба');
+                  const seatObj = {
+                    id: seatId,
+                    seatNumber: seatNum,
+                    tableId: isVip ? 'VIP' : 'Салон',
+                    tableLabel: deckLabel,
+                    type: isVip ? 'vip' : 'standard',
+                    categoryId: isVip ? 'vip_window' : 'standard',
+                    categoryName: isVip ? 'VIP Панорама' : 'Стандартный стол',
+                    price: price
+                  };
+                  handleToggleSeat(seatObj);
+                }}
+              />
+            </div>
+          ) : (
+            <HallRenderer
+              hall={hall}
+              event={event}
+              selectedSeats={selectedSeats}
+              setSelectedSeats={setSelectedSeats}
+              onToggleSeat={handleToggleSeat}
+              occupiedSeats={occupiedSeats}
+            />
+          )}
         </div>
 
         {/* Right Column: Checkout Info & Cart */}
