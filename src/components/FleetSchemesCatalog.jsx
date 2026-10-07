@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Ship, Eye, CheckCircle2, Layers, Compass, 
-  MapPin, Users, Info, X, ExternalLink, Ticket, ArrowRight, Sparkles
+  MapPin, Users, Info, ExternalLink, Ticket, ArrowRight, Sparkles
 } from 'lucide-react';
 import RockHitNevaVesselScheme from './RockHitNevaVesselScheme';
 
@@ -29,10 +29,6 @@ export const ASTRA_SCHEMES_MAP = {
 };
 
 export default function FleetSchemesCatalog({ onSelectShipForBooking }) {
-  const [previewModalOpen, setPreviewModalOpen] = useState(false);
-  const [previewShip, setPreviewShip] = useState(null);
-  const [selectedSeat, setSelectedSeat] = useState(null);
-
   // All ships in fleet with accurate vector schemes
   const ships = [
     {
@@ -41,7 +37,7 @@ export default function FleetSchemesCatalog({ onSelectShipForBooking }) {
       model: 'Флагманский музыкальный лайнер',
       capacity: 115,
       pier: 'Причал Набережная Макарова, 34',
-      type: 'Двухпалубный (Нижний ресторанный салон + Верхняя панорамная палуба)',
+      type: 'Двухпалубный (Нижний ресторанный салон + Верхняя открытая палуба)',
       badge: 'Астра-Марин Вектор',
       badgeColor: '#1d4ed8',
       badgeBg: '#eff6ff',
@@ -59,20 +55,20 @@ export default function FleetSchemesCatalog({ onSelectShipForBooking }) {
       badgeColor: '#1d4ed8',
       badgeBg: '#eff6ff',
       isVectorAstra: true,
-      description: 'Президентский мостик, кают-компания Президентов, Невский бар, рок-сцена с барабанами и танцпол. 96 посадочных мест.'
+      description: 'Президентский мостик, VIP-ложи 1A–3B, Невский бар, танцпол перед рок-сценой и верхний концертный партер. 96 посадочных мест.'
     },
     {
       id: 'bp_m125_classic',
       name: 'Теплоход «Москва-125» (Живой звук)',
-      model: 'Тип Москва (Классический салон)',
+      model: 'Тип Москва (Классическая компоновка)',
       capacity: 100,
-      pier: 'Причал Спуск со львами',
-      type: 'Двухпалубный салон',
+      pier: 'Набережная Фонтанки, 34',
+      type: 'Двухпалубный теплоход-ресторан',
       badge: 'Астра-Марин Вектор',
       badgeColor: '#1d4ed8',
       badgeBg: '#eff6ff',
       isVectorAstra: true,
-      description: 'Носовая VIP-зона, сцена, теплый закрытый верхний салон, DJ-пульт и мангал. 100 посадочных мест.'
+      description: 'Классическая европейская банкетная рассадка со столиками на 4 персоны, сценой для живого звука и уютной верхней палубой. 100 посадочных мест.'
     },
     {
       id: 'bp_m201',
@@ -102,394 +98,248 @@ export default function FleetSchemesCatalog({ onSelectShipForBooking }) {
     }
   ];
 
-  const handleOpenPreview = (ship) => {
-    setPreviewShip(ship);
-    setSelectedSeat(null);
-    setPreviewModalOpen(true);
-  };
+  // Selected ship for direct display on the first screen (default is Rock Hit Neva)
+  const [selectedShipId, setSelectedShipId] = useState('bp_rock_hit_neva');
+  const [selectedSeat, setSelectedSeat] = useState(null);
 
-  const handleClosePreview = () => {
-    setPreviewModalOpen(false);
-    setPreviewShip(null);
-    setSelectedSeat(null);
-  };
+  const currentShip = ships.find((s) => s.id === selectedShipId) || ships[0];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      {/* Header Banner */}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* 1. Header & Ship Switcher Navigation Bar (Single place to select ship) */}
       <div 
         style={{ 
-          background: 'linear-gradient(135deg, #1e3a8a 0%, #0369a1 100%)', 
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%)', 
           color: '#ffffff', 
           borderRadius: '16px', 
-          padding: '24px 28px',
-          boxShadow: '0 10px 25px -5px rgba(3, 105, 161, 0.3)'
+          padding: '20px 24px',
+          boxShadow: '0 8px 24px -4px rgba(15, 23, 42, 0.25)'
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-              <Ship size={26} color="#93c5fd" />
-              <h2 style={{ margin: 0, fontSize: '24px', fontWeight: '800', letterSpacing: '-0.5px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px', marginBottom: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Ship size={24} color="#60a5fa" />
+            <div>
+              <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '800', letterSpacing: '-0.3px', color: '#ffffff' }}>
                 Флот и Схемы судов компании
               </h2>
+              <p style={{ margin: '2px 0 0', fontSize: '13px', color: '#93c5fd' }}>
+                Аутентичные векторные схемы рассадки в фирменном стиле <strong>Астра-Марин</strong>
+              </p>
             </div>
-            <p style={{ margin: 0, fontSize: '14px', color: '#e0f2fe', maxWidth: '750px', lineHeight: '1.5' }}>
-              Каталог флота с аутентичными векторными схемами рассадки в фирменном стиле <strong>Астра-Марин</strong>.
-              Для каждого судна доступна интерактивная векторная схема с кликабельными местами и разделением по палубам и зонам.
-            </p>
           </div>
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-            {ships.map((s) => (
-              <button
-                key={s.id}
-                onClick={() => handleOpenPreview(s)}
-                style={{
-                  background: '#ffffff',
-                  color: '#1e3a8a',
-                  border: 'none',
-                  padding: '9px 15px',
-                  borderRadius: '10px',
-                  fontWeight: '700',
-                  fontSize: '12px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
-                }}
-              >
-                <Eye size={14} color="#1d4ed8" /> {s.name.replace('Теплоход ', '').replace('Премиум-лайнер ', '').replace('Концертный флагман ', '')}
-              </button>
-            ))}
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button
+              onClick={() => { window.location.hash = '#booking'; }}
+              className="btn btn-primary"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '9px 18px',
+                fontSize: '13px',
+                fontWeight: '700',
+                background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                boxShadow: '0 4px 12px rgba(37, 99, 235, 0.35)'
+              }}
+            >
+              <Ticket size={15} />
+              <span>Купить билет на рейс</span>
+              <ArrowRight size={14} />
+            </button>
           </div>
         </div>
-      </div>
 
-      {/* Grid of Ships */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '20px' }}>
-        {ships.map((ship) => (
-          <div
-            key={ship.id}
-            style={{
-              background: '#ffffff',
-              borderRadius: '16px',
-              border: ship.id === 'bp_rock_hit_neva' ? '2px solid #3b82f6' : '1px solid #e2e8f0',
-              padding: '20px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)',
-              transition: 'transform 0.15s ease, box-shadow 0.15s ease'
-            }}
-          >
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                <span
-                  style={{
-                    background: ship.badgeBg,
-                    color: ship.badgeColor,
-                    padding: '4px 10px',
-                    borderRadius: '20px',
-                    fontSize: '11px',
-                    fontWeight: '700',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px'
-                  }}
-                >
-                  <Sparkles size={12} /> {ship.badge}
-                </span>
-
-                <span
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    fontSize: '13px',
-                    fontWeight: '700',
-                    color: '#0f172a',
-                    background: '#f8fafc',
-                    padding: '4px 10px',
-                    borderRadius: '20px',
-                    border: '1px solid #e2e8f0'
-                  }}
-                >
-                  <Users size={14} color="#64748b" /> {ship.capacity} мест
-                </span>
-              </div>
-
-              <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', fontWeight: '800', color: '#0f172a' }}>
-                {ship.name}
-              </h3>
-              <div style={{ fontSize: '12px', color: '#64748b', fontWeight: '600', marginBottom: '12px' }}>
-                {ship.model}
-              </div>
-
-              <p style={{ fontSize: '13px', color: '#334155', lineHeight: '1.5', margin: '0 0 16px 0' }}>
-                {ship.description}
-              </p>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '12px', color: '#64748b', marginBottom: '16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <MapPin size={14} color="#0284c7" />
-                  <span><strong>Базовый причал:</strong> {ship.pier}</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Layers size={14} color="#0284c7" />
-                  <span><strong>Конфигурация:</strong> {ship.type}</span>
-                </div>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', gap: '8px', paddingTop: '12px', borderTop: '1px solid #f1f5f9' }}>
+        {/* Fleet Switcher Pills (Top Bar) */}
+        <div 
+          style={{ 
+            display: 'flex', 
+            gap: '8px', 
+            overflowX: 'auto', 
+            paddingBottom: '4px',
+            scrollbarWidth: 'thin'
+          }}
+        >
+          {ships.map((ship) => {
+            const isActive = ship.id === selectedShipId;
+            return (
               <button
-                onClick={() => handleOpenPreview(ship)}
+                key={ship.id}
+                onClick={() => {
+                  setSelectedShipId(ship.id);
+                  setSelectedSeat(null);
+                }}
                 style={{
-                  flex: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px',
-                  background: ship.id === 'bp_rock_hit_neva' ? '#1d4ed8' : '#eff6ff',
-                  color: ship.id === 'bp_rock_hit_neva' ? '#ffffff' : '#1d4ed8',
-                  border: '1px solid ' + (ship.id === 'bp_rock_hit_neva' ? '#1d4ed8' : '#bfdbfe'),
-                  padding: '10px 14px',
-                  borderRadius: '10px',
-                  fontWeight: '700',
+                  padding: '9px 16px',
+                  borderRadius: '12px',
+                  border: isActive ? '2px solid #60a5fa' : '1px solid rgba(255,255,255,0.15)',
+                  background: isActive ? '#ffffff' : 'rgba(255,255,255,0.08)',
+                  color: isActive ? '#1e3a8a' : '#f8fafc',
+                  fontWeight: isActive ? '800' : '600',
                   fontSize: '13px',
                   cursor: 'pointer',
-                  transition: 'background 0.15s'
-                }}
-              >
-                <Eye size={15} /> Предпросмотр схемы
-              </button>
-              
-              <button
-                onClick={() => {
-                  window.location.hash = '#booking';
-                }}
-                title="Перейти к покупке билетов"
-                style={{
-                  background: '#f8fafc',
-                  border: '1px solid #cbd5e1',
-                  color: '#475569',
-                  padding: '10px 12px',
-                  borderRadius: '10px',
-                  cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  gap: '8px',
+                  whiteSpace: 'nowrap',
+                  boxShadow: isActive ? '0 4px 14px rgba(0,0,0,0.2)' : 'none',
+                  transition: 'all 0.15s ease'
                 }}
               >
-                <Ticket size={16} />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Modal: Live Customer View Scheme Preview for Clients / Stakeholders */}
-      {previewModalOpen && previewShip && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(15, 23, 42, 0.75)',
-            backdropFilter: 'blur(4px)',
-            zIndex: 9999,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px'
-          }}
-          onClick={handleClosePreview}
-        >
-          <div
-            style={{
-              background: '#ffffff',
-              borderRadius: '20px',
-              maxWidth: '920px',
-              width: '100%',
-              maxHeight: '94vh',
-              display: 'flex',
-              flexDirection: 'column',
-              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.3)',
-              overflow: 'hidden'
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Modal Header */}
-            <div
-              style={{
-                padding: '16px 24px',
-                borderBottom: '1px solid #e2e8f0',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                background: '#f8fafc'
-              }}
-            >
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Ship size={20} color="#1d4ed8" />
-                  <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '800', color: '#0f172a' }}>
-                    {previewShip.name}
-                  </h3>
-                  <span style={{ fontSize: '11px', background: '#dbeafe', color: '#1e40af', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold' }}>
-                    Векторная схема Астра-Марин
-                  </span>
-                </div>
-                <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>
-                  Аутентичная векторная схема рассадки судна • Вместимость: {previewShip.capacity} мест
-                </div>
-              </div>
-
-              <button
-                onClick={handleClosePreview}
-                style={{
-                  background: '#f1f5f9',
-                  border: 'none',
-                  borderRadius: '50%',
-                  width: '34px',
-                  height: '34px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  color: '#475569'
-                }}
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            {/* Ship Quick-Switch Tabs inside Modal */}
-            <div 
-              style={{ 
-                display: 'flex', 
-                gap: '8px', 
-                padding: '10px 20px', 
-                background: '#f1f5f9', 
-                borderBottom: '1px solid #e2e8f0', 
-                overflowX: 'auto',
-                alignItems: 'center'
-              }}
-            >
-              <span style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', whiteSpace: 'nowrap', marginRight: '4px' }}>
-                Флот:
-              </span>
-              {ships.map((s) => {
-                const isActive = previewShip.id === s.id;
-                return (
-                  <button
-                    key={s.id}
-                    onClick={() => {
-                      setPreviewShip(s);
-                      setSelectedSeat(null);
-                    }}
-                    style={{
-                      padding: '6px 14px',
-                      borderRadius: '20px',
-                      border: isActive ? '2px solid #2563eb' : '1px solid #cbd5e1',
-                      background: isActive ? '#eff6ff' : '#ffffff',
-                      color: isActive ? '#1d4ed8' : '#334155',
-                      fontWeight: isActive ? '700' : '600',
-                      fontSize: '12px',
-                      cursor: 'pointer',
-                      whiteSpace: 'nowrap',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '5px'
-                    }}
-                  >
-                    <span>{s.name.replace('Теплоход ', '').replace('Премиум-лайнер ', '').replace('Концертный флагман ', '')}</span>
-                    <span style={{ fontSize: '10px', opacity: 0.75 }}>({s.capacity})</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Modal Body: Vessel Scheme */}
-            <div style={{ padding: '20px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div style={{ marginBottom: '16px', display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#475569' }}>
-                  <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#93c5fd', border: '1px solid #60a5fa' }}></span>
-                  <span>Свободное место</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#475569' }}>
-                  <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#10b981', border: '1px solid #059669' }}></span>
-                  <span>Выбранное место</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#475569' }}>
-                  <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#f1f5f9', border: '1px solid #cbd5e1' }}></span>
-                  <span>Столики / Интерьер</span>
-                </div>
-              </div>
-
-              <div style={{ width: '100%', maxWidth: '460px', background: '#f8fafc', padding: '16px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
-                <RockHitNevaVesselScheme
-                  key={previewShip.id}
-                  schemeSvgUrl={ASTRA_SCHEMES_MAP[previewShip.id]?.svg || '/ships_schemes/rock_hit_neva_scheme.svg'}
-                  selectedSeat={selectedSeat}
-                  onSeatClick={(seatNum) => {
-                    setSelectedSeat(selectedSeat === seatNum ? null : seatNum);
-                  }}
-                />
-              </div>
-
-              {selectedSeat && (
-                <div 
+                <Ship size={15} color={isActive ? '#1d4ed8' : '#93c5fd'} />
+                <span>{ship.name.replace('Теплоход ', '').replace('Премиум-лайнер ', '').replace('Концертный флагман ', '')}</span>
+                <span 
                   style={{ 
-                    marginTop: '16px', 
-                    padding: '12px 20px', 
-                    background: '#ecfdf5', 
-                    border: '1px solid #a7f3d0', 
-                    borderRadius: '12px',
-                    color: '#065f46',
-                    fontSize: '13px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px'
+                    fontSize: '11px', 
+                    padding: '2px 7px',
+                    borderRadius: '10px',
+                    background: isActive ? '#eff6ff' : 'rgba(255,255,255,0.12)',
+                    color: isActive ? '#1d4ed8' : '#cbd5e1',
+                    fontWeight: '700'
                   }}
                 >
-                  <CheckCircle2 size={16} color="#059669" />
-                  <span>
-                    Выбрано место <strong>№{typeof selectedSeat === 'object' ? selectedSeat.number || selectedSeat.id : selectedSeat}</strong>. Интерактивная схема работает штатно!
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Modal Footer */}
-            <div
-              style={{
-                padding: '14px 24px',
-                borderTop: '1px solid #e2e8f0',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                background: '#f8fafc'
-              }}
-            >
-              <div style={{ fontSize: '12px', color: '#64748b' }}>
-                📍 {previewShip.pier} • Вместимость: {previewShip.capacity} чел.
-              </div>
-              <button
-                onClick={() => {
-                  handleClosePreview();
-                  window.location.hash = '#booking';
-                }}
-                className="btn btn-primary"
-                style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', fontSize: '13px' }}
-              >
-                <span>Перейти к покупке билетов</span>
-                <ArrowRight size={14} />
+                  {ship.capacity} мест
+                </span>
               </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 2. Direct Interactive Scheme Viewer on First Screen (No modal/popup needed) */}
+      <div 
+        style={{ 
+          background: '#ffffff', 
+          borderRadius: '16px', 
+          border: '1px solid #e2e8f0', 
+          boxShadow: '0 4px 16px -2px rgba(0,0,0,0.06)',
+          overflow: 'hidden'
+        }}
+      >
+        {/* Info Header of Selected Ship */}
+        <div 
+          style={{ 
+            padding: '16px 24px', 
+            borderBottom: '1px solid #f1f5f9', 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '12px',
+            background: '#fafafa'
+          }}
+        >
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '800', color: '#0f172a' }}>
+                {currentShip.name}
+              </h3>
+              <span 
+                style={{
+                  background: '#eff6ff',
+                  color: '#1d4ed8',
+                  padding: '3px 9px',
+                  borderRadius: '12px',
+                  fontSize: '11px',
+                  fontWeight: '700'
+                }}
+              >
+                {currentShip.badge} • {currentShip.capacity} мест
+              </span>
+            </div>
+            <div style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>
+              📍 {currentShip.pier} &nbsp;|&nbsp; 🛳️ {currentShip.model} &nbsp;|&nbsp; {currentShip.type}
+            </div>
+          </div>
+
+          {/* Legend */}
+          <div style={{ display: 'flex', gap: '14px', alignItems: 'center', fontSize: '12px', color: '#475569' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#93c5fd', border: '1px solid #60a5fa' }}></span>
+              <span>Свободно</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#10b981', border: '1px solid #059669' }}></span>
+              <span>Выбрано</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#f1f5f9', border: '1px solid #cbd5e1' }}></span>
+              <span>Столики</span>
             </div>
           </div>
         </div>
-      )}
+
+        {/* Main Scheme Display Canvas */}
+        <div 
+          style={{ 
+            padding: '24px 16px', 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center',
+            background: '#f8fafc',
+            minHeight: '650px'
+          }}
+        >
+          <div 
+            style={{ 
+              width: '100%', 
+              maxWidth: '520px', 
+              background: '#ffffff', 
+              padding: '20px', 
+              borderRadius: '16px', 
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+            }}
+          >
+            <RockHitNevaVesselScheme
+              key={currentShip.id}
+              schemeSvgUrl={ASTRA_SCHEMES_MAP[currentShip.id]?.svg || '/ships_schemes/rock_hit_neva_scheme.svg'}
+              selectedSeat={selectedSeat}
+              onSeatClick={(seatNum) => {
+                setSelectedSeat(selectedSeat === seatNum ? null : seatNum);
+              }}
+            />
+          </div>
+
+          {/* Seat selection notification */}
+          {selectedSeat && (
+            <div 
+              style={{ 
+                marginTop: '16px', 
+                padding: '12px 20px', 
+                background: '#ecfdf5', 
+                border: '1px solid #a7f3d0', 
+                borderRadius: '12px',
+                color: '#065f46',
+                fontSize: '13px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px'
+              }}
+            >
+              <CheckCircle2 size={16} color="#059669" />
+              <span>
+                Выбрано место <strong>№{typeof selectedSeat === 'object' ? selectedSeat.number || selectedSeat.id : selectedSeat}</strong> на теплоходе {currentShip.name}. Векторная схема Астра-Марин полностью интерактивна!
+              </span>
+            </div>
+          )}
+
+          {/* Description footer */}
+          <div 
+            style={{ 
+              marginTop: '18px', 
+              maxWidth: '720px', 
+              textAlign: 'center', 
+              fontSize: '13px', 
+              color: '#64748b', 
+              lineHeight: '1.5' 
+            }}
+          >
+            {currentShip.description}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

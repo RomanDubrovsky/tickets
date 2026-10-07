@@ -519,7 +519,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
         setCurrentSection('sites');
       } else if (h === '#occupancy') {
         setCurrentSection('occupancy');
-      } else if (h === '#marketing') {
+      } else if (h === '#marketing' || h === '#geo' || h === '#geoscout' || h === '#target' || h === '#vk') {
         setCurrentSection('marketing');
       }
     };
@@ -1231,9 +1231,9 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
   const currentSelectedVenue = venues.find(v => v.id === Number(scheduleForm.venue_id)) || venues[0];
 
   return (
-    <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+    <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
       {/* LEFT SIDEBAR: 4 Main Sections */}
-      <div className="glass" style={{ flex: '1 1 270px', padding: '20px' }}>
+      <div className="glass" style={{ width: '280px', flexShrink: 0, padding: '20px' }}>
         <h4 style={{ margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px', color: '#0f172a', fontSize: '16px' }}>
           <Music size={20} color="var(--color-primary)" />
           Репертуар & Расписание
@@ -1454,7 +1454,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
           </span>
         </div>
 
-        {/* Section 8: AI-Таргетинг & VK Маркетинг */}
+        {/* Section 8: Маркетинг & AI-Продвижение (GEO + VK Таргетинг + Аудитории + Roadmap) */}
         <div
           onClick={() => switchSection('marketing')}
           style={{
@@ -1462,7 +1462,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
             padding: '14px 16px',
             borderRadius: '10px',
             background: currentSection === 'marketing' ? 'linear-gradient(135deg, #eff6ff 0%, #e0f2fe 100%)' : '#f8fafc',
-            border: currentSection === 'marketing' ? '1px solid #0284c7' : '1px solid #e2e8f0',
+            border: currentSection === 'marketing' ? '1.5px solid #0284c7' : '1px solid #e2e8f0',
             cursor: 'pointer',
             transition: 'all 0.15s',
             display: 'flex',
@@ -1473,18 +1473,18 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <Target size={18} color={currentSection === 'marketing' ? '#0284c7' : '#64748b'} />
             <span style={{ fontWeight: currentSection === 'marketing' ? 'bold' : '600', color: currentSection === 'marketing' ? '#0369a1' : '#334155', fontSize: '14px' }}>
-              🎯 AI-Таргетинг & VK
+              🎯 Маркетинг & AI
             </span>
           </div>
           <span style={{
             fontSize: '11px',
-            background: '#0284c7',
+            background: 'linear-gradient(135deg, #0284c7 0%, #7c3aed 100%)',
             color: '#ffffff',
-            padding: '2px 6px',
+            padding: '2px 8px',
             borderRadius: '10px',
             fontWeight: 'bold'
           }}>
-            VK API
+            GEO + VK
           </span>
         </div>
 
@@ -1496,7 +1496,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
       </div>
 
       {/* RIGHT WORKSPACE */}
-      <div className="glass" style={{ flex: '1 1 700px', padding: '24px' }}>
+      <div className="glass" style={{ flex: 1, minWidth: 0, padding: '24px' }}>
         {notification && (
           <div style={{
             background: '#ecfdf5',
