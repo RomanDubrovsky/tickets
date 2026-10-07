@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { 
   Music, Calendar, Anchor, Plus, Edit3, Trash2, X, 
   Check, Sparkles, Filter, Clock, MapPin, Tag, Layers,
-  Users, Mic, Radio, CheckSquare, Square, ChevronRight, Layout, Copy, List, Grid, Globe
+  Users, Mic, Radio, CheckSquare, Square, ChevronRight, Layout, Copy, List, Grid, Globe, Target, Ship
 } from 'lucide-react';
 import DeckBuilder from './DeckBuilder';
+import FleetSchemesCatalog from './FleetSchemesCatalog';
 import Afisha from './Afisha';
 import SitesAdmin, { DEFAULT_DOMAINS } from './SitesAdmin';
 import ShipOccupancyMonitor from './ShipOccupancyMonitor';
+import VkMarketingAgent from './VkMarketingAgent';
 import { SHIP_BLUEPRINTS, PRESET_SHIP_DECKS } from '../data/ship_blueprints';
 
 const INITIAL_MUSICIANS = [
@@ -476,8 +478,75 @@ export const getTicketlandStatus = (iframeCode) => {
 };
 
 export default function ProgramsManager({ defaultSection = 'events', onSelectEvent, navigateTo }) {
-  const [currentSection, setCurrentSection] = useState(defaultSection); // 'events', 'sessions', 'musicians', 'venues', 'afisha'
+  const [currentSection, setCurrentSection] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const h = window.location.hash.split('?')[0];
+      if (h === '#programs' || h === '#events') return 'events';
+      if (h === '#sessions') return 'sessions';
+      if (h === '#musicians') return 'musicians';
+      if (h === '#venues' || h === '#fleet') return 'venues';
+      if (h === '#afisha') return 'afisha';
+      if (h === '#sites') return 'sites';
+      if (h === '#occupancy') return 'occupancy';
+      if (h === '#marketing') return 'marketing';
+    }
+    return defaultSection || 'events';
+  });
   const [notification, setNotification] = useState('');
+
+  // Sync section when defaultSection changes from parent
+  useEffect(() => {
+    if (defaultSection) {
+      setCurrentSection(defaultSection);
+    }
+  }, [defaultSection]);
+
+  // Sync section when hash changes in URL bar
+  useEffect(() => {
+    const handleHash = () => {
+      const h = window.location.hash.split('?')[0];
+      if (h === '#programs' || h === '#events') {
+        setCurrentSection('events');
+      } else if (h === '#sessions') {
+        setCurrentSection('sessions');
+      } else if (h === '#musicians') {
+        setCurrentSection('musicians');
+      } else if (h === '#venues' || h === '#fleet') {
+        setCurrentSection('venues');
+      } else if (h === '#afisha') {
+        setCurrentSection('afisha');
+      } else if (h === '#sites') {
+        setCurrentSection('sites');
+      } else if (h === '#occupancy') {
+        setCurrentSection('occupancy');
+      } else if (h === '#marketing') {
+        setCurrentSection('marketing');
+      }
+    };
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
+
+  const switchSection = (section) => {
+    setCurrentSection(section);
+    if (section === 'venues') {
+      setSelectedVenueForDeck(null);
+    }
+    const hashMap = {
+      events: '#programs',
+      sessions: '#sessions',
+      musicians: '#musicians',
+      venues: '#venues',
+      afisha: '#afisha',
+      sites: '#sites',
+      occupancy: '#occupancy',
+      marketing: '#marketing'
+    };
+    const targetHash = hashMap[section] || `#${section}`;
+    if (window.location.hash !== targetHash) {
+      window.location.hash = targetHash;
+    }
+  };
 
   // LocalStorage Persistence
   const [events, setEvents] = useState(() => {
@@ -486,12 +555,12 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
   });
 
   const [venues, setVenues] = useState(() => {
-    const saved = localStorage.getItem('pm_venues_v6');
+    const saved = localStorage.getItem('pm_venues_v8');
     return saved ? JSON.parse(saved) : INITIAL_VENUES;
   });
 
   const [sessions, setSessions] = useState(() => {
-    const saved = localStorage.getItem('pm_sessions_v6');
+    const saved = localStorage.getItem('pm_sessions_v7');
     return saved ? JSON.parse(saved) : INITIAL_SESSIONS;
   });
 
@@ -507,12 +576,12 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
 
   const saveVenues = (data) => {
     setVenues(data);
-    localStorage.setItem('pm_venues_v6', JSON.stringify(data));
+    localStorage.setItem('pm_venues_v8', JSON.stringify(data));
   };
 
   const saveSessions = (data) => {
     setSessions(data);
-    localStorage.setItem('pm_sessions_v6', JSON.stringify(data));
+    localStorage.setItem('pm_sessions_v7', JSON.stringify(data));
   };
 
   const saveMusicians = (data) => {
@@ -1173,7 +1242,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {/* Section 1: Программы */}
           <div
-            onClick={() => setCurrentSection('events')}
+            onClick={() => switchSection('events')}
             style={{
               padding: '14px 16px',
               borderRadius: '10px',
@@ -1206,7 +1275,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
 
           {/* Section 2: Расписание */}
           <div
-            onClick={() => setCurrentSection('sessions')}
+            onClick={() => switchSection('sessions')}
             style={{
               padding: '14px 16px',
               borderRadius: '10px',
@@ -1239,7 +1308,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
 
           {/* Section 3: Справочник Музыканты */}
           <div
-            onClick={() => setCurrentSection('musicians')}
+            onClick={() => switchSection('musicians')}
             style={{
               padding: '14px 16px',
               borderRadius: '10px',
@@ -1270,12 +1339,9 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
             </span>
           </div>
 
-          {/* Section 4: Конструктор схем */}
+          {/* Section 4: Флот и Схемы судов */}
           <div
-            onClick={() => {
-              setCurrentSection('venues');
-              setSelectedVenueForDeck(null); // Return to list view
-            }}
+            onClick={() => switchSection('venues')}
             style={{
               padding: '14px 16px',
               borderRadius: '10px',
@@ -1289,9 +1355,9 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Layout size={18} color={currentSection === 'venues' ? '#2563eb' : '#64748b'} />
+              <Ship size={18} color={currentSection === 'venues' ? '#2563eb' : '#64748b'} />
               <span style={{ fontWeight: currentSection === 'venues' ? 'bold' : '600', color: currentSection === 'venues' ? '#1d4ed8' : '#334155', fontSize: '14px' }}>
-                📐 Конструктор схем
+                🚢 Флот и Схемы судов
               </span>
             </div>
             <span style={{
@@ -1302,13 +1368,13 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
               borderRadius: '12px',
               fontWeight: 'bold'
             }}>
-              {venues.length}
+              5
             </span>
           </div>
 
           {/* Section 5: Афиша (Виджет) */}
           <div
-            onClick={() => setCurrentSection('afisha')}
+            onClick={() => switchSection('afisha')}
             style={{
               padding: '14px 16px',
               borderRadius: '10px',
@@ -1332,7 +1398,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
         
         {/* Section 6: Сайты & CMS */}
         <div
-          onClick={() => setCurrentSection('sites')}
+          onClick={() => switchSection('sites')}
           style={{
             marginTop: '10px',
             padding: '14px 16px',
@@ -1356,7 +1422,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
 
         {/* Section 7: Монитор заполненности (ship.xlsx) */}
         <div
-          onClick={() => setCurrentSection('occupancy')}
+          onClick={() => switchSection('occupancy')}
           style={{
             marginTop: '10px',
             padding: '14px 16px',
@@ -1385,6 +1451,40 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
             fontWeight: 'bold'
           }}>
             ship.xlsx
+          </span>
+        </div>
+
+        {/* Section 8: AI-Таргетинг & VK Маркетинг */}
+        <div
+          onClick={() => switchSection('marketing')}
+          style={{
+            marginTop: '10px',
+            padding: '14px 16px',
+            borderRadius: '10px',
+            background: currentSection === 'marketing' ? 'linear-gradient(135deg, #eff6ff 0%, #e0f2fe 100%)' : '#f8fafc',
+            border: currentSection === 'marketing' ? '1px solid #0284c7' : '1px solid #e2e8f0',
+            cursor: 'pointer',
+            transition: 'all 0.15s',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Target size={18} color={currentSection === 'marketing' ? '#0284c7' : '#64748b'} />
+            <span style={{ fontWeight: currentSection === 'marketing' ? 'bold' : '600', color: currentSection === 'marketing' ? '#0369a1' : '#334155', fontSize: '14px' }}>
+              🎯 AI-Таргетинг & VK
+            </span>
+          </div>
+          <span style={{
+            fontSize: '11px',
+            background: '#0284c7',
+            color: '#ffffff',
+            padding: '2px 6px',
+            borderRadius: '10px',
+            fontWeight: 'bold'
+          }}>
+            VK API
           </span>
         </div>
 
@@ -1916,180 +2016,10 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
           </div>
         )}
 
-        {/* 4. ПЛОЩАДКИ & СУДА (VENUES / DECK BUILDER) */}
+        {/* 4. ФЛОТ & СХЕМЫ СУДОВ (FLEET SCHEMES CATALOG / DECK BLUEPRINTS) */}
         {currentSection === 'venues' && (
           <div>
-            {selectedVenueForDeck ? (
-              <DeckBuilder 
-                venue={venues.find(v => v.id === selectedVenueForDeck)} 
-                onSave={(deckData) => {
-                  const vn = venues.find(v => v.id === selectedVenueForDeck);
-                  if (vn) {
-                    saveVenues(venues.map(v => v.id === vn.id ? { ...v, deckData } : v));
-                    showNotification('Схема рассадки сохранена!');
-                  }
-                }}
-                onCancel={() => setSelectedVenueForDeck(null)}
-              />
-            ) : (
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
-                  <div>
-                    <h3 style={{ margin: 0, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Layout size={22} color="var(--color-primary)" />
-                      Конструктор схем, теплоходы и причалы ({venues.length})
-                    </h3>
-                    <div style={{ fontSize: '13px', color: '#64748b', marginTop: '2px' }}>
-                      Суда, их схемы рассадки (столики / танцпол) и адреса причалов
-                    </div>
-                  </div>
-                  <button
-                    onClick={handleOpenAddVenue}
-                    className="btn btn-primary"
-                    style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 18px', borderRadius: '8px', fontWeight: 'bold' }}
-                  >
-                    <Plus size={16} /> Добавить судно
-                  </button>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {venues.map(vn => (
-                    <div
-                      key={vn.id}
-                      style={{
-                        padding: '18px',
-                        background: '#ffffff',
-                        border: '1px solid #e2e8f0',
-                        borderRadius: '12px',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.03)'
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
-                        <div>
-                          <h4 style={{ margin: 0, fontSize: '16px', color: '#0f172a', fontWeight: 'bold' }}>
-                            {vn.name}
-                          </h4>
-                          <div style={{ fontSize: '13px', color: '#2563eb', margin: '6px 0 4px 0' }}>
-                            📍 {vn.pier_address}
-                          </div>
-                          <div style={{ fontSize: '12px', color: '#64748b' }}>
-                            {vn.description}
-                          </div>
-                          {(() => {
-                            const capInfo = getVenueCapacityBreakdown(vn);
-                            const priceVal = validateDeckPricing(vn.deckData);
-                            return (
-                              <div style={{ marginTop: '8px', fontSize: '12px', color: '#475569', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                                <span>Вместимость: <strong>{capInfo.total} пассажиров</strong></span>
-                                {capInfo.isCalculated ? (
-                                  <span style={{ fontSize: '11px', background: '#dcfce7', color: '#15803d', border: '1px solid #bbf7d0', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold' }}>
-                                    ✓ Схема активна: {capInfo.seats} кресел + {capInfo.zones} танцпол
-                                  </span>
-                                ) : (
-                                  <span style={{ fontSize: '11px', background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a', padding: '2px 8px', borderRadius: '12px' }}>
-                                    ⚠️ Схема не нарисована (по умолчанию {vn.capacity} мест)
-                                  </span>
-                                )}
-                                {vn.deckData && (
-                                  priceVal.isValid ? (
-                                    <span style={{ fontSize: '11px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '2px 6px', borderRadius: '6px', fontWeight: '600' }}>
-                                      💰 Цены настроены
-                                    </span>
-                                  ) : (
-                                    <span style={{ fontSize: '11px', background: '#fee2e2', color: '#dc2626', border: '1px solid #fca5a5', padding: '2px 6px', borderRadius: '6px', fontWeight: 'bold' }}>
-                                      ⚠️ {priceVal.issues[0]}
-                                    </span>
-                                  )
-                                )}
-                              </div>
-                            );
-                          })()}
-                        </div>
-
-                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: '300px' }}>
-                          <button
-                            onClick={() => setSelectedVenueForDeck(vn.id)}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '4px',
-                              padding: '6px 12px',
-                              background: '#eff6ff',
-                              color: '#2563eb',
-                              border: '1px solid #bfdbfe',
-                              borderRadius: '6px',
-                              fontSize: '12px',
-                              fontWeight: '600',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            <Layout size={14} /> Конструктор схемы
-                          </button>
-                          <button
-                            onClick={() => handleDuplicateVenue(vn.id, vn.name)}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '4px',
-                              padding: '6px 12px',
-                              background: '#f8fafc',
-                              color: '#334155',
-                              border: '1px solid #cbd5e1',
-                              borderRadius: '6px',
-                              fontSize: '12px',
-                              fontWeight: '600',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            <Copy size={14} /> Копировать
-                          </button>
-                          <button
-                            onClick={() => {
-                              setEditingVenueId(vn.id);
-                              setVenueForm({
-                                name: vn.name,
-                                pier_address: vn.pier_address,
-                                capacity: vn.capacity || 120,
-                                description: vn.description || ''
-                              });
-                              setVenueModalOpen(true);
-                            }}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '4px',
-                              padding: '6px 12px',
-                              background: '#f8fafc',
-                              color: '#334155',
-                              border: '1px solid #cbd5e1',
-                              borderRadius: '6px',
-                              fontSize: '12px',
-                              fontWeight: '600',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            <Edit3 size={14} /> Настройки
-                          </button>
-                          <button
-                            onClick={() => handleDeleteVenue(vn.id, vn.name)}
-                            style={{
-                              padding: '6px 10px',
-                              background: '#fff1f2',
-                              color: '#e11d48',
-                              border: '1px solid #fecdd3',
-                              borderRadius: '6px',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            <FleetSchemesCatalog />
           </div>
         )}
 
@@ -2206,6 +2136,13 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
         {currentSection === 'occupancy' && (
           <div>
             <ShipOccupancyMonitor />
+          </div>
+        )}
+
+        {/* 8. AI-ТАРГЕТИНГ & VK МАРКЕТИНГ */}
+        {currentSection === 'marketing' && (
+          <div>
+            <VkMarketingAgent />
           </div>
         )}
       </div>

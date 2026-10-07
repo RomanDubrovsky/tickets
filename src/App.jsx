@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Anchor, Calendar, Shield, Percent, Ticket, QrCode, Layout, Globe, HelpCircle, Music, Sparkles, Smartphone, BookOpen } from 'lucide-react';
+import { Anchor, Calendar, Shield, Percent, Ticket, QrCode, Layout, Globe, HelpCircle, Music, Sparkles, Smartphone, BookOpen, Target } from 'lucide-react';
 import Afisha from './components/Afisha';
 import BookingDetails from './components/BookingDetails';
 import AdminPanel from './components/AdminPanel';
@@ -13,6 +13,7 @@ import ProgramsManager from './components/ProgramsManager';
 import PromoApp from './components/PromoApp';
 import HelpModal from './components/HelpModal';
 import ClientDocsPortal from './components/ClientDocsPortal';
+import VkMarketingAgent from './components/VkMarketingAgent';
 
 export default function App() {
   const [currentView, setCurrentView] = useState('programs'); // 'programs', 'sessions', 'venues', 'sites', 'builder', 'afisha', 'booking', 'admin', 'agent', 'seller', 'widget', 'scanner'
@@ -37,10 +38,14 @@ export default function App() {
         setCurrentView('programs');
       } else if (hash === '#sessions') {
         setCurrentView('sessions');
-      } else if (hash === '#venues') {
+      } else if (hash === '#musicians') {
+        setCurrentView('musicians');
+      } else if (hash === '#venues' || hash === '#fleet') {
         setCurrentView('venues');
       } else if (hash === '#afisha') {
         setCurrentView('afisha');
+      } else if (hash === '#booking') {
+        setCurrentView('booking');
       } else if (hash === '#agent' || hash === '#hotels') {
         setCurrentView('agent');
       } else if (hash === '#promo') {
@@ -49,6 +54,10 @@ export default function App() {
         setCurrentView('seller');
       } else if (hash === '#admin') {
         setCurrentView('admin');
+      } else if (hash === '#marketing' || hash === '#target' || hash === '#vk') {
+        setCurrentView('marketing');
+      } else if (hash === '#geo' || hash === '#geoscout') {
+        setCurrentView('geo');
       } else if (hash === '#docs' || hash === '#help' || hash === '#client-docs') {
         setCurrentView('docs');
       }
@@ -60,8 +69,8 @@ export default function App() {
 
   const navigateTo = (view, hash = '') => {
     setCurrentView(view);
-    if (window.location.hash !== hash) {
-      window.history.pushState(null, '', hash || window.location.pathname + window.location.search);
+    if (hash && window.location.hash !== hash) {
+      window.location.hash = hash;
     }
   };
 
@@ -79,15 +88,17 @@ export default function App() {
   const renderMain = () => {
     switch (currentView) {
       case 'programs':
-        return <ProgramsManager defaultSection="events" />;
+        return <ProgramsManager defaultSection="events" onSelectEvent={handleSelectEvent} navigateTo={navigateTo} />;
       case 'sessions':
-        return <ProgramsManager defaultSection="sessions" />;
+        return <ProgramsManager defaultSection="sessions" onSelectEvent={handleSelectEvent} navigateTo={navigateTo} />;
       case 'venues':
-        return <ProgramsManager defaultSection="venues" />;
+        return <ProgramsManager defaultSection="venues" onSelectEvent={handleSelectEvent} navigateTo={navigateTo} />;
+      case 'musicians':
+        return <ProgramsManager defaultSection="musicians" onSelectEvent={handleSelectEvent} navigateTo={navigateTo} />;
       case 'sites':
-        return <ProgramsManager defaultSection="sites" />;
+        return <ProgramsManager defaultSection="sites" onSelectEvent={handleSelectEvent} navigateTo={navigateTo} />;
       case 'occupancy':
-        return <ProgramsManager defaultSection="occupancy" />;
+        return <ProgramsManager defaultSection="occupancy" onSelectEvent={handleSelectEvent} navigateTo={navigateTo} />;
       case 'builder':
         return <DeckBuilder />;
       case 'widget':
@@ -97,11 +108,21 @@ export default function App() {
       case 'afisha':
         return <ProgramsManager defaultSection="afisha" onSelectEvent={handleSelectEvent} navigateTo={navigateTo} />;
       case 'booking':
-        return selectedEvent ? (
-          <BookingDetails event={selectedEvent} onBack={handleBackToAfisha} />
-        ) : null;
+        return <BookingDetails event={selectedEvent} onBack={handleBackToAfisha} />;
       case 'admin':
         return <AdminPanel />;
+      case 'marketing':
+        return (
+          <div style={{ padding: '24px', maxWidth: '1440px', margin: '0 auto' }}>
+            <VkMarketingAgent initialTab="overview" />
+          </div>
+        );
+      case 'geo':
+        return (
+          <div style={{ padding: '24px', maxWidth: '1440px', margin: '0 auto' }}>
+            <VkMarketingAgent initialTab="geo" />
+          </div>
+        );
       case 'agent':
         return <AgentPanel />;
       case 'promo':
@@ -175,6 +196,26 @@ export default function App() {
               >
                 <Shield size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
                 Администратор
+              </button>
+
+              {/* 6. AI-Таргетинг & VK Маркетинг */}
+              <button
+                className={`nav-link ${currentView === 'marketing' ? 'active' : ''}`}
+                onClick={() => navigateTo('marketing', '#marketing')}
+                title="AI-Таргетинг ВКонтакте и генератор конверсионных офферов для рейсов"
+                style={{
+                  background: currentView === 'marketing'
+                    ? 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)'
+                    : 'transparent',
+                  color: currentView === 'marketing' ? '#ffffff' : 'inherit',
+                  borderColor: currentView === 'marketing' ? '#0284c7' : 'transparent',
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontWeight: currentView === 'marketing' ? '700' : 'normal'
+                }}
+              >
+                <Target size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} color={currentView === 'marketing' ? '#ffffff' : '#0284c7'} />
+                AI-Таргетинг
               </button>
 
               {/* 6. База знаний / Документация для заказчика (с ИИ) */}
