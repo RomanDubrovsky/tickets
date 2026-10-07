@@ -77,6 +77,15 @@ export default function BookingDetails({ event: passedEvent, onBack }) {
   const [occupiedSeats, setOccupiedSeats] = useState([]);
   const [hall, setHall] = useState(null);
   const [activeBlueprintId, setActiveBlueprintId] = useState('bp_rock_hit_neva');
+  const [isManagerPreview, setIsManagerPreview] = useState(() => {
+    try {
+      const search = window.location.search || '';
+      const hash = window.location.hash || '';
+      return search.includes('preview=1') || hash.includes('preview=1') || search.includes('manager=1');
+    } catch (e) {
+      return false;
+    }
+  });
 
   const rockHitSeatColorMap = useMemo(() => {
     return occupiedSeats.reduce((acc, s) => {
@@ -100,17 +109,19 @@ export default function BookingDetails({ event: passedEvent, onBack }) {
   useEffect(() => {
     async function loadEventData() {
       // 1. Detect ship / blueprint
-      const evTitle = ((event && (event.name || event.title)) || '').toLowerCase();
-      const evDesc = ((event && event.description) || '').toLowerCase();
-      let initBp = 'bp_rock_hit_neva';
-      if (evTitle.includes('201') || evDesc.includes('201')) {
-        initBp = 'bp_m201';
-      } else if (evTitle.includes('солярис') || evDesc.includes('солярис') || evTitle.includes('solaris')) {
-        initBp = 'bp_solaris';
-      } else if (evTitle.includes('125') || evDesc.includes('125')) {
-        initBp = 'bp_m125_classic';
-      } else if (evTitle.includes('177') || evDesc.includes('177')) {
-        initBp = 'bp_m177';
+      let initBp = event?.blueprint_id || 'bp_rock_hit_neva';
+      if (!event?.blueprint_id) {
+        const evTitle = ((event && (event.name || event.title || event.ship_name || event.venue_name)) || '').toLowerCase();
+        const evDesc = ((event && event.description) || '').toLowerCase();
+        if (evTitle.includes('201') || evDesc.includes('201')) {
+          initBp = 'bp_m201';
+        } else if (evTitle.includes('солярис') || evDesc.includes('солярис') || evTitle.includes('solaris')) {
+          initBp = 'bp_solaris';
+        } else if (evTitle.includes('125') || evDesc.includes('125')) {
+          initBp = 'bp_m125_classic';
+        } else if (evTitle.includes('177') || evDesc.includes('177')) {
+          initBp = evTitle.includes('танц') ? 'bp_m177_dance' : 'bp_m177';
+        }
       }
       setActiveBlueprintId(initBp);
 
@@ -306,33 +317,78 @@ export default function BookingDetails({ event: passedEvent, onBack }) {
             Кликните по свободным креслам за столиками или в зоне танцпола. Вы можете выбрать сразу несколько мест.
           </p>
 
-          {/* Ship Blueprint Switcher Bar */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '16px', background: '#f8fafc', padding: '8px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#475569', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Ship size={14} color="#0284c7" /> Схема судна:
-            </span>
-            <select
-              value={activeBlueprintId}
-              onChange={(e) => handleSwitchBlueprint(e.target.value)}
-              style={{
-                fontSize: '12px',
-                padding: '4px 8px',
-                borderRadius: '6px',
-                border: '1px solid #cbd5e1',
-                background: '#ffffff',
-                fontWeight: '600',
-                color: '#0f172a',
-                cursor: 'pointer'
-              }}
-            >
-              <option value="bp_rock_hit_neva">🚢 Рок Хит Нева (2 палубы — 70 мест)</option>
-              <option value="bp_m177">🚢 Москва-177 (Флагман)</option>
-              <option value="bp_m125_classic">🚢 Москва-125 (Инженерная)</option>
-              <option value="bp_m125_styled">🚢 Москва-125 (Стилизованная)</option>
-              <option value="bp_m201">🚢 Москва-201 (VIP диваны)</option>
-              <option value="bp_solaris">🚢 Солярис (Премиум-класс)</option>
-              <option value="bp_m177_dance">🚢 Москва-177 (Танцевальная)</option>
-            </select>
+          {/* Ship Banner for Customer Booking */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '12px',
+            marginBottom: '16px',
+            background: '#f8fafc',
+            padding: '10px 14px',
+            borderRadius: '8px',
+            border: '1px solid #e2e8f0',
+            flexWrap: 'wrap'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ background: '#e0f2fe', color: '#0369a1', padding: '6px', borderRadius: '6px', display: 'flex' }}>
+                <Ship size={18} />
+              </div>
+              <div>
+                <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#0f172a' }}>
+                  {ASTRA_SCHEMES_MAP[activeBlueprintId]?.name || event?.ship_name || 'Теплоход «Рок Хит Нева»'}
+                </div>
+                <div style={{ fontSize: '11px', color: '#64748b' }}>
+                  Двухпалубный лайнер • Выберите свободные места на интерактивной схеме
+                </div>
+              </div>
+            </div>
+
+            {/* Hidden for regular clients; visible only when manager preview is enabled */}
+            {isManagerPreview ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '11px', background: '#fef3c7', color: '#92400e', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
+                  Тест схем (Менеджер):
+                </span>
+                <select
+                  value={activeBlueprintId}
+                  onChange={(e) => handleSwitchBlueprint(e.target.value)}
+                  style={{
+                    fontSize: '11px',
+                    padding: '4px 8px',
+                    borderRadius: '6px',
+                    border: '1px solid #cbd5e1',
+                    background: '#ffffff',
+                    fontWeight: '600',
+                    color: '#0f172a',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="bp_rock_hit_neva">🚢 Рок Хит Нева (70 мест)</option>
+                  <option value="bp_m177">🚢 Москва-177 (Флагман)</option>
+                  <option value="bp_m125_classic">🚢 Москва-125 (Инженерная)</option>
+                  <option value="bp_m125_styled">🚢 Москва-125 (Стилизованная)</option>
+                  <option value="bp_m201">🚢 Москва-201 (VIP диваны)</option>
+                  <option value="bp_solaris">🚢 Солярис (Премиум)</option>
+                  <option value="bp_m177_dance">🚢 Москва-177 (Танцевальная)</option>
+                </select>
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsManagerPreview(true)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#94a3b8',
+                  fontSize: '11px',
+                  cursor: 'pointer',
+                  textDecoration: 'underline'
+                }}
+                title="Включить селектор схем флота для проверки"
+              >
+                Режим организатора
+              </button>
+            )}
           </div>
 
           {ASTRA_SCHEMES_MAP[activeBlueprintId] ? (

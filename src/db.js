@@ -3,20 +3,49 @@
 // Default seeds (Ships, Agents, Halls, Events)
 const defaultShips = [
   {
-    id: 'a26084cb-626a-4638-b769-d4ff5a772da0',
-    name: 'Рок Хит Нева (М-177)',
-    description: 'Комфортабельный теплоход с живой рок-музыкой, баром и отличным обзором на Неву.',
-    capacity: 100,
+    id: 'ship-rock-hit',
+    name: 'Теплоход «Рок Хит Нева»',
+    blueprint_id: 'bp_rock_hit_neva',
+    description: 'Двухпалубный рок-лайнер: нижний ресторанный салон, бар, сцена и верхняя открытая палуба (70 мест).',
+    capacity: 70,
     image_url: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&w=800&q=80',
     coordinates: { lat: 59.9402, lng: 30.3152 }
   },
   {
-    id: 'b51b3f7f-e7cb-4b36-9a29-b632fa5a7751',
-    name: 'Соларис',
-    description: 'Современный теплоход-ресторан премиум класса с панорамным остеклением.',
-    capacity: 120,
+    id: 'ship-m201',
+    name: 'Теплоход «Москва-201» (VIP диваны & мангал)',
+    blueprint_id: 'bp_m201',
+    description: 'Двухпалубный лайнер: 6 носовых VIP-диванов, концертная рок-сцена, бар, мангал на углях и верхний панорамный зал (108 мест).',
+    capacity: 108,
+    image_url: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80',
+    coordinates: { lat: 59.9398, lng: 30.3145 }
+  },
+  {
+    id: 'ship-m177',
+    name: 'Концертный флагман «Москва-177»',
+    blueprint_id: 'bp_m177',
+    description: 'Флагман флота: Президентский мостик, кают-компания Президентов, Невский бар, рок-сцена с барабанами и танцпол (96 мест).',
+    capacity: 96,
+    image_url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+    coordinates: { lat: 59.9488, lng: 30.3255 }
+  },
+  {
+    id: 'ship-solaris',
+    name: 'Премиум-лайнер «Солярис»',
+    blueprint_id: 'bp_solaris',
+    description: 'Премиум-класс с Капитанским VIP-партером у сцены, акустический рояль, винтовая лестница и видовая верхняя терраса (87 мест).',
+    capacity: 87,
     image_url: 'https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?auto=format&fit=crop&w=800&q=80',
     coordinates: { lat: 59.9312, lng: 30.3601 }
+  },
+  {
+    id: 'ship-m125',
+    name: 'Теплоход «Москва-125» (Живой звук)',
+    blueprint_id: 'bp_m125_classic',
+    description: 'Двухпалубный салон: носовая VIP-зона, сцена, теплый закрытый верхний салон, DJ-пульт и мангал (100 мест).',
+    capacity: 100,
+    image_url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
+    coordinates: { lat: 59.9450, lng: 30.3000 }
   }
 ];
 
@@ -201,7 +230,9 @@ const defaultHalls = [
 const defaultEvents = [
   {
     id: 'e18c6501-c852-47e2-8951-b844f2d3d991',
-    ship_id: 'a26084cb-626a-4638-b769-d4ff5a772da0',
+    ship_id: 'ship-rock-hit',
+    ship_name: 'Теплоход «Рок Хит Нева»',
+    blueprint_id: 'bp_rock_hit_neva',
     hall_id: 'a1b2c3d4-e5f6-7890-abcd-1234567890ef',
     name: 'Громыка',
     full_title: 'Концерт коллектива «Громыка» — Презентация альбома',
@@ -230,7 +261,9 @@ const defaultEvents = [
   },
   {
     id: 'e18c6501-c852-47e2-8951-b844f2d3d992',
-    ship_id: 'a26084cb-626a-4638-b769-d4ff5a772da0',
+    ship_id: 'ship-m201',
+    ship_name: 'Теплоход «Москва-201» (VIP диваны & мангал)',
+    blueprint_id: 'bp_m201',
     hall_id: 'a1b2c3d4-e5f6-7890-abcd-1234567890ef',
     name: 'Концерт «Легенда Жива: Ностальгический Круиз в Ленинград 80-х»',
     full_title: 'Виктор Цой & группа «Кино» — Живой трибьют-концерт на Неве',
@@ -239,8 +272,8 @@ const defaultEvents = [
     duration: '120 мин',
     age_limit: '18+',
     is_hit: true,
-    location: 'Санкт-Петербург, ст. м. Спортивная, причал Набережная Макарова, 34',
-    description: 'Музыкальная прогулка по Неве с видом на разводные мосты и живым концертом',
+    location: 'Санкт-Петербург, ст. м. Адмиралтейская, Дворцовая пристань',
+    description: 'Носовой салон VIP-диванов, рок-сцена, гриль на углях и верхний панорамный зал',
     full_info: 'Главные рок-гимны группы «Кино» и Виктора Цоя в живом исполнении рок-коллектива. Атмосфера ленинградского рок-клуба 80-х годов, шум волн Невы, ночные гранитные набережные и разведение главных мостов Петербурга.',
     date: '2026-05-15',
     time: '19:00:00',
@@ -259,17 +292,19 @@ const defaultEvents = [
   },
   {
     id: 'e18c6501-c852-47e2-8951-b844f2d3d993',
-    ship_id: 'a26084cb-626a-4638-b769-d4ff5a772da0',
+    ship_id: 'ship-m177',
+    ship_name: 'Концертный флагман «Москва-177»',
+    blueprint_id: 'bp_m177',
     hall_id: 'a1b2c3d4-e5f6-7890-abcd-1234567890ef',
     name: 'Концерт «RHCP Tribute Show — Рок-Драйв на Неве»',
-    full_title: 'Red Hot Chili Peppers Tribute Show на борту теплохода',
+    full_title: 'Red Hot Chili Peppers Tribute Show на борту флагмана',
     slug: 'rhcp',
     tags: ['Хит', '18+', '⏱ 120 мин'],
     duration: '120 мин',
     age_limit: '18+',
     is_hit: true,
-    location: 'Санкт-Петербург, ст. м. Спортивная, причал Набережная Макарова, 34',
-    description: 'Музыкальная прогулка по Неве с видом на разводные мосты и живым концертом',
+    location: 'Санкт-Петербург, ст. м. Горьковская, причал Кронверкская набережная',
+    description: 'Президентский мостик, рок-сцена с барабанами, VIP-партер и большой танцпол',
     full_info: 'Взрывной калифорнийский фанк-рок и главные хиты Red Hot Chili Peppers (Californication, Can\'t Stop, Give It Away, Under the Bridge). Драйв, живой звук и разводные мосты.',
     date: '2026-05-15',
     time: '19:00:00',
@@ -288,17 +323,19 @@ const defaultEvents = [
   },
   {
     id: 'e18c6501-c852-47e2-8951-b844f2d3d994',
-    ship_id: 'a26084cb-626a-4638-b769-d4ff5a772da0',
+    ship_id: 'ship-solaris',
+    ship_name: 'Премиум-лайнер «Солярис»',
+    blueprint_id: 'bp_solaris',
     hall_id: 'a1b2c3d4-e5f6-7890-abcd-1234567890ef',
     name: 'Концерт «Брат: Саундтреки к фильму»',
-    full_title: 'Культовые песни из фильмов «Брат» и «Брат 2» на Неве',
+    full_title: 'Культовые песни из фильмов «Брат» и «Брат 2» на борту «Солярис»',
     slug: 'brother',
     tags: ['Хит', '18+', '⏱ 120 мин'],
     duration: '120 мин',
     age_limit: '18+',
     is_hit: true,
-    location: 'Санкт-Петербург, ст. м. Спортивная, причал Набережная Макарова, 34',
-    description: 'Музыкальная прогулка по Неве с видом на разводные мосты и живым концертом',
+    location: 'Санкт-Петербург, ст. м. Адмиралтейская, пристань «Спуск со львами»',
+    description: 'Капитанский VIP-партер у акустической сцены, винтовая лестница и открытая терраса',
     full_info: 'Песни Nautilus Pompilius, Смысловых Галлюцинаций, Би-2, Агаты Кристи, Сплина и других рок-легенд в живом исполнении.',
     date: '2026-05-17',
     time: '20:00:00',
@@ -313,7 +350,9 @@ const defaultEvents = [
   },
   {
     id: 'e18c6501-c852-47e2-8951-b844f2d3d995',
-    ship_id: 'a26084cb-626a-4638-b769-d4ff5a772da0',
+    ship_id: 'ship-m125',
+    ship_name: 'Теплоход «Москва-125» (Живой звук)',
+    blueprint_id: 'bp_m125_classic',
     hall_id: 'a1b2c3d4-e5f6-7890-abcd-1234567890ef',
     name: 'Рок под разводными мостами',
     full_title: 'Хиты мирового и отечественного рока под разводные мосты',
@@ -323,7 +362,7 @@ const defaultEvents = [
     age_limit: '18+',
     is_hit: true,
     location: 'Санкт-Петербург, ст. м. Спортивная, причал Набережная Макарова, 34',
-    description: 'Музыкальная прогулка по Неве с видом на разводные мосты и живым концертом',
+    description: 'VIP-зона в носу, теплый закрытый верхний салон, DJ-пульт и панорама разводных мостов',
     full_info: 'Классика рок-музыки во время кульминационного разведения петербургских мостов.',
     date: '2026-05-18',
     time: '23:30:00',
@@ -339,7 +378,7 @@ const defaultEvents = [
 ];
 
 // LocalStorage initialization
-const DB_VERSION = 'v3_concert_poster';
+const DB_VERSION = 'v4_distinct_fleet';
 function initLocalStorage() {
   if (typeof localStorage === 'undefined') return;
 

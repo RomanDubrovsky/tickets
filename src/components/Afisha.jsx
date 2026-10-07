@@ -27,6 +27,10 @@ export default function Afisha({ onSelectEvent }) {
     return ship ? ship.name : 'Теплоход «Рок Хит Нева»';
   };
 
+  const getShipObj = (shipId) => {
+    return ships.find(s => s.id === shipId) || null;
+  };
+
   const toggleExpandSlots = (eventId, e) => {
     if (e) e.stopPropagation();
     setExpandedSlots(prev => ({
@@ -37,24 +41,42 @@ export default function Afisha({ onSelectEvent }) {
 
   const handleSlotClick = (event, slot, e) => {
     if (e) e.stopPropagation();
-    onSelectEvent({
+    const shipObj = getShipObj(event.ship_id);
+    const eventPayload = {
       ...event,
+      ship_name: event.ship_name || (shipObj ? shipObj.name : 'Теплоход «Рок Хит Нева»'),
+      blueprint_id: event.blueprint_id || (shipObj ? shipObj.blueprint_id : 'bp_rock_hit_neva'),
       date: slot.date,
       time: (slot.time.length === 5 ? slot.time + ':00' : slot.time),
       slotLabel: slot.dayStr,
       selectedSlotPrice: slot.price
-    });
+    };
+    if (typeof onSelectEvent === 'function') {
+      onSelectEvent(eventPayload);
+    } else {
+      localStorage.setItem('selected_booking_event', JSON.stringify(eventPayload));
+      window.location.hash = `#booking?event=${event.id}`;
+    }
   };
 
   const handleBuyClick = (event, e) => {
     if (e) e.stopPropagation();
     const firstSlot = event.slots && event.slots.length > 0 ? event.slots[0] : null;
-    onSelectEvent({
+    const shipObj = getShipObj(event.ship_id);
+    const eventPayload = {
       ...event,
+      ship_name: event.ship_name || (shipObj ? shipObj.name : 'Теплоход «Рок Хит Нева»'),
+      blueprint_id: event.blueprint_id || (shipObj ? shipObj.blueprint_id : 'bp_rock_hit_neva'),
       date: firstSlot ? firstSlot.date : event.date,
       time: firstSlot ? (firstSlot.time.length === 5 ? firstSlot.time + ':00' : firstSlot.time) : event.time,
       slotLabel: firstSlot ? firstSlot.dayStr : event.date
-    });
+    };
+    if (typeof onSelectEvent === 'function') {
+      onSelectEvent(eventPayload);
+    } else {
+      localStorage.setItem('selected_booking_event', JSON.stringify(eventPayload));
+      window.location.hash = `#booking?event=${event.id}`;
+    }
   };
 
   const filteredEvents = events.filter(event => {
