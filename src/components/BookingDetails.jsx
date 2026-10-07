@@ -405,20 +405,15 @@ export default function BookingDetails({ event: passedEvent, onBack }) {
                     alert(`Место №${seatNum} уже занято.`);
                     return;
                   }
-                  const isVip = seatData?.categoryName?.toLowerCase().includes('vip') || (seatNum <= 9 || seatNum >= 63);
+                  const isUpper = seatData?.deck === 'upper' || seatData?.tableLabel?.includes('Верхняя') || seatNum > 70;
+                  const isVip = seatData?.categoryName?.toLowerCase().includes('vip') || (seatNum <= 2 || (seatNum >= 63 && seatNum <= 70) || (seatNum >= 71 && seatNum <= 82) || (seatNum >= 106 && seatNum <= 115));
                   const price = seatData?.price || (isVip ? (event.price_vip || 2500) : (event.price_standard || 1500));
-                  let deckLabel = seatData?.tableLabel || 'Нижняя палуба (Салон)';
-                  if (!seatData?.tableLabel) {
-                    if (isVip) {
-                      deckLabel = seatNum <= 9 ? 'VIP Носовая панорама' : 'VIP Кормовая панорама';
-                    } else if (seatNum > 36) {
-                      deckLabel = 'Верхняя открытая палуба';
-                    }
-                  }
+                  let deckLabel = seatData?.tableLabel || (isUpper ? 'Верхняя открытая палуба' : 'Нижняя палуба (Салон)');
+                  
                   const seatObj = {
                     id: seatId,
                     seatNumber: seatNum,
-                    tableId: seatData?.tableLabel || (isVip ? 'VIP' : 'Салон'),
+                    tableId: seatData?.tableLabel || (isUpper ? 'Верхняя палуба' : 'Нижняя палуба'),
                     tableLabel: deckLabel,
                     type: isVip ? 'vip' : 'standard',
                     categoryId: seatData?.categoryId || (isVip ? 'vip_window' : 'standard'),

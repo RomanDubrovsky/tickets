@@ -6,8 +6,8 @@ const defaultShips = [
     id: 'ship-rock-hit',
     name: 'Теплоход «Рок Хит Нева»',
     blueprint_id: 'bp_rock_hit_neva',
-    description: 'Двухпалубный рок-лайнер: нижний ресторанный салон, бар, сцена и верхняя открытая палуба (70 мест).',
-    capacity: 70,
+    description: 'Двухпалубный рок-лайнер: нижний ресторанный салон, бар, сцена и верхняя панорамная палуба (115 мест).',
+    capacity: 115,
     image_url: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&w=800&q=80',
     coordinates: { lat: 59.9402, lng: 30.3152 }
   },
@@ -378,7 +378,7 @@ const defaultEvents = [
 ];
 
 // LocalStorage initialization
-const DB_VERSION = 'v4_distinct_fleet';
+const DB_VERSION = 'v5_upper_deck_seats';
 function initLocalStorage() {
   if (typeof localStorage === 'undefined') return;
 

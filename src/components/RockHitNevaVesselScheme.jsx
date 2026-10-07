@@ -105,7 +105,7 @@ export default function RockHitNevaVesselScheme({
 
     updateDefaultStatus();
 
-    // Find all 70 seats
+    // Find all seats (both lower deck 1..70 and upper deck 71..115)
     const seatGroups = svgEl.querySelectorAll('g[data-seat-number]');
     seatGroups.forEach((g) => {
       const seatNum = g.getAttribute('data-seat-number');
@@ -152,9 +152,12 @@ export default function RockHitNevaVesselScheme({
       const attrCat = g.getAttribute('data-category-name');
       const attrPrice = g.getAttribute('data-price');
       const attrCatId = g.getAttribute('data-category-id');
-      const isVip = attrCat ? attrCat.toLowerCase().includes('vip') : (num <= 9 || num >= 63);
+      const attrDeck = g.getAttribute('data-deck');
+      
+      const isUpper = attrDeck === 'upper' || num > 70;
+      const isVip = attrCat ? attrCat.toLowerCase().includes('vip') : (num <= 2 || (num >= 63 && num <= 70) || (num >= 71 && num <= 82) || (num >= 106 && num <= 115));
       const seatPrice = attrPrice ? parseInt(attrPrice, 10) : (isVip ? 2500 : 1500);
-      const deckName = attrTable || (isVip ? (num <= 9 ? 'VIP Нос' : 'VIP Корма') : (num <= 36 ? 'Нижняя палуба' : 'Верхняя палуба'));
+      const deckName = attrTable || (isUpper ? 'Верхняя палуба' : 'Нижняя палуба');
       const catName = attrCat || (isVip ? 'VIP Панорама' : 'Стандарт');
 
       // Clean existing listeners to prevent duplicates
@@ -165,9 +168,10 @@ export default function RockHitNevaVesselScheme({
           onSeatClick(num, {
             seatNumber: num,
             color: seatFill,
+            deck: isUpper ? 'upper' : 'lower',
             tableLabel: deckName,
             categoryName: catName,
-            categoryId: attrCatId || (isVip ? 'vip_front' : 'standard'),
+            categoryId: attrCatId || (isVip ? 'vip_window' : 'standard'),
             price: seatPrice,
             channelVal: deckCells[seatNum]
           });
