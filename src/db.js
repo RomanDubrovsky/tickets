@@ -398,7 +398,7 @@ function initLocalStorage() {
 initLocalStorage();
 
 // Public API
-const API_BASE = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:3001/api/v1' : 'https://bba5k6ap1ipl4focterr.containers.yandexcloud.net/api/v1');
+export const API_BASE = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:3001/api/v1' : 'https://bba5k6ap1ipl4focterr.containers.yandexcloud.net/api/v1');
 
 export async function getShips() {
   if (API_BASE) {

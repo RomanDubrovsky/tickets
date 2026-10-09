@@ -44,6 +44,8 @@ jobs:
           YC_SA_JSON: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
           DB_URL: ${{ secrets.DATABASE_URL }}
           YC_ENDPOINT: api.cloud.yandex.net:443
+          YC_STORAGE_ACCESS_KEY: ${{ secrets.YC_STORAGE_ACCESS_KEY }}
+          YC_STORAGE_SECRET_KEY: ${{ secrets.YC_STORAGE_SECRET_KEY }}
         run: |
           echo "$YC_SA_JSON" > key.json
           yc config set service-account-key key.json
@@ -58,4 +60,4 @@ jobs:
             --concurrency 8 \
             --execution-timeout 30s \
             --service-account-id ajea08ejar7sjlo0muuq \
-            --environment DATABASE_URL="${DB_URL}"
+            --environment DATABASE_URL="${DB_URL}",YC_STORAGE_ACCESS_KEY="${YC_STORAGE_ACCESS_KEY}",YC_STORAGE_SECRET_KEY="${YC_STORAGE_SECRET_KEY}"

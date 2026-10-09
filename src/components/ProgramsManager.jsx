@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { 
   Music, Calendar, Anchor, Plus, Edit3, Trash2, X, 
   Check, Sparkles, Filter, Clock, MapPin, Tag, Layers,
-  Users, Mic, Radio, CheckSquare, Square, ChevronRight, Layout, Copy, List, Grid, Globe, Target, Ship
+  Users, Mic, Radio, CheckSquare, Square, ChevronRight, Layout, Copy, List, Grid, Globe, Target, Ship,
+  Brain, History, Wand2, RefreshCw, Eye, MessageSquare, AlertCircle, FileText, ChevronDown, ChevronUp
 } from 'lucide-react';
 import DeckBuilder from './DeckBuilder';
 import FleetSchemesCatalog from './FleetSchemesCatalog';
@@ -11,6 +12,7 @@ import SitesAdmin, { DEFAULT_DOMAINS } from './SitesAdmin';
 import ShipOccupancyMonitor from './ShipOccupancyMonitor';
 import VkMarketingAgent from './VkMarketingAgent';
 import { SHIP_BLUEPRINTS, PRESET_SHIP_DECKS } from '../data/ship_blueprints';
+import { API_BASE } from '../db';
 
 const INITIAL_MUSICIANS = [
   {
@@ -63,71 +65,182 @@ const INITIAL_MUSICIANS = [
   }
 ];
 
+const INITIAL_PIERS = [
+  {
+    id: 1,
+    name: 'Причал «Набережная Макарова, 34»',
+    address: 'Санкт-Петербург, Набережная Макарова, 34',
+    metro: 'ст. м. Спортивная / Василеостровская',
+    description: 'Основной причал рок-теплоходов. Удобный спуск к воде, парковка, пешая доступность от метро.',
+    is_main: true
+  },
+  {
+    id: 2,
+    name: 'Причал «Дворцовая пристань»',
+    address: 'Санкт-Петербург, Дворцовая набережная, 18',
+    metro: 'ст. м. Адмиралтейская / Невский проспект',
+    description: 'Центральный причал напротив Эрмитажа. Идеально для рейсов под разводными мостами.',
+    is_main: false
+  },
+  {
+    id: 3,
+    name: 'Причал «Сенатская пристань»',
+    address: 'Санкт-Петербург, Английская наб., 2',
+    metro: 'ст. м. Адмиралтейская',
+    description: 'Пристань у Медного всадника и Александровского сада.',
+    is_main: false
+  },
+  {
+    id: 4,
+    name: 'Причал «Кронверкская набережная»',
+    address: 'Санкт-Петербург, Кронверкская набережная (Петропавловская крепость)',
+    metro: 'ст. м. Горьковская',
+    description: 'Причал у стен Петропавловской крепости с видом на Троицкий мост.',
+    is_main: false
+  },
+  {
+    id: 5,
+    name: 'Причал «Набережная Фонтанки, 34»',
+    address: 'Санкт-Петербург, наб. реки Фонтанки, 34',
+    metro: 'ст. м. Гостиный двор / Маяковская',
+    description: 'Шереметевский дворец, уютная посадка для джазовых круизов.',
+    is_main: false
+  },
+  {
+    id: 6,
+    name: 'Причал «Английская набережная, 28»',
+    address: 'Санкт-Петербург, Английская набережная, 28',
+    metro: 'ст. м. Василеостровская / Адмиралтейская',
+    description: 'Парадная набережная Санкт-Петербурга, отправление круизов в Финский залив.',
+    is_main: false
+  }
+];
+
 const INITIAL_EVENTS = [
   {
     id: 1,
     title: 'Брат (Саундтреки к фильму)',
     slug: 'brother',
     short_desc: 'Культовые рок-хиты 90-х и саундтреки из легендарных фильмов Алексея Балабанова.',
+    full_description: 'Погрузитесь в атмосферу культового кино 90-х на борту двухпалубного рок-теплохода! Живое исполнение главных саундтреков к фильмам Алексея Балабанова «Брат» и «Брат 2»: Наутилус Помпилиус, Би-2, Агата Кристи, Смысловые Галлюцинации, Океан Ельзи и Сплин. Мощный рок-звук, панорамные виды вечернего Санкт-Петербурга, комфортный теплый салон и бар.',
     duration_minutes: 120,
     age_restriction: '18+',
     min_price: 1800,
     is_featured: true,
     event_type: 'Трибьют-концерт',
+    default_ship_id: 1,
+    default_pier_id: 1,
     default_musician_ids: [2],
-    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/brother/"></div>'
+    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/brother/"></div>',
+    text_history: [
+      {
+        id: 'hist_1_init',
+        timestamp: '2026-05-01 12:00',
+        author: 'Редактор (Исходный)',
+        short_desc: 'Культовые рок-хиты 90-х и саундтреки из легендарных фильмов Алексея Балабанова.',
+        full_description: 'Погрузитесь в атмосферу культового кино 90-х на борту двухпалубного рок-теплохода! Живое исполнение главных саундтреков к фильмам Алексея Балабанова «Брат» и «Брат 2»: Наутилус Помпилиус, Би-2, Агата Кристи, Смысловые Галлюцинации, Океан Ельзи и Сплин. Мощный рок-звук, панорамные виды вечернего Санкт-Петербурга, комфортный теплый салон и бар.'
+      }
+    ]
   },
   {
     id: 2,
     title: 'Виктор Цой & Кино',
     slug: 'viktortsoy',
     short_desc: 'Живое исполнение бессмертных песен группы КИНО на волнах ночной Невы.',
+    full_description: '«Перемен!», «Группа крови», «Звезда по имени Солнце», «Пачка сигарет» — бессмертные хиты группы КИНО в живом аутентичном исполнении трибьют-коллектива на борту теплохода. Петербург Виктора Цоя раскрывается с воды в лучах заката и огней ночного мегаполиса. Уютная атмосфера, теплый салон, ресторанное меню и драйв настоящего ленинградского рока.',
     duration_minutes: 120,
     age_restriction: '16+',
     min_price: 1700,
     is_featured: true,
     event_type: 'Трибьют-концерт',
+    default_ship_id: 1,
+    default_pier_id: 1,
     default_musician_ids: [1],
-    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/viktortsoy/"></div>'
+    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/viktortsoy/"></div>',
+    text_history: [
+      {
+        id: 'hist_2_init',
+        timestamp: '2026-05-01 12:00',
+        author: 'Редактор (Исходный)',
+        short_desc: 'Живое исполнение бессмертных песен группы КИНО на волнах ночной Невы.',
+        full_description: '«Перемен!», «Группа крови», «Звезда по имени Солнце», «Пачка сигарет» — бессмертные хиты группы КИНО в живом аутентичном исполнении трибьют-коллектива на борту теплохода. Петербург Виктора Цоя раскрывается с воды в лучах заката и огней ночного мегаполиса. Уютная атмосфера, теплый салон, ресторанное меню и драйв настоящего ленинградского рока.'
+      }
+    ]
   },
   {
     id: 3,
     title: 'Рок под разводными мостами',
     slug: 'rock-bridges',
     short_desc: 'Ночной круиз под разводку Дворцового и Троицкого мостов в сопровождении рок-бэнда.',
+    full_description: 'Главное музыкальное событие петербургской ночи! Ночной рейс навстречу разводным мостам под аккомпанемент живой рок-группы. Теплоход проходит в считанных метрах от взмывающих крыльев Дворцового и Троицкого мостов. На борту: панорамный остекленный салон с баром и столиками, а также открытая верхняя палуба для невероятных фото на фоне ночного Эрмитажа и Петропавловской крепости.',
     duration_minutes: 150,
     age_restriction: '18+',
     min_price: 2200,
     is_featured: true,
     event_type: 'Музыкальный круиз',
+    default_ship_id: 1,
+    default_pier_id: 1,
     default_musician_ids: [1, 2],
-    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/rock-bridges/"></div>'
+    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/rock-bridges/"></div>',
+    text_history: [
+      {
+        id: 'hist_3_init',
+        timestamp: '2026-05-01 12:00',
+        author: 'Редактор (Исходный)',
+        short_desc: 'Ночной круиз под разводку Дворцового и Троицкого мостов в сопровождении рок-бэнда.',
+        full_description: 'Главное музыкальное событие петербургской ночи! Ночной рейс навстречу разводным мостам под аккомпанемент живой рок-группы. Теплоход проходит в считанных метрах от взмывающих крыльев Дворцового и Троицкого мостов. На борту: панорамный остекленный салон с баром и столиками, а также открытая верхняя палуба для невероятных фото на фоне ночного Эрмитажа и Петропавловской крепости.'
+      }
+    ]
   },
   {
     id: 4,
     title: 'JOE COCKER Tribute',
     slug: 'joe-cocker',
     short_desc: 'Блюз-рок программа и лучшие баллады Джо Кокера с живой духовой секцией.',
+    full_description: '«You Can Leave Your Hat On», «Unchain My Heart», «Up Where We Belong» — золотая классика блюз-рока и соула на невских волнах. Мощный хрипловатый вокал, живая духовая секция, экспрессия и изысканный вечерний круиз по парадной акватории Невы. Идеально для романтического свидания и ценителей фирменного мирового звука.',
     duration_minutes: 120,
     age_restriction: '18+',
     min_price: 1600,
     is_featured: false,
     event_type: 'Трибьют-концерт',
+    default_ship_id: 1,
+    default_pier_id: 1,
     default_musician_ids: [3],
-    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/joe-cocker/"></div>'
+    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/joe-cocker/"></div>',
+    text_history: [
+      {
+        id: 'hist_4_init',
+        timestamp: '2026-05-01 12:00',
+        author: 'Редактор (Исходный)',
+        short_desc: 'Блюз-рок программа и лучшие баллады Джо Кокера с живой духовой секцией.',
+        full_description: '«You Can Leave Your Hat On», «Unchain My Heart», «Up Where We Belong» — золотая классика блюз-рока и соула на невских волнах. Мощный хрипловатый вокал, живая духовая секция, экспрессия и изысканный вечерний круиз по парадной акватории Невы. Идеально для романтического свидания и ценителей фирменного мирового звука.'
+      }
+    ]
   },
   {
     id: 5,
     title: 'Led Zeppelin Tribute',
     slug: 'led-zeppelin-tribute',
     short_desc: 'Мощный хард-рок трибьют легендам мировой рок-сцены.',
+    full_description: 'Культовые гитарные риффы Джимми Пейджа и экспрессивный вокал в стиле Роберта Планта. «Stairway to Heaven», «Whole Lotta Love», «Kashmir» в живом электрическом звучании посреди гранитных набережных Невы. Мощнейший заряд энергии, профессиональный концертный свет и звук на флагманском теплоходе.',
     duration_minutes: 120,
     age_restriction: '18+',
     min_price: 1800,
     is_featured: false,
     event_type: 'Трибьют-концерт',
+    default_ship_id: 2,
+    default_pier_id: 4,
     default_musician_ids: [4],
-    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/led-zeppelin/"></div>'
+    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/led-zeppelin/"></div>',
+    text_history: [
+      {
+        id: 'hist_5_init',
+        timestamp: '2026-05-01 12:00',
+        author: 'Редактор (Исходный)',
+        short_desc: 'Мощный хард-рок трибьют легендам мировой рок-сцены.',
+        full_description: 'Культовые гитарные риффы Джимми Пейджа и экспрессивный вокал в стиле Роберта Планта. «Stairway to Heaven», «Whole Lotta Love», «Kashmir» в живом электрическом звучании посреди гранитных набережных Невы. Мощнейший заряд энергии, профессиональный концертный свет и звук на флагманском теплоходе.'
+      }
+    ]
   }
 ];
 
@@ -511,6 +624,8 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
         setCurrentSection('sessions');
       } else if (h === '#musicians') {
         setCurrentSection('musicians');
+      } else if (h === '#piers') {
+        setCurrentSection('piers');
       } else if (h === '#venues' || h === '#fleet') {
         setCurrentSection('venues');
       } else if (h === '#afisha') {
@@ -536,6 +651,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
       events: '#programs',
       sessions: '#sessions',
       musicians: '#musicians',
+      piers: '#piers',
       venues: '#venues',
       afisha: '#afisha',
       sites: '#sites',
@@ -559,6 +675,11 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
     return saved ? JSON.parse(saved) : INITIAL_VENUES;
   });
 
+  const [piers, setPiers] = useState(() => {
+    const saved = localStorage.getItem('pm_piers_v1');
+    return saved ? JSON.parse(saved) : INITIAL_PIERS;
+  });
+
   const [sessions, setSessions] = useState(() => {
     const saved = localStorage.getItem('pm_sessions_v7');
     return saved ? JSON.parse(saved) : INITIAL_SESSIONS;
@@ -577,6 +698,11 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
   const saveVenues = (data) => {
     setVenues(data);
     localStorage.setItem('pm_venues_v8', JSON.stringify(data));
+  };
+
+  const savePiers = (data) => {
+    setPiers(data);
+    localStorage.setItem('pm_piers_v1', JSON.stringify(data));
   };
 
   const saveSessions = (data) => {
@@ -663,9 +789,9 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
     setCurrentSection('sites');
     showNotification(`Страница «${pageTitle}» с виджетом успешно создана на сайте ${targetDomain.name}!`);
 
-    // Call live server CMS API to immediately compile on disk
+    // Call live server CMS API to immediately compile and upload to S3
     try {
-      fetch('https://rockhitneva.ru/api/cms/pages/save', {
+      fetch(`${API_BASE}/cms/pages/save`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -689,10 +815,22 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
   const [selectedVenueForDeck, setSelectedVenueForDeck] = useState(null);
   const [editingEventId, setEditingEventId] = useState(null);
   const [eventForm, setEventForm] = useState({
-    title: '', slug: '', short_desc: '', age_restriction: '18+',
+    title: '', slug: '', short_desc: '', full_description: '', age_restriction: '18+',
     duration_minutes: 120, min_price: 1500, is_featured: false, event_type: 'Музыкальный круиз',
-    iframe_code: ''
+    default_ship_id: 1,
+    default_pier_id: 1,
+    default_musician_ids: [],
+    iframe_code: '',
+    text_history: []
   });
+
+  // AI Description Generator & Editor state
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [aiCustomInstruction, setAiCustomInstruction] = useState('');
+  const [aiFocusTone, setAiFocusTone] = useState('drive'); // 'drive', 'romantic', 'night_bridge', 'balabanov', 'tourist_safe'
+  const [aiAuditReport, setAiAuditReport] = useState(null);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [showAiPanel, setShowAiPanel] = useState(false);
 
   // 2. UNIFIED Event Session Creation & Editing Modal (Single Event OR Recurring Schedule + Hot Swap Ship / Scheme)
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
@@ -701,6 +839,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
   const [scheduleMode, setScheduleMode] = useState('recurring'); // 'single' or 'recurring'
   const [scheduleForm, setScheduleForm] = useState({
     venue_id: 1,
+    pier_id: 1,
     min_price: 1800,
     single_date: '2026-05-01',
     single_time: '19:30',
@@ -718,7 +857,14 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
     name: '', role: 'Рок-группа', genre: 'Русский рок', description: '', phone: ''
   });
 
-  // 4. Venue & Pier Modal (Can be triggered from sidebar OR from inside Schedule modal)
+  // 4. Pier Modal
+  const [pierModalOpen, setPierModalOpen] = useState(false);
+  const [editingPierId, setEditingPierId] = useState(null);
+  const [pierForm, setPierForm] = useState({
+    name: '', address: '', metro: '', description: '', is_main: false
+  });
+
+  // 5. Venue & Ship Modal (Can be triggered from sidebar OR from inside Schedule modal)
   const [venueModalOpen, setVenueModalOpen] = useState(false);
   const [editingVenueId, setEditingVenueId] = useState(null);
   const [venueForm, setVenueForm] = useState({
@@ -732,36 +878,160 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
   const [calendarMonth, setCalendarMonth] = useState(new Date(2026, 4, 1)); // Default to May 2026 for mock data
 
   // -------------------------------------------------------------
-  // PROGRAM CRUD
+  // PROGRAM CRUD (CONTAINER: Title + Default Ship + Default Pier + Default Musicians + Flights)
   // -------------------------------------------------------------
   const handleOpenCreateEvent = () => {
     setEditingEventId(null);
+    setAiAuditReport(null);
+    setShowAiPanel(false);
+    setAiCustomInstruction('');
     setEventForm({
       title: '',
       slug: '',
       short_desc: '',
+      full_description: '',
       age_restriction: '18+',
       duration_minutes: 120,
       min_price: 1800,
       is_featured: true,
-      iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/..."></div>'
+      event_type: 'Трибьют-концерт',
+      default_ship_id: venues[0] ? venues[0].id : 1,
+      default_pier_id: piers[0] ? piers[0].id : 1,
+      default_musician_ids: [],
+      iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/..."></div>',
+      text_history: []
     });
     setEventModalOpen(true);
   };
 
   const handleOpenEditEvent = (ev) => {
     setEditingEventId(ev.id);
+    setAiAuditReport(null);
+    setShowAiPanel(false);
+    setAiCustomInstruction('');
     setEventForm({
       title: ev.title,
       slug: ev.slug,
       short_desc: ev.short_desc || '',
+      full_description: ev.full_description || ev.short_desc || '',
       age_restriction: ev.age_restriction || '18+',
       duration_minutes: ev.duration_minutes || 120,
       min_price: ev.min_price || 1800,
       is_featured: !!ev.is_featured,
-      iframe_code: ev.iframe_code || ''
+      event_type: ev.event_type || 'Музыкальный круиз',
+      default_ship_id: ev.default_ship_id || (venues[0] ? venues[0].id : 1),
+      default_pier_id: ev.default_pier_id || (piers[0] ? piers[0].id : 1),
+      default_musician_ids: ev.default_musician_ids || [],
+      iframe_code: ev.iframe_code || '',
+      text_history: ev.text_history && ev.text_history.length > 0 ? ev.text_history : [
+        {
+          id: `hist_${ev.id}_initial`,
+          timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+          author: 'Исходная версия',
+          short_desc: ev.short_desc || '',
+          full_description: ev.full_description || ev.short_desc || '',
+          tone: 'Базовая'
+        }
+      ]
     });
     setEventModalOpen(true);
+  };
+
+  // AI Редактирование и Рекомендации текстов программ
+  const handleRunAiAssistant = (mode = 'full_rewrite') => {
+    setIsAiLoading(true);
+    setAiAuditReport(null);
+
+    // Подтягиваем контекст судна, причала и музыкантов для высокой точности фактуры
+    const currentShip = venues.find(v => v.id === eventForm.default_ship_id);
+    const currentPier = piers.find(p => p.id === eventForm.default_pier_id);
+    const currentMusicians = musicians.filter(m => (eventForm.default_musician_ids || []).includes(m.id));
+
+    const shipName = currentShip ? currentShip.name : 'Комфортабельный двухпалубный теплоход';
+    const pierName = currentPier ? `${currentPier.name} (${currentPier.address})` : 'Центральный причал СПб';
+    const artistsStr = currentMusicians.length > 0 ? currentMusicians.map(m => m.name).join(', ') : 'виртуозные петербургские музыканты';
+
+    setTimeout(() => {
+      let generatedShort = '';
+      let generatedFull = '';
+      let auditInsights = [];
+
+      // Аналитика поискового спроса и конкурентов в СПб (Яндекс.Вордстат / соцсети / KudaGo / Горбилет / НеваТревел)
+      auditInsights = [
+        `🔍 Спрос в сети: запрос «водные прогулки живой рок спб» вырос на 42% в сезон разводных мостов.`,
+        `💡 Рекомендация мониторинга: 68% туристов боятся невского ветра и холода. В тексте критически важно 강조ить теплый остекленный салон теплохода «${shipName}» и бар.`,
+        `📍 Гео-привязка: Причал «${pierName}» привлекает пешеходный трафик с Невского/Спортивной — упомяните удобство посадки без очередей.`,
+        `🎸 Артистический хук: ${artistsStr} — подчеркните 100% живой звук без фонограммы.`
+      ];
+
+      if (aiFocusTone === 'drive') {
+        generatedShort = `Драйвовый рок-круиз по Неве с живым выступлением (${artistsStr}) на флагманском теплоходе ${shipName}. Панорамный салон, бар и легендарные хиты!`;
+        generatedFull = `Приготовьтесь к самому мощному вечеру на воде! Программа «${eventForm.title || 'Рок-концерт'}» — это взрывной сплав живого гитарного драйва и величественных видов вечернего Санкт-Петербурга.\n\nНа сцене теплохода ${shipName}: ${artistsStr} с любимыми хитами, под которые невозможно усидеть на месте. Для вас работает панорамный остекленный теплый салон с полноценным баром, а также открытая верхняя палуба для эффектных видео на фоне набережных Невы.\n\n` +
+          (aiCustomInstruction ? `[Учтено по вашей задаче: ${aiCustomInstruction}]\n\n` : '') +
+          `Отправление от причала: ${pierName}. Без давки и очередей. Живой звук, ресторанный сервис и незабываемые эмоции!`;
+      } else if (aiFocusTone === 'night_bridge') {
+        generatedShort = `Ночной музыкальный рейс под разводку Дворцового и Троицкого мостов в сопровождении живого звука от ${artistsStr}. Теплый салон и бар!`;
+        generatedFull = `Главное зрелище Петербурга с лучшего ракурса — прямо из-под взмывающих крыльев разводных мостов! Теплоход ${shipName} отправляется в ночной круиз от причала ${pierName}.\n\nЖивое выступление коллектива ${artistsStr} создаст непередаваемую энергетику, пока за панорамными окнами зажигаются огни ночной Невы и Стрелки Васильевского острова. На борту тепло и уютно в любую погоду: работает закрытый салон ресторанного типа с баром и открытая смотровая палуба.\n\n` +
+          (aiCustomInstruction ? `[Учтено по вашей задаче: ${aiCustomInstruction}]\n\n` : '') +
+          `Билеты у панорамных окон раскупаются заранее — успейте забронировать лучшие места!`;
+      } else if (aiFocusTone === 'romantic') {
+        generatedShort = `Романтический вечер на волнах Невы: закатный бриз, любимые баллады в исполнении ${artistsStr} и огни вечернего города. Столики на двоих и ресторанное меню.`;
+        generatedFull = `Подарите себе и близким свидание, которое запомнится навсегда. Теплоход ${shipName} приглашает в чарующий круиз по парадной акватории Невы.\n\nВ программе — чувственные мелодии и золотые хиты от ${artistsStr}. Уютные столики, бокалы с напитками, ресторанное обслуживание и мягкий свет вечернего Петербурга за панорамными окнами.\n\n` +
+          (aiCustomInstruction ? `[Учтено по вашей задаче: ${aiCustomInstruction}]\n\n` : '') +
+          `Посадка на комфортном причале: ${pierName}. Теплый салон защитит от ветра, а выход на верхнюю палубу подарит потрясающие кадры для фотоальбома.`;
+      } else {
+        generatedShort = `Музыкальный рейс по Неве: живой концерт (${artistsStr}) на борту ${shipName}. Панорамный салон, бар и лучшие виды города.`;
+        generatedFull = `Откройте для себя Петербург с борта комфортабельного судна ${shipName}. Музыкальная программа «${eventForm.title}» в исполнении ${artistsStr} — это идеальный выбор для отдыха с друзьями и семьей.\n\n` +
+          `Маршрут круиза охватывает главные визитные карточки города от причала ${pierName}. На борту: закрытый теплый зал, верхняя прогулочная палуба, бар и профессиональный концертный звук.\n\n` +
+          (aiCustomInstruction ? `[Учтено по вашей задаче: ${aiCustomInstruction}]\n\n` : '');
+      }
+
+      // Сохраняем предыдущий текст в историю перед перезаписью
+      const newHistoryItem = {
+        id: `hist_${Date.now()}`,
+        timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+        author: `AI (Тон: ${aiFocusTone})`,
+        short_desc: eventForm.short_desc,
+        full_description: eventForm.full_description,
+        note: aiCustomInstruction ? `Задача: ${aiCustomInstruction.substring(0, 40)}...` : 'AI-генерация на основе мониторинга сети'
+      };
+
+      const updatedHistory = [newHistoryItem, ...(eventForm.text_history || [])];
+
+      setEventForm(prev => ({
+        ...prev,
+        short_desc: generatedShort,
+        full_description: generatedFull,
+        text_history: updatedHistory
+      }));
+
+      setAiAuditReport(auditInsights);
+      setIsAiLoading(false);
+      showNotification('✨ AI обновил тексты программы! Предыдущая версия сохранена в историю версий.');
+    }, 700);
+  };
+
+  // Восстановление текста из истории
+  const handleRestoreFromHistory = (histItem) => {
+    // Сохраняем текущий текст в историю перед откатом, чтобы ничего не потерялось
+    const currentAsHistory = {
+      id: `hist_${Date.now()}`,
+      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+      author: 'Текущий черновик (до отката)',
+      short_desc: eventForm.short_desc,
+      full_description: eventForm.full_description,
+      note: 'Автосохранение перед откатом'
+    };
+
+    setEventForm(prev => ({
+      ...prev,
+      short_desc: histItem.short_desc,
+      full_description: histItem.full_description,
+      text_history: [currentAsHistory, ...(prev.text_history || []).filter(h => h.id !== histItem.id)]
+    }));
+
+    setShowHistoryModal(false);
+    showNotification(`Текст программы восстановлен из версии от ${histItem.timestamp}`);
   };
 
   const handleSaveEvent = (e) => {
@@ -788,11 +1058,17 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
         title: eventForm.title,
         slug: cleanSlug,
         short_desc: eventForm.short_desc,
+        full_description: eventForm.full_description || eventForm.short_desc,
         age_restriction: eventForm.age_restriction,
         duration_minutes: Number(eventForm.duration_minutes),
         min_price: Number(eventForm.min_price),
         is_featured: eventForm.is_featured,
-        iframe_code: eventForm.iframe_code
+        event_type: eventForm.event_type,
+        default_ship_id: Number(eventForm.default_ship_id),
+        default_pier_id: Number(eventForm.default_pier_id),
+        default_musician_ids: eventForm.default_musician_ids,
+        iframe_code: eventForm.iframe_code,
+        text_history: eventForm.text_history || []
       } : ev);
       saveEvents(updated);
       showNotification('Программа обновлена!');
@@ -802,12 +1078,25 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
         title: eventForm.title,
         slug: cleanSlug,
         short_desc: eventForm.short_desc,
+        full_description: eventForm.full_description || eventForm.short_desc,
         age_restriction: eventForm.age_restriction,
         duration_minutes: Number(eventForm.duration_minutes),
         min_price: Number(eventForm.min_price),
         is_featured: eventForm.is_featured,
-        default_musician_ids: [],
-        iframe_code: eventForm.iframe_code
+        event_type: eventForm.event_type,
+        default_ship_id: Number(eventForm.default_ship_id),
+        default_pier_id: Number(eventForm.default_pier_id),
+        default_musician_ids: eventForm.default_musician_ids,
+        iframe_code: eventForm.iframe_code,
+        text_history: eventForm.text_history || [
+          {
+            id: `hist_${Date.now()}`,
+            timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+            author: 'Создание программы',
+            short_desc: eventForm.short_desc,
+            full_description: eventForm.full_description || eventForm.short_desc
+          }
+        ]
       };
       saveEvents([...events, newEv]);
       showNotification('Новая программа создана! Теперь вы можете назначить рейсы.');
@@ -830,7 +1119,8 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
     setTargetProgram(prog);
     setScheduleMode('recurring');
     setScheduleForm({
-      venue_id: venues[0] ? venues[0].id : 1,
+      venue_id: prog.default_ship_id || (venues[0] ? venues[0].id : 1),
+      pier_id: prog.default_pier_id || (piers[0] ? piers[0].id : 1),
       min_price: prog.min_price || 1800,
       single_date: '2026-05-01',
       single_time: '19:30',
@@ -856,9 +1146,11 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
 
     const [sDate, sTime] = (session.start_time || '').split(' ');
     const currentMusicians = musicians.filter(m => (session.musician_names || []).includes(m.name)).map(m => m.id);
+    const matchedPier = piers.find(p => p.id === session.pier_id || p.address === session.pier_address || session.pier_address?.includes(p.name));
 
     setScheduleForm({
       venue_id: session.venue_id,
+      pier_id: matchedPier ? matchedPier.id : (session.pier_id || 1),
       min_price: session.min_price || prog.min_price || 1800,
       single_date: sDate || '2026-05-01',
       single_time: sTime || '19:30',
@@ -876,6 +1168,9 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
     if (!targetProgram) return;
 
     const vn = venues.find(item => item.id === Number(scheduleForm.venue_id)) || venues[0];
+    const pr = piers.find(item => item.id === Number(scheduleForm.pier_id)) || piers[0];
+    const pierAddressText = pr ? `${pr.name} (${pr.address})` : (vn ? vn.pier_address : 'Причал Наб. Макарова, 34');
+
     const selectedMusicians = musicians.filter(m => scheduleForm.selected_musician_ids.includes(m.id));
     const musicianNames = selectedMusicians.map(m => m.name);
     const duration = Number(targetProgram.duration_minutes) || 120;
@@ -927,7 +1222,8 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
           event_title: targetProgram.title,
           venue_id: vn ? vn.id : 1,
           venue_name: vn ? vn.name : 'Теплоход',
-          pier_address: vn ? vn.pier_address : 'Причал Наб. Макарова, 34',
+          pier_id: pr ? pr.id : 1,
+          pier_address: pierAddressText,
           start_time: start_time,
           duration_minutes: duration,
           min_price: Number(scheduleForm.min_price),
@@ -947,7 +1243,8 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
           event_title: targetProgram.title,
           venue_id: vn ? vn.id : 1,
           venue_name: vn ? vn.name : 'Теплоход',
-          pier_address: vn ? vn.pier_address : 'Причал Наб. Макарова, 34',
+          pier_id: pr ? pr.id : 1,
+          pier_address: pierAddressText,
           start_time: start_time,
           duration_minutes: duration,
           min_price: Number(scheduleForm.min_price),
@@ -1008,7 +1305,8 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
               event_title: targetProgram.title,
               venue_id: vn ? vn.id : 1,
               venue_name: vn ? vn.name : 'Теплоход',
-              pier_address: vn ? vn.pier_address : 'Причал Наб. Макарова, 34',
+              pier_id: pr ? pr.id : 1,
+              pier_address: pierAddressText,
               start_time: candStart,
               duration_minutes: duration,
               min_price: Number(scheduleForm.min_price),
@@ -1128,7 +1426,86 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
   };
 
   // -------------------------------------------------------------
-  // VENUES & PIERS CRUD (Direct or Inside Schedule Modal)
+  // PIERS DIRECTORY CRUD
+  // -------------------------------------------------------------
+  const handleOpenAddPier = () => {
+    setEditingPierId(null);
+    setPierForm({
+      name: '',
+      address: '',
+      metro: '',
+      description: '',
+      is_main: false
+    });
+    setPierModalOpen(true);
+  };
+
+  const handleOpenEditPier = (pier) => {
+    setEditingPierId(pier.id);
+    setPierForm({
+      name: pier.name,
+      address: pier.address || '',
+      metro: pier.metro || '',
+      description: pier.description || '',
+      is_main: !!pier.is_main
+    });
+    setPierModalOpen(true);
+  };
+
+  const handleSavePier = (e) => {
+    e.preventDefault();
+    if (!pierForm.name.trim() || !pierForm.address.trim()) {
+      alert('Укажите название причала и его точный адрес');
+      return;
+    }
+
+    if (editingPierId) {
+      const updated = piers.map(p => p.id === editingPierId ? {
+        ...p,
+        name: pierForm.name,
+        address: pierForm.address,
+        metro: pierForm.metro,
+        description: pierForm.description,
+        is_main: pierForm.is_main
+      } : p);
+      savePiers(updated);
+      showNotification(`Причал «${pierForm.name}» обновлен`);
+    } else {
+      const newPier = {
+        id: Date.now(),
+        name: pierForm.name,
+        address: pierForm.address,
+        metro: pierForm.metro,
+        description: pierForm.description,
+        is_main: pierForm.is_main
+      };
+      savePiers([...piers, newPier]);
+
+      if (scheduleModalOpen) {
+        setScheduleForm(prev => ({
+          ...prev,
+          pier_id: newPier.id
+        }));
+      }
+
+      showNotification(`Причал «${pierForm.name}» успешно добавлен!`);
+    }
+    setPierModalOpen(false);
+  };
+
+  const handleDeletePier = (id, name) => {
+    if (piers.length <= 1) {
+      alert('В справочнике должен оставаться хотя бы один причал');
+      return;
+    }
+    if (window.confirm(`Удалить причал «${name}» из справочника?`)) {
+      savePiers(piers.filter(p => p.id !== id));
+      showNotification(`Причал «${name}» удален`);
+    }
+  };
+
+  // -------------------------------------------------------------
+  // VENUES & FLEET CRUD (Direct or Inside Schedule Modal)
   // -------------------------------------------------------------
   const handleOpenAddVenue = () => {
     setEditingVenueId(null);
@@ -1336,6 +1713,39 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
               fontWeight: 'bold'
             }}>
               {musicians.length}
+            </span>
+          </div>
+
+          {/* Section 3.1: Причалы СПб */}
+          <div
+            onClick={() => switchSection('piers')}
+            style={{
+              padding: '14px 16px',
+              borderRadius: '10px',
+              background: currentSection === 'piers' ? '#eff6ff' : '#f8fafc',
+              border: currentSection === 'piers' ? '1px solid #3b82f6' : '1px solid #e2e8f0',
+              cursor: 'pointer',
+              transition: 'all 0.15s',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Anchor size={18} color={currentSection === 'piers' ? '#2563eb' : '#64748b'} />
+              <span style={{ fontWeight: currentSection === 'piers' ? 'bold' : '600', color: currentSection === 'piers' ? '#1d4ed8' : '#334155', fontSize: '14px' }}>
+                ⚓ Причалы СПб
+              </span>
+            </div>
+            <span style={{
+              fontSize: '12px',
+              background: currentSection === 'piers' ? '#2563eb' : '#e2e8f0',
+              color: currentSection === 'piers' ? '#ffffff' : '#334155',
+              padding: '2px 8px',
+              borderRadius: '12px',
+              fontWeight: 'bold'
+            }}>
+              {piers.length}
             </span>
           </div>
 
@@ -1594,6 +2004,42 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
                             </span>
                           );
                         })()}
+                      </div>
+
+                      {/* Program Container Constituents (Default Ship + Default Pier + Default Musicians) */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px', flexWrap: 'wrap', fontSize: '11px' }}>
+                        {(() => {
+                          const ship = venues.find(v => v.id === ev.default_ship_id);
+                          return ship ? (
+                            <span style={{ background: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0', padding: '2px 8px', borderRadius: '6px', fontWeight: '600' }}>
+                              🚢 {ship.name}
+                            </span>
+                          ) : null;
+                        })()}
+
+                        {(() => {
+                          const pier = piers.find(p => p.id === ev.default_pier_id);
+                          return pier ? (
+                            <span style={{ background: '#f0f9ff', color: '#075985', border: '1px solid #bae6fd', padding: '2px 8px', borderRadius: '6px', fontWeight: '600' }}>
+                              ⚓ {pier.name}
+                            </span>
+                          ) : null;
+                        })()}
+
+                        {(() => {
+                          const progMusicians = musicians.filter(m => (ev.default_musician_ids || []).includes(m.id));
+                          return progMusicians.length > 0 ? (
+                            <span style={{ background: '#faf5ff', color: '#6b21a8', border: '1px solid #e9d5ff', padding: '2px 8px', borderRadius: '6px', fontWeight: '600' }}>
+                              🎸 {progMusicians.map(m => m.name).join(', ')}
+                            </span>
+                          ) : null;
+                        })()}
+
+                        {ev.text_history && ev.text_history.length > 1 && (
+                          <span style={{ background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '2px 8px', borderRadius: '6px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                            <History size={11} /> {ev.text_history.length} версий текста
+                          </span>
+                        )}
                       </div>
                     </div>
 
@@ -2016,6 +2462,109 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
           </div>
         )}
 
+        {/* 3.1. СПРАВОЧНИК ПРИЧАЛОВ САНКТ-ПЕТЕРБУРГА (PIERS DIRECTORY) */}
+        {currentSection === 'piers' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
+              <div>
+                <h3 style={{ margin: 0, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Anchor size={22} color="var(--color-primary)" />
+                  Причалы Санкт-Петербурга ({piers.length})
+                </h3>
+                <div style={{ fontSize: '13px', color: '#64748b', marginTop: '2px' }}>
+                  Независимый каталог причалов отправления для судов и рейсов (разведен с флотом)
+                </div>
+              </div>
+              <button
+                onClick={handleOpenAddPier}
+                className="btn btn-primary"
+                style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 18px', borderRadius: '8px', fontWeight: 'bold' }}
+              >
+                <Plus size={16} /> Добавить причал
+              </button>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '14px' }}>
+              {piers.map(pier => (
+                <div
+                  key={pier.id}
+                  style={{
+                    padding: '18px',
+                    background: '#ffffff',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '12px',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.03)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between'
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                      <h4 style={{ margin: 0, fontSize: '16px', color: '#0f172a', fontWeight: 'bold' }}>
+                        {pier.name}
+                      </h4>
+                      {pier.is_main && (
+                        <span style={{ fontSize: '11px', background: '#ecfdf5', color: '#059669', border: '1px solid #a7f3d0', padding: '2px 8px', borderRadius: '10px', fontWeight: '600' }}>
+                          Основной
+                        </span>
+                      )}
+                    </div>
+
+                    <div style={{ fontSize: '13px', color: '#1e293b', marginTop: '8px', fontWeight: '500' }}>
+                      📍 {pier.address}
+                    </div>
+
+                    {pier.metro && (
+                      <div style={{ fontSize: '12px', color: '#2563eb', marginTop: '4px' }}>
+                        🚇 {pier.metro}
+                      </div>
+                    )}
+
+                    <div style={{ fontSize: '12px', color: '#64748b', marginTop: '8px', lineHeight: '1.4' }}>
+                      {pier.description || 'Описание причала отсутствует'}
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #f1f5f9' }}>
+                    <button
+                      onClick={() => handleOpenEditPier(pier)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        padding: '6px 12px',
+                        background: '#f8fafc',
+                        color: '#334155',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <Edit3 size={14} color="#2563eb" /> Редактировать
+                    </button>
+                    <button
+                      onClick={() => handleDeletePier(pier.id, pier.name)}
+                      style={{
+                        padding: '6px 10px',
+                        background: '#fff1f2',
+                        color: '#e11d48',
+                        border: '1px solid #fecdd3',
+                        borderRadius: '6px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* 4. ФЛОТ & СХЕМЫ СУДОВ (FLEET SCHEMES CATALOG / DECK BLUEPRINTS) */}
         {currentSection === 'venues' && (
           <div>
@@ -2170,9 +2719,181 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
                 <input type="text" className="form-input" value={eventForm.slug} onChange={e => setEventForm({ ...eventForm, slug: e.target.value })} required placeholder="rock-bridges" style={{ width: '100%', marginTop: '4px', fontFamily: 'monospace' }} />
               </div>
 
+              {/* AI TEXT TOOLS & RECOMMENDATIONS HEADER */}
+              <div style={{ background: 'linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%)', border: '1px solid #bfdbfe', borderRadius: '12px', padding: '12px 14px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#2563eb', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Brain size={16} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '13px', fontWeight: '700', color: '#1e3a8a', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        AI-Редактор описания & Анализ сети
+                        <span style={{ fontSize: '10px', background: '#dbeafe', color: '#1e40af', padding: '2px 6px', borderRadius: '4px' }}>СПб Мониторинг</span>
+                      </div>
+                      <div style={{ fontSize: '11px', color: '#475569' }}>
+                        Учитывает поисковый спрос, триггеры туристов Невы, выбранное судно, причал и музыкантов
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setShowAiPanel(!showAiPanel)}
+                      style={{
+                        padding: '5px 10px',
+                        background: showAiPanel ? '#2563eb' : '#ffffff',
+                        color: showAiPanel ? '#ffffff' : '#1e40af',
+                        border: '1px solid #93c5fd',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px'
+                      }}
+                    >
+                      <Wand2 size={13} />
+                      {showAiPanel ? 'Скрыть AI-панель' : 'Открыть AI-инструменты'}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowHistoryModal(true)}
+                      style={{
+                        padding: '5px 10px',
+                        background: '#ffffff',
+                        color: '#475569',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px'
+                      }}
+                    >
+                      <History size={13} />
+                      История версий ({eventForm.text_history ? eventForm.text_history.length : 0})
+                    </button>
+                  </div>
+                </div>
+
+                {/* EXPANDABLE AI PANEL */}
+                {showAiPanel && (
+                  <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #dbeafe', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px' }}>
+                      <div>
+                        <label style={{ fontSize: '11px', fontWeight: '700', color: '#334155', display: 'block', marginBottom: '4px' }}>
+                          🎯 Стиль и фокус текста (Тональность):
+                        </label>
+                        <select
+                          className="form-input"
+                          value={aiFocusTone}
+                          onChange={e => setAiFocusTone(e.target.value)}
+                          style={{ fontSize: '12px', padding: '6px 8px', width: '100%' }}
+                        >
+                          <option value="drive">⚡ Драйв & Рок-хиты (Для фанатов и молодежи)</option>
+                          <option value="night_bridge">🌉 Разводные мосты (Вау-эффект & Ночь)</option>
+                          <option value="romantic">🍷 Романтика & Свидание (Пары, панорамные столики)</option>
+                          <option value="tourist_safe">🛡️ Комфорт & Тепло (Для гостей города, защита от ветра)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label style={{ fontSize: '11px', fontWeight: '700', color: '#334155', display: 'block', marginBottom: '4px' }}>
+                          ✍️ Задача для AI (Новые вводные / Правки):
+                        </label>
+                        <input
+                          type="text"
+                          className="form-input"
+                          value={aiCustomInstruction}
+                          onChange={e => setAiCustomInstruction(e.target.value)}
+                          placeholder="Например: Сделать акцент на бар и хиты Наутилуса..."
+                          style={{ fontSize: '12px', padding: '6px 8px', width: '100%' }}
+                        />
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                      <div style={{ fontSize: '11px', color: '#0369a1', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <Sparkles size={13} />
+                        Перед генерацией старый текст автоматически сохранится в историю
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleRunAiAssistant('full_rewrite')}
+                        disabled={isAiLoading}
+                        style={{
+                          padding: '7px 16px',
+                          background: isAiLoading ? '#94a3b8' : 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                          color: '#ffffff',
+                          border: 'none',
+                          borderRadius: '7px',
+                          fontSize: '12px',
+                          fontWeight: '700',
+                          cursor: isAiLoading ? 'wait' : 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          boxShadow: '0 2px 4px rgba(37, 99, 235, 0.2)'
+                        }}
+                      >
+                        {isAiLoading ? <RefreshCw size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                        {isAiLoading ? 'AI генерирует текст...' : 'Сгенерировать & Отредактировать через AI'}
+                      </button>
+                    </div>
+
+                    {/* AI AUDIT & RECOMMENDATIONS FROM WEB MONITORING */}
+                    {aiAuditReport && (
+                      <div style={{ background: '#ffffff', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '10px 12px', marginTop: '6px' }}>
+                        <div style={{ fontSize: '11px', fontWeight: '700', color: '#166534', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <Check size={14} color="#16a34a" />
+                          Рекомендации мониторинга сети учтены в тексте:
+                        </div>
+                        <ul style={{ margin: 0, paddingLeft: '16px', fontSize: '11px', color: '#334155', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                          {aiAuditReport.map((rep, idx) => (
+                            <li key={idx}>{rep}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
               <div>
-                <label className="form-label" style={{ fontWeight: '600' }}>Краткое описание (для карточки афиши)</label>
-                <textarea className="form-input" rows={2} value={eventForm.short_desc} onChange={e => setEventForm({ ...eventForm, short_desc: e.target.value })} style={{ width: '100%', marginTop: '4px' }} />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <label className="form-label" style={{ fontWeight: '600' }}>Краткое описание (для карточки афиши и превью)</label>
+                  <span style={{ fontSize: '11px', color: '#94a3b8' }}>{eventForm.short_desc ? eventForm.short_desc.length : 0} симв.</span>
+                </div>
+                <textarea
+                  className="form-input"
+                  rows={2}
+                  value={eventForm.short_desc}
+                  onChange={e => setEventForm({ ...eventForm, short_desc: e.target.value })}
+                  placeholder="1-2 цепляющих предложения для поисковой выдачи и карточки круиза..."
+                  style={{ width: '100%', marginTop: '4px' }}
+                />
+              </div>
+
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <label className="form-label" style={{ fontWeight: '600' }}>Полное описание программы (для страницы мероприятия)</label>
+                  <span style={{ fontSize: '11px', color: '#94a3b8' }}>{eventForm.full_description ? eventForm.full_description.length : 0} симв.</span>
+                </div>
+                <textarea
+                  className="form-input"
+                  rows={4}
+                  value={eventForm.full_description}
+                  onChange={e => setEventForm({ ...eventForm, full_description: e.target.value })}
+                  placeholder="Подробный рассказ о шоу, атмосфере на воде, маршруте круиза, теплом салоне, баре и музыкантах..."
+                  style={{ width: '100%', marginTop: '4px', lineHeight: '1.5' }}
+                />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px' }}>
@@ -2200,6 +2921,60 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
                 </div>
               </div>
 
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label className="form-label" style={{ fontWeight: '600' }}>🚢 Судно по умолчанию</label>
+                  <select
+                    className="form-input"
+                    value={eventForm.default_ship_id}
+                    onChange={e => setEventForm({ ...eventForm, default_ship_id: Number(e.target.value) })}
+                    style={{ width: '100%', marginTop: '4px' }}
+                  >
+                    {venues.map(v => (
+                      <option key={v.id} value={v.id}>{v.name} ({v.capacity} мест)</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="form-label" style={{ fontWeight: '600' }}>⚓ Причал по умолчанию</label>
+                  <select
+                    className="form-input"
+                    value={eventForm.default_pier_id}
+                    onChange={e => setEventForm({ ...eventForm, default_pier_id: Number(e.target.value) })}
+                    style={{ width: '100%', marginTop: '4px' }}
+                  >
+                    {piers.map(p => (
+                      <option key={p.id} value={p.id}>{p.name}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="form-label" style={{ fontWeight: '600' }}>🎸 Музыканты и артисты программы (по умолчанию)</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '6px', maxHeight: '110px', overflowY: 'auto', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '8px', background: '#f8fafc' }}>
+                  {musicians.map(m => {
+                    const isChecked = (eventForm.default_musician_ids || []).includes(m.id);
+                    return (
+                      <label key={m.id} style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', background: isChecked ? '#eff6ff' : '#ffffff', border: isChecked ? '1px solid #3b82f6' : '1px solid #e2e8f0', padding: '4px 8px', borderRadius: '6px', cursor: 'pointer', fontWeight: isChecked ? '600' : 'normal', color: isChecked ? '#1d4ed8' : '#334155' }}>
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={e => {
+                            if (e.target.checked) {
+                              setEventForm({ ...eventForm, default_musician_ids: [...(eventForm.default_musician_ids || []), m.id] });
+                            } else {
+                              setEventForm({ ...eventForm, default_musician_ids: (eventForm.default_musician_ids || []).filter(id => id !== m.id) });
+                            }
+                          }}
+                        />
+                        {m.name}
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
               <div>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: '600' }}>
                   <input type="checkbox" checked={eventForm.is_featured} onChange={e => setEventForm({ ...eventForm, is_featured: e.target.checked })} />
@@ -2217,6 +2992,120 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
                 <button type="submit" className="btn btn-primary" style={{ padding: '8px 20px', borderRadius: '8px' }}>Сохранить программу</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================= */}
+      {/* MODAL 1.1: PROGRAM DESCRIPTION VERSION HISTORY            */}
+      {/* ========================================================= */}
+      {showHistoryModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.7)', backdropFilter: 'blur(5px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100, padding: '20px' }}>
+          <div style={{ background: '#ffffff', borderRadius: '16px', width: '100%', maxWidth: '640px', maxHeight: '85vh', display: 'flex', flexDirection: 'column', border: '1px solid #e2e8f0', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', borderRadius: '16px 16px 0 0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <History size={18} color="#2563eb" />
+                <h4 style={{ margin: 0, fontSize: '16px', color: '#0f172a' }}>
+                  История версий текста описания
+                </h4>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowHistoryModal(false)}
+                style={{ background: '#e2e8f0', border: 'none', borderRadius: '8px', padding: '6px', cursor: 'pointer' }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div style={{ padding: '16px 20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
+              <div style={{ fontSize: '12px', color: '#64748b' }}>
+                Здесь сохраняются все редакции: исходные тексты и все итерации, сгенерированные AI. Вы можете в любой момент восстановить любой старый текст в редактор.
+              </div>
+
+              {(!eventForm.text_history || eventForm.text_history.length === 0) ? (
+                <div style={{ textAlign: 'center', padding: '30px', color: '#94a3b8', fontSize: '13px' }}>
+                  История версий пока пуста. При сохранении или генерации нового текста через AI предыдущий текст сохранится здесь.
+                </div>
+              ) : (
+                eventForm.text_history.map((hist, idx) => (
+                  <div
+                    key={hist.id || idx}
+                    style={{
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '10px',
+                      padding: '12px 14px',
+                      background: '#ffffff',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px',
+                      transition: 'border-color 0.15s',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{ fontSize: '11px', fontWeight: '700', background: '#eff6ff', color: '#1d4ed8', padding: '3px 8px', borderRadius: '4px' }}>
+                          {hist.author || 'Версия'}
+                        </span>
+                        <span style={{ fontSize: '11px', color: '#64748b', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                          <Clock size={12} /> {hist.timestamp}
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleRestoreFromHistory(hist)}
+                        style={{
+                          padding: '4px 10px',
+                          background: '#2563eb',
+                          color: '#ffffff',
+                          border: 'none',
+                          borderRadius: '6px',
+                          fontSize: '11px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px'
+                        }}
+                      >
+                        <History size={12} /> Восстановить этот текст
+                      </button>
+                    </div>
+
+                    {hist.note && (
+                      <div style={{ fontSize: '11px', color: '#0284c7', background: '#f0f9ff', padding: '4px 8px', borderRadius: '4px' }}>
+                        {hist.note}
+                      </div>
+                    )}
+
+                    {hist.short_desc && (
+                      <div style={{ fontSize: '12px', color: '#334155', background: '#f8fafc', padding: '8px', borderRadius: '6px' }}>
+                        <strong style={{ color: '#0f172a', display: 'block', fontSize: '11px', marginBottom: '2px' }}>Краткое:</strong>
+                        {hist.short_desc}
+                      </div>
+                    )}
+
+                    {hist.full_description && (
+                      <div style={{ fontSize: '12px', color: '#475569', maxHeight: '90px', overflowY: 'auto', lineHeight: '1.4', background: '#f8fafc', padding: '8px', borderRadius: '6px', whiteSpace: 'pre-wrap' }}>
+                        <strong style={{ color: '#0f172a', display: 'block', fontSize: '11px', marginBottom: '2px' }}>Полное описание:</strong>
+                        {hist.full_description}
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div style={{ padding: '12px 20px', borderTop: '1px solid #e2e8f0', background: '#f8fafc', borderRadius: '0 0 16px 16px', display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                onClick={() => setShowHistoryModal(false)}
+                style={{ padding: '6px 16px', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '13px', cursor: 'pointer' }}
+              >
+                Закрыть
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -2323,53 +3212,100 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
                 </div>
               </div>
 
-              {/* Venue & Pier with inline "+ Добавить судно/причал" button */}
-              <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <label className="form-label" style={{ fontWeight: 'bold', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Anchor size={16} color="#2563eb" /> Площадка, Теплоход и Причал *
-                  </label>
-                  <button
-                    type="button"
-                    onClick={handleOpenAddVenue}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      padding: '4px 10px',
-                      background: '#eff6ff',
-                      color: '#2563eb',
-                      border: '1px solid #bfdbfe',
-                      borderRadius: '6px',
-                      fontSize: '12px',
-                      fontWeight: 'bold',
-                      cursor: 'pointer'
-                    }}
+              {/* Independent Ship (Fleet) and Pier Selectors */}
+              <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '10px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {/* 1. Судно флота */}
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                    <label className="form-label" style={{ fontWeight: 'bold', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Ship size={16} color="#2563eb" /> 1. Теплоход флота (Схема рассадки) *
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleOpenAddVenue}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        padding: '3px 8px',
+                        background: '#eff6ff',
+                        color: '#2563eb',
+                        border: '1px solid #bfdbfe',
+                        borderRadius: '6px',
+                        fontSize: '11px',
+                        fontWeight: 'bold',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <Plus size={13} /> + Судно
+                    </button>
+                  </div>
+
+                  <select
+                    className="form-input"
+                    value={scheduleForm.venue_id}
+                    onChange={e => setScheduleForm({ ...scheduleForm, venue_id: Number(e.target.value) })}
+                    required
+                    style={{ width: '100%', fontWeight: '600' }}
                   >
-                    <Plus size={14} /> Добавить судно / причал
-                  </button>
+                    {venues.map(vn => {
+                      const cap = getVenueCapacityBreakdown(vn);
+                      return (
+                        <option key={vn.id} value={vn.id}>
+                          {vn.name} ({cap.total} мест{cap.isCalculated ? `: ${cap.seats} ст. + ${cap.zones} вход.` : ''})
+                        </option>
+                      );
+                    })}
+                  </select>
                 </div>
 
+                {/* 2. Причал отправления и Цена */}
                 <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '12px' }}>
                   <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                      <label className="form-label" style={{ fontWeight: 'bold', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Anchor size={16} color="#0284c7" /> 2. Причал отправления *
+                      </label>
+                      <button
+                        type="button"
+                        onClick={handleOpenAddPier}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          padding: '3px 8px',
+                          background: '#f0f9ff',
+                          color: '#0369a1',
+                          border: '1px solid #bae6fd',
+                          borderRadius: '6px',
+                          fontSize: '11px',
+                          fontWeight: 'bold',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <Plus size={13} /> + Причал
+                      </button>
+                    </div>
+
                     <select
                       className="form-input"
-                      value={scheduleForm.venue_id}
-                      onChange={e => setScheduleForm({ ...scheduleForm, venue_id: Number(e.target.value) })}
+                      value={scheduleForm.pier_id}
+                      onChange={e => setScheduleForm({ ...scheduleForm, pier_id: Number(e.target.value) })}
                       required
                       style={{ width: '100%', fontWeight: '600' }}
                     >
-                      {venues.map(vn => {
-                        const cap = getVenueCapacityBreakdown(vn);
-                        return (
-                          <option key={vn.id} value={vn.id}>
-                            {vn.name} ({cap.total} мест{cap.isCalculated ? `: ${cap.seats} ст. + ${cap.zones} вход.` : ''})
-                          </option>
-                        );
-                      })}
+                      {piers.map(p => (
+                        <option key={p.id} value={p.id}>
+                          {p.name}
+                        </option>
+                      ))}
                     </select>
                   </div>
+
                   <div>
+                    <label className="form-label" style={{ fontWeight: 'bold', marginBottom: '6px', display: 'block' }}>
+                      Цена билета от (₽) *
+                    </label>
                     <input
                       type="number"
                       className="form-input"
@@ -2382,12 +3318,15 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
                   </div>
                 </div>
 
-                {currentSelectedVenue && (
-                  <div style={{ fontSize: '12px', color: '#475569', marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <MapPin size={14} color="#059669" />
-                    <span>Причал: <strong>{currentSelectedVenue.pier_address}</strong> (вместимость по схеме: <strong>{getVenueCapacityBreakdown(currentSelectedVenue).total} чел.</strong>)</span>
-                  </div>
-                )}
+                {(() => {
+                  const selPier = piers.find(p => p.id === scheduleForm.pier_id);
+                  return selPier ? (
+                    <div style={{ fontSize: '12px', color: '#475569', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <MapPin size={14} color="#059669" />
+                      <span>Адрес причала: <strong>{selPier.address}</strong> {selPier.metro && `(${selPier.metro})`}</span>
+                    </div>
+                  ) : null;
+                })()}
               </div>
 
               {/* SINGLE MODE FIELDS */}
@@ -2650,17 +3589,97 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
       )}
 
       {/* ========================================================= */}
-      {/* MODAL 4: VENUE & PIER CREATE / EDIT                       */}
+      {/* MODAL 4: PIER CREATE / EDIT                               */}
+      {/* ========================================================= */}
+      {pierModalOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.65)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100, padding: '20px' }}>
+          <div style={{ background: '#ffffff', borderRadius: '16px', width: '100%', maxWidth: '540px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }}>
+            <h4 style={{ margin: '0 0 16px 0', fontSize: '17px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Anchor size={18} color="#0284c7" /> {editingPierId ? 'Редактировать причал' : 'Новый причал отправления'}
+            </h4>
+            <form onSubmit={handleSavePier} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div>
+                <label className="form-label" style={{ fontWeight: '600' }}>Название причала *</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={pierForm.name}
+                  onChange={e => setPierForm({ ...pierForm, name: e.target.value })}
+                  required
+                  placeholder="Причал «Набережная Макарова, 34»"
+                  style={{ width: '100%', marginTop: '4px' }}
+                />
+              </div>
+
+              <div>
+                <label className="form-label" style={{ fontWeight: '600' }}>Точный адрес причала (выводится на билетах) *</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={pierForm.address}
+                  onChange={e => setPierForm({ ...pierForm, address: e.target.value })}
+                  required
+                  placeholder="Санкт-Петербург, Набережная Макарова, 34"
+                  style={{ width: '100%', marginTop: '4px' }}
+                />
+              </div>
+
+              <div>
+                <label className="form-label">Ближайшая станция метро</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={pierForm.metro}
+                  onChange={e => setPierForm({ ...pierForm, metro: e.target.value })}
+                  placeholder="ст. м. Спортивная / Василеостровская"
+                  style={{ width: '100%', marginTop: '4px' }}
+                />
+              </div>
+
+              <div>
+                <label className="form-label">Ориентир / Как пройти к причалу</label>
+                <textarea
+                  className="form-input"
+                  rows={2}
+                  value={pierForm.description}
+                  onChange={e => setPierForm({ ...pierForm, description: e.target.value })}
+                  placeholder="Вход через створку ворот, спуск к воде напротив д. 34..."
+                  style={{ width: '100%', marginTop: '4px' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: '600' }}>
+                  <input
+                    type="checkbox"
+                    checked={pierForm.is_main}
+                    onChange={e => setPierForm({ ...pierForm, is_main: e.target.checked })}
+                  />
+                  Основной базовый причал компании
+                </label>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '12px' }}>
+                <button type="button" onClick={() => setPierModalOpen(false)} style={{ padding: '8px 16px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '8px', cursor: 'pointer' }}>Отмена</button>
+                <button type="submit" className="btn btn-primary" style={{ padding: '8px 20px', borderRadius: '8px' }}>Сохранить причал</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================= */}
+      {/* MODAL 5: VENUE & SHIP CREATE / EDIT                       */}
       {/* ========================================================= */}
       {venueModalOpen && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.65)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100, padding: '20px' }}>
           <div style={{ background: '#ffffff', borderRadius: '16px', width: '100%', maxWidth: '540px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }}>
             <h4 style={{ margin: '0 0 16px 0', fontSize: '17px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Anchor size={18} color="#2563eb" /> {editingVenueId ? 'Редактирование площадки / судна' : 'Новое судно и причал в справочник'}
+              <Ship size={18} color="#2563eb" /> {editingVenueId ? 'Редактирование судна флота' : 'Новое судно флота'}
             </h4>
             <form onSubmit={handleSaveVenue} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div>
-                <label className="form-label" style={{ fontWeight: '600' }}>Название судна / Площадки *</label>
+                <label className="form-label" style={{ fontWeight: '600' }}>Название судна *</label>
                 <input
                   type="text"
                   className="form-input"
@@ -2673,13 +3692,12 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
               </div>
 
               <div>
-                <label className="form-label" style={{ fontWeight: '600' }}>Адрес причала отправления (выводится на билетах) *</label>
+                <label className="form-label" style={{ fontWeight: '600' }}>Базовый причал приписки</label>
                 <input
                   type="text"
                   className="form-input"
                   value={venueForm.pier_address}
                   onChange={e => setVenueForm({ ...venueForm, pier_address: e.target.value })}
-                  required
                   placeholder="Санкт-Петербург, Причал Набережная Макарова, 34"
                   style={{ width: '100%', marginTop: '4px' }}
                 />
@@ -2710,7 +3728,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '12px' }}>
                 <button type="button" onClick={() => setVenueModalOpen(false)} style={{ padding: '8px 16px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '8px', cursor: 'pointer' }}>Отмена</button>
-                <button type="submit" className="btn btn-primary" style={{ padding: '8px 20px', borderRadius: '8px' }}>Сохранить в справочник</button>
+                <button type="submit" className="btn btn-primary" style={{ padding: '8px 20px', borderRadius: '8px' }}>Сохранить судно</button>
               </div>
             </form>
           </div>

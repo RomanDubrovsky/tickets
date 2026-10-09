@@ -13,9 +13,13 @@ import webhookManager from './webhooks.js';
 import { startQuotaReleaseWorker } from './quotaWorker.js';
 import { startAlertWorker } from './alertWorker.js';
 
+import { setupPartnerRoutes } from './partnerRoutes.js';
+import { setupCmsRoutes } from './cmsRoutes.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '../.env') });
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 const { Pool } = pg;
 const pool = new Pool({
@@ -40,6 +44,12 @@ app.use(express.json());
 
 // API Documentation via Swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// Mount Partner & Boarding APIs (Sputnik8 / Promoters / СКУД)
+setupPartnerRoutes(app, pool);
+
+// Mount CMS & Dynamic S3 landing page builder
+setupCmsRoutes(app, pool);
 
 // Endpoint for Dynamic Price calculation & forecast
 app.get('/api/v1/events/:id/dynamic-price', async (req, res) => {
