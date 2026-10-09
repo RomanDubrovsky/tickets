@@ -43,7 +43,7 @@ export const ensureStandardGateways = (gateways) => {
 
 const DEFAULT_DOMAINS = [
   {
-    id: 2,
+    id: 1,
     name: 'rockhitneva.ru',
     title: 'Рок Хит Нева — Рок-круизы по Неве',
     primary_color: '#e55f2e',
@@ -165,7 +165,7 @@ const DEFAULT_DOMAINS = [
     ]
   },
   {
-    id: 1,
+    id: 2,
     name: 'aquasound.club',
     title: 'AquaSound Club — Музыка на воде',
     primary_color: '#446084',
@@ -348,28 +348,30 @@ export const getGatewayToken = (code) => {
   return match ? match[1] : '';
 };
 
-// Гарантируем, что главная страница домена всегда существует и ВСЕГДА стоит на 1-м месте в списке
+// Гарантируем, что главная страница домена ВСЕГДА существует в строго ЕДИНСТВЕННОМ экземпляре и ВСЕГДА стоит на 1-м месте в списке
 export const getOrderedPages = (domain) => {
   if (!domain) return [];
-  const pages = domain.pages ? [...domain.pages] : [];
+  const rawPages = Array.isArray(domain.pages) ? [...domain.pages] : [];
 
-  // Ищем главную страницу (slug === '/' или пустой)
-  const homeIdx = pages.findIndex(p => p.slug === '/' || !p.slug || p.slug === '');
+  // Ищем все записи, претендующие на главную страницу (slug === '/' или пустой, или isHome)
+  const homeCandidates = rawPages.filter(p => !p.slug || p.slug === '/' || p.slug === '' || p.isHome);
+  
   let homePage = null;
-
-  if (homeIdx !== -1) {
-    homePage = pages.splice(homeIdx, 1)[0];
+  if (homeCandidates.length > 0) {
+    // Выбираем страницу с наименьшим/стабильным id либо первый кандидат
+    homePage = homeCandidates.find(p => p.id && p.id < 1000) || homeCandidates[0];
   } else {
     // Дефолтная главная страница для домена, если ее еще нет в списке
-    const defaultIframe = domain.id === 2 
-      ? '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/JHgCdar1f2RgfwwTnasWr9ScZXK_hHlR/"></div>'
-      : (domain.id === 1 ? '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/drugoe/akvatoriya-zvuka-angliyskaya-nab-28"></div>' : '');
+    const isAquasound = domain.id === 2 || domain.name === 'aquasound.club';
+    const defaultIframe = isAquasound
+      ? '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/drugoe/akvatoriya-zvuka-angliyskaya-nab-28"></div>'
+      : '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/JHgCdar1f2RgfwwTnasWr9ScZXK_hHlR/"></div>';
 
     homePage = {
-      id: domain.id === 2 ? 3 : (domain.id === 1 ? 23 : (domain.id === 6 ? 27 : (domain.id === 7 ? 32 : Date.now()))),
-      title: domain.title || `Главная страница (${domain.name})`,
+      id: isAquasound ? 23 : 3,
+      title: domain.title || `Главная афиша`,
       slug: '/',
-      script_choice: domain.id === 1 ? 2 : 1,
+      script_choice: isAquasound ? 2 : 1,
       iframe_code: defaultIframe,
       url: domain.cloud_url || `https://${domain.name}/`
     };
@@ -377,20 +379,41 @@ export const getOrderedPages = (domain) => {
 
   const normalizedHome = {
     ...homePage,
+    title: homePage.title || 'Главная афиша',
     slug: '/',
     url: domain.cloud_url || `https://${domain.name}/`,
     isHome: true
   };
 
-  // Все остальные страницы сортируем по id DESC
-  const otherPages = pages.sort((a, b) => (b.id || 0) - (a.id || 0));
+  // Все остальные страницы СТРОГО без дубликатов главной страницы и без повторяющихся slug
+  const seenSlugs = new Set(['/', '']);
+  const otherPages = [];
+
+  for (const p of rawPages) {
+    const cleanSlug = (p.slug || '').trim().toLowerCase().replace(/^\/+|\/+$/g, '');
+    // Отсекаем ЛЮБЫЕ дубликаты главной страницы
+    if (!cleanSlug || cleanSlug === '/' || p.isHome || p.id === normalizedHome.id) {
+      continue;
+    }
+    if (!seenSlugs.has(cleanSlug)) {
+      seenSlugs.add(cleanSlug);
+      otherPages.push({
+        ...p,
+        slug: cleanSlug,
+        isHome: false
+      });
+    }
+  }
+
+  // Сортируем остальные страницы по id DESC
+  otherPages.sort((a, b) => (b.id || 0) - (a.id || 0));
 
   return [normalizedHome, ...otherPages];
 };
 
 export default function SitesAdmin({ initialDomainId, initialSelectedPageId }) {
   const [domains, setDomains] = useState(() => {
-    const saved = localStorage.getItem('cms_domains_v8');
+    const saved = localStorage.getItem('cms_domains_v9');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -401,13 +424,13 @@ export default function SitesAdmin({ initialDomainId, initialSelectedPageId }) {
         console.error(e);
       }
     }
-    const oldSaved = localStorage.getItem('cms_domains_v7') || localStorage.getItem('cms_domains_v6');
+    const oldSaved = localStorage.getItem('cms_domains_v8') || localStorage.getItem('cms_domains_v7');
     if (oldSaved) {
       try {
         const parsedOld = JSON.parse(oldSaved);
         if (Array.isArray(parsedOld) && parsedOld.length > 0) {
           const updated = parsedOld.map(d => ({ ...d, gateways: ensureStandardGateways(d.gateways), pages: getOrderedPages(d) }));
-          localStorage.setItem('cms_domains_v8', JSON.stringify(updated));
+          localStorage.setItem('cms_domains_v9', JSON.stringify(updated));
           return updated;
         }
       } catch (e) {
@@ -417,7 +440,7 @@ export default function SitesAdmin({ initialDomainId, initialSelectedPageId }) {
     return DEFAULT_DOMAINS.map(d => ({ ...d, gateways: ensureStandardGateways(d.gateways), pages: getOrderedPages(d) }));
   });
 
-  const [selectedDomainId, setSelectedDomainId] = useState(initialDomainId || 2); // 2 = rockhitneva.ru
+  const [selectedDomainId, setSelectedDomainId] = useState(initialDomainId || 1); // 1 = rockhitneva.ru
 
   useEffect(() => {
     if (initialDomainId) {
@@ -437,7 +460,7 @@ export default function SitesAdmin({ initialDomainId, initialSelectedPageId }) {
             pages: getOrderedPages(d)
           }));
           setDomains(ordered);
-          localStorage.setItem('cms_domains_v8', JSON.stringify(ordered));
+          localStorage.setItem('cms_domains_v9', JSON.stringify(ordered));
         }
       }
     } catch (err) {
@@ -463,9 +486,8 @@ export default function SitesAdmin({ initialDomainId, initialSelectedPageId }) {
 
   const saveDomainsToStorage = (newDomains) => {
     setDomains(newDomains);
+    localStorage.setItem('cms_domains_v9', JSON.stringify(newDomains));
     localStorage.setItem('cms_domains_v8', JSON.stringify(newDomains));
-    localStorage.setItem('cms_domains_v7', JSON.stringify(newDomains));
-    localStorage.setItem('cms_domains_v6', JSON.stringify(newDomains));
   };
 
   const updateCurrentDomain = (key, value) => {
@@ -570,49 +592,52 @@ export default function SitesAdmin({ initialDomainId, initialSelectedPageId }) {
       iframe_code: pageForm.iframe_code
     };
 
-    if (editingPageId) {
+    if (editingPageId || isEditingHome) {
       let pageFound = false;
       updatedPages = updatedPages.map(pg => {
-        const isThisHome = isEditingHome && (pg.slug === '/' || !pg.slug || pg.id === editingPageId);
+        const isThisHome = isEditingHome && (pg.slug === '/' || !pg.slug || pg.isHome || pg.id === editingPageId);
         if (pg.id === editingPageId || isThisHome) {
           pageFound = true;
           return {
             ...pg,
             id: effectivePageId || pg.id,
             title: pageForm.title,
-            slug: cleanSlug,
+            slug: isEditingHome ? '/' : cleanSlug,
             script_choice: Number(pageForm.script_choice),
             iframe_code: pageForm.iframe_code,
-            url: pageUrl
+            url: pageUrl,
+            isHome: isEditingHome
           };
         }
         return pg;
       });
 
-      if (!pageFound && isEditingHome) {
+      if (!pageFound) {
         updatedPages.unshift({
           id: effectivePageId || Date.now(),
           title: pageForm.title,
-          slug: '/',
+          slug: isEditingHome ? '/' : cleanSlug,
           script_choice: Number(pageForm.script_choice),
           iframe_code: pageForm.iframe_code,
-          url: pageUrl
+          url: pageUrl,
+          isHome: isEditingHome
         });
       }
-
     } else {
+      const existingIdx = updatedPages.findIndex(p => p.slug === cleanSlug);
       const newPage = {
-        id: Date.now(),
+        id: existingIdx !== -1 ? updatedPages[existingIdx].id : Date.now(),
         title: pageForm.title,
         slug: cleanSlug,
         script_choice: Number(pageForm.script_choice),
         iframe_code: pageForm.iframe_code,
-        url: pageUrl
+        url: pageUrl,
+        isHome: false
       };
-      if (isHome) {
-        updatedPages.unshift(newPage);
+      if (existingIdx !== -1) {
+        updatedPages[existingIdx] = newPage;
       } else {
-        const homeIdx = updatedPages.findIndex(p => p.slug === '/' || !p.slug);
+        const homeIdx = updatedPages.findIndex(p => p.slug === '/' || !p.slug || p.isHome);
         if (homeIdx !== -1) {
           updatedPages.splice(homeIdx + 1, 0, newPage);
         } else {
