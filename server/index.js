@@ -28,7 +28,22 @@ const pool = new Pool({
   database: process.env.PG_DATABASE || 'ships_prod',
   password: process.env.PG_PASSWORD || 'ShipsProdSecurePass2026!',
   port: parseInt(process.env.PG_PORT || '6432', 10),
-  ssl: { rejectUnauthorized: false }
+  ssl: { rejectUnauthorized: false },
+  max: 10,
+  idleTimeoutMillis: 20000,
+  connectionTimeoutMillis: 5000
+});
+
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle client (non-fatal):', err.message);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
 // Start background workers and DB schemas
