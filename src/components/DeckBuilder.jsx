@@ -2,9 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { 
   Plus, Trash2, Save, Layout, Layers, Check, Upload, Tag, Palette, 
   MousePointer, BoxSelect, Paintbrush, Copy, RefreshCw, ZoomIn, ZoomOut, Eye,
-  Sliders, Move, Ticket, Sparkles, Grid, X, Ship, ChevronDown
+  Sliders, Move, Ticket, Sparkles, Grid, X, Ship, ChevronDown, Smartphone
 } from 'lucide-react';
 import { SHIP_BLUEPRINTS, PRESET_SHIP_DECKS } from '../data/ship_blueprints';
+import HallRenderer from './HallRenderer';
+import RockHitNevaVesselScheme from './RockHitNevaVesselScheme';
 
 const PRESET_COLORS = [
   '#f59e0b', // Amber / Gold (VIP)
@@ -26,11 +28,11 @@ const DEFAULT_CATEGORIES = [
 ];
 
 // Helper to compute seat relative coordinates with scale
-export function computeSeatPositions(tableType, seatsCount, width = 70, height = 46, scale = 1.0, roundRadius = 26) {
+export function computeSeatPositions(tableType, seatsCount, width = 70, height = 44, scale = 1.0, roundRadius = 24) {
   const seats = [];
-  const sRoundRadius = (roundRadius || 26) * scale;
+  const sRoundRadius = (roundRadius || 24) * scale;
   const sWidth = (width || 70) * scale;
-  const sHeight = (height || 46) * scale;
+  const sHeight = (height || 44) * scale;
 
   if (tableType === 'round') {
     const seatDistance = sRoundRadius + 15 * scale;
@@ -41,26 +43,42 @@ export function computeSeatPositions(tableType, seatsCount, width = 70, height =
       seats.push({ relX, relY, angle });
     }
   } else {
-    // Rectangular table
     const halfW = sWidth / 2;
     const halfH = sHeight / 2;
     const seatDist = 14 * scale;
 
-    // Distribute seats: half on top, half on bottom
-    const topCount = Math.ceil(seatsCount / 2);
-    const bottomCount = Math.floor(seatsCount / 2);
-
-    for (let i = 0; i < topCount; i++) {
-      const step = sWidth / (topCount + 1);
-      const relX = Math.round(-halfW + (i + 1) * step);
-      const relY = Math.round(-halfH - seatDist);
-      seats.push({ relX, relY, angle: -Math.PI / 2 });
-    }
-    for (let i = 0; i < bottomCount; i++) {
-      const step = sWidth / (bottomCount + 1);
-      const relX = Math.round(-halfW + (i + 1) * step);
-      const relY = Math.round(halfH + seatDist);
-      seats.push({ relX, relY, angle: Math.PI / 2 });
+    if (seatsCount === 4) {
+      seats.push({ relX: Math.round(-halfW * 0.45), relY: Math.round(-halfH - seatDist), angle: -Math.PI / 2 });
+      seats.push({ relX: Math.round(halfW * 0.45), relY: Math.round(-halfH - seatDist), angle: -Math.PI / 2 });
+      seats.push({ relX: Math.round(-halfW * 0.45), relY: Math.round(halfH + seatDist), angle: Math.PI / 2 });
+      seats.push({ relX: Math.round(halfW * 0.45), relY: Math.round(halfH + seatDist), angle: Math.PI / 2 });
+    } else if (seatsCount === 6) {
+      seats.push({ relX: Math.round(-halfW * 0.6), relY: Math.round(-halfH - seatDist), angle: -Math.PI / 2 });
+      seats.push({ relX: 0, relY: Math.round(-halfH - seatDist), angle: -Math.PI / 2 });
+      seats.push({ relX: Math.round(halfW * 0.6), relY: Math.round(-halfH - seatDist), angle: -Math.PI / 2 });
+      seats.push({ relX: Math.round(-halfW * 0.6), relY: Math.round(halfH + seatDist), angle: Math.PI / 2 });
+      seats.push({ relX: 0, relY: Math.round(halfH + seatDist), angle: Math.PI / 2 });
+      seats.push({ relX: Math.round(halfW * 0.6), relY: Math.round(halfH + seatDist), angle: Math.PI / 2 });
+    } else if (seatsCount <= 2) {
+      seats.push({ relX: 0, relY: Math.round(-halfH - seatDist), angle: -Math.PI / 2 });
+      if (seatsCount === 2) {
+        seats.push({ relX: 0, relY: Math.round(halfH + seatDist), angle: Math.PI / 2 });
+      }
+    } else {
+      const topCount = Math.ceil(seatsCount / 2);
+      const bottomCount = Math.floor(seatsCount / 2);
+      for (let i = 0; i < topCount; i++) {
+        const step = sWidth / (topCount + 1);
+        const relX = Math.round(-halfW + (i + 1) * step);
+        const relY = Math.round(-halfH - seatDist);
+        seats.push({ relX, relY, angle: -Math.PI / 2 });
+      }
+      for (let i = 0; i < bottomCount; i++) {
+        const step = sWidth / (bottomCount + 1);
+        const relX = Math.round(-halfW + (i + 1) * step);
+        const relY = Math.round(halfH + seatDist);
+        seats.push({ relX, relY, angle: Math.PI / 2 });
+      }
     }
   }
   return seats;
@@ -77,6 +95,7 @@ export default function DeckBuilder({ venue, onSave, onCancel }) {
   // Element Scaling and Blueprint controls
   const [elementsScale, setElementsScale] = useState(initialDeck.elementsScale || 1.0); // 0.5 to 2.0
   const [bgImage, setBgImage] = useState(initialDeck.bg_image || null);
+  const [showBg, setShowBg] = useState(false); // Default to clean hull contour to eliminate visual duplicates
   const [bgOpacity, setBgOpacity] = useState(0.85);
   const [bgScale, setBgScale] = useState(initialDeck.bg_scale || 1.0);
   const [bgOffsetX, setBgOffsetX] = useState(initialDeck.bg_offset_x || 0);
@@ -107,130 +126,183 @@ export default function DeckBuilder({ venue, onSave, onCancel }) {
     }
   ]);
 
+  // Helper to ensure each table object has a valid seats array
+  const normalizeTables = (tbls) => {
+    if (!tbls || !Array.isArray(tbls)) return null;
+    return tbls.map(t => {
+      const sCount = t.seatsCount || (t.seats && Array.isArray(t.seats) ? t.seats.length : 4);
+      const existingSeats = t.seats && Array.isArray(t.seats) && t.seats.length > 0 ? t.seats : null;
+      const seats = existingSeats || Array.from({ length: sCount }, (_, i) => ({
+        id: `${t.id}-${i + 1}`,
+        seatNumber: i + 1,
+        categoryId: t.categoryId || 'standard'
+      }));
+      return {
+        ...t,
+        seatsCount: sCount,
+        seats: seats
+      };
+    });
+  };
+
   // Tables state
-  const [tables, setTables] = useState(initialDeck.tables || [
-    {
-      id: 'T1',
-      label: 'Стол 1',
-      type: 'round',
-      x: 230,
-      y: 110,
-      radius: 26,
-      seatsCount: 4,
-      categoryId: 'stage_front',
-      seats: [
-        { id: 'T1-1', seatNumber: 1, categoryId: 'stage_front' },
-        { id: 'T1-2', seatNumber: 2, categoryId: 'stage_front' },
-        { id: 'T1-3', seatNumber: 3, categoryId: 'stage_front' },
-        { id: 'T1-4', seatNumber: 4, categoryId: 'stage_front' }
-      ]
-    },
-    {
-      id: 'T2',
-      label: 'Стол 2',
-      type: 'round',
-      x: 230,
-      y: 410,
-      radius: 26,
-      seatsCount: 4,
-      categoryId: 'stage_front',
-      seats: [
-        { id: 'T2-1', seatNumber: 1, categoryId: 'stage_front' },
-        { id: 'T2-2', seatNumber: 2, categoryId: 'stage_front' },
-        { id: 'T2-3', seatNumber: 3, categoryId: 'stage_front' },
-        { id: 'T2-4', seatNumber: 4, categoryId: 'stage_front' }
-      ]
-    },
-    {
-      id: 'T3',
-      label: 'Стол 3 (У окна)',
-      type: 'rect',
-      x: 410,
-      y: 90,
-      width: 70,
-      height: 46,
-      seatsCount: 6,
-      categoryId: 'vip_window',
-      seats: [
-        { id: 'T3-1', seatNumber: 1, categoryId: 'vip_window' },
-        { id: 'T3-2', seatNumber: 2, categoryId: 'vip_window' },
-        { id: 'T3-3', seatNumber: 3, categoryId: 'vip_window' },
-        { id: 'T3-4', seatNumber: 4, categoryId: 'vip_window' },
-        { id: 'T3-5', seatNumber: 5, categoryId: 'vip_window' },
-        { id: 'T3-6', seatNumber: 6, categoryId: 'vip_window' }
-      ]
-    },
-    {
-      id: 'T4',
-      label: 'Стол 4 (У окна)',
-      type: 'rect',
-      x: 410,
-      y: 430,
-      width: 70,
-      height: 46,
-      seatsCount: 6,
-      categoryId: 'vip_window',
-      seats: [
-        { id: 'T4-1', seatNumber: 1, categoryId: 'vip_window' },
-        { id: 'T4-2', seatNumber: 2, categoryId: 'vip_window' },
-        { id: 'T4-3', seatNumber: 3, categoryId: 'vip_window' },
-        { id: 'T4-4', seatNumber: 4, categoryId: 'vip_window' },
-        { id: 'T4-5', seatNumber: 5, categoryId: 'vip_window' },
-        { id: 'T4-6', seatNumber: 6, categoryId: 'vip_window' }
-      ]
-    },
-    {
-      id: 'T5',
-      label: 'Стол 5 (Центр)',
-      type: 'round',
-      x: 580,
-      y: 200,
-      radius: 26,
-      seatsCount: 4,
-      categoryId: 'standard',
-      seats: [
-        { id: 'T5-1', seatNumber: 1, categoryId: 'standard' },
-        { id: 'T5-2', seatNumber: 2, categoryId: 'standard' },
-        { id: 'T5-3', seatNumber: 3, categoryId: 'standard' },
-        { id: 'T5-4', seatNumber: 4, categoryId: 'standard' }
-      ]
-    },
-    {
-      id: 'T6',
-      label: 'Стол 6 (Центр)',
-      type: 'round',
-      x: 580,
-      y: 320,
-      radius: 26,
-      seatsCount: 4,
-      categoryId: 'standard',
-      seats: [
-        { id: 'T6-1', seatNumber: 1, categoryId: 'standard' },
-        { id: 'T6-2', seatNumber: 2, categoryId: 'standard' },
-        { id: 'T6-3', seatNumber: 3, categoryId: 'standard' },
-        { id: 'T6-4', seatNumber: 4, categoryId: 'standard' }
-      ]
-    },
-    {
-      id: 'T7',
-      label: 'Стол 7 (Корма)',
-      type: 'rect',
-      x: 730,
-      y: 260,
-      width: 70,
-      height: 46,
-      seatsCount: 6,
-      categoryId: 'standard',
-      seats: [
-        { id: 'T7-1', seatNumber: 1, categoryId: 'standard' },
-        { id: 'T7-2', seatNumber: 2, categoryId: 'standard' },
-        { id: 'T7-3', seatNumber: 3, categoryId: 'standard' },
-        { id: 'T7-4', seatNumber: 4, categoryId: 'standard' },
-        { id: 'T7-5', seatNumber: 5, categoryId: 'standard' },
-        { id: 'T7-6', seatNumber: 6, categoryId: 'standard' }
-      ]
+  const [tables, setTables] = useState(() => {
+    const fromDeck = normalizeTables(initialDeck.tables);
+    if (fromDeck && fromDeck.length > 0) return fromDeck;
+    return [
+      {
+        id: 'T1',
+        label: 'Стол 1',
+        type: 'round',
+        x: 230,
+        y: 110,
+        radius: 26,
+        seatsCount: 4,
+        categoryId: 'stage_front',
+        seats: [
+          { id: 'T1-1', seatNumber: 1, categoryId: 'stage_front' },
+          { id: 'T1-2', seatNumber: 2, categoryId: 'stage_front' },
+          { id: 'T1-3', seatNumber: 3, categoryId: 'stage_front' },
+          { id: 'T1-4', seatNumber: 4, categoryId: 'stage_front' }
+        ]
+      },
+      {
+        id: 'T2',
+        label: 'Стол 2',
+        type: 'round',
+        x: 230,
+        y: 410,
+        radius: 26,
+        seatsCount: 4,
+        categoryId: 'stage_front',
+        seats: [
+          { id: 'T2-1', seatNumber: 1, categoryId: 'stage_front' },
+          { id: 'T2-2', seatNumber: 2, categoryId: 'stage_front' },
+          { id: 'T2-3', seatNumber: 3, categoryId: 'stage_front' },
+          { id: 'T2-4', seatNumber: 4, categoryId: 'stage_front' }
+        ]
+      },
+      {
+        id: 'T3',
+        label: 'Стол 3 (У окна)',
+        type: 'rect',
+        x: 410,
+        y: 90,
+        width: 70,
+        height: 46,
+        seatsCount: 6,
+        categoryId: 'vip_window',
+        seats: [
+          { id: 'T3-1', seatNumber: 1, categoryId: 'vip_window' },
+          { id: 'T3-2', seatNumber: 2, categoryId: 'vip_window' },
+          { id: 'T3-3', seatNumber: 3, categoryId: 'vip_window' },
+          { id: 'T3-4', seatNumber: 4, categoryId: 'vip_window' },
+          { id: 'T3-5', seatNumber: 5, categoryId: 'vip_window' },
+          { id: 'T3-6', seatNumber: 6, categoryId: 'vip_window' }
+        ]
+      },
+      {
+        id: 'T4',
+        label: 'Стол 4 (У окна)',
+        type: 'rect',
+        x: 410,
+        y: 430,
+        width: 70,
+        height: 46,
+        seatsCount: 6,
+        categoryId: 'vip_window',
+        seats: [
+          { id: 'T4-1', seatNumber: 1, categoryId: 'vip_window' },
+          { id: 'T4-2', seatNumber: 2, categoryId: 'vip_window' },
+          { id: 'T4-3', seatNumber: 3, categoryId: 'vip_window' },
+          { id: 'T4-4', seatNumber: 4, categoryId: 'vip_window' },
+          { id: 'T4-5', seatNumber: 5, categoryId: 'vip_window' },
+          { id: 'T4-6', seatNumber: 6, categoryId: 'vip_window' }
+        ]
+      },
+      {
+        id: 'T5',
+        label: 'Стол 5 (Центр)',
+        type: 'round',
+        x: 580,
+        y: 200,
+        radius: 26,
+        seatsCount: 4,
+        categoryId: 'standard',
+        seats: [
+          { id: 'T5-1', seatNumber: 1, categoryId: 'standard' },
+          { id: 'T5-2', seatNumber: 2, categoryId: 'standard' },
+          { id: 'T5-3', seatNumber: 3, categoryId: 'standard' },
+          { id: 'T5-4', seatNumber: 4, categoryId: 'standard' }
+        ]
+      },
+      {
+        id: 'T6',
+        label: 'Стол 6 (Центр)',
+        type: 'round',
+        x: 580,
+        y: 320,
+        radius: 26,
+        seatsCount: 4,
+        categoryId: 'standard',
+        seats: [
+          { id: 'T6-1', seatNumber: 1, categoryId: 'standard' },
+          { id: 'T6-2', seatNumber: 2, categoryId: 'standard' },
+          { id: 'T6-3', seatNumber: 3, categoryId: 'standard' },
+          { id: 'T6-4', seatNumber: 4, categoryId: 'standard' }
+        ]
+      },
+      {
+        id: 'T7',
+        label: 'Стол 7 (Корма)',
+        type: 'rect',
+        x: 730,
+        y: 260,
+        width: 70,
+        height: 46,
+        seatsCount: 6,
+        categoryId: 'standard',
+        seats: [
+          { id: 'T7-1', seatNumber: 1, categoryId: 'standard' },
+          { id: 'T7-2', seatNumber: 2, categoryId: 'standard' },
+          { id: 'T7-3', seatNumber: 3, categoryId: 'standard' },
+          { id: 'T7-4', seatNumber: 4, categoryId: 'standard' },
+          { id: 'T7-5', seatNumber: 5, categoryId: 'standard' },
+          { id: 'T7-6', seatNumber: 6, categoryId: 'standard' }
+        ]
+      }
+    ];
+  });
+
+  // Sync state if venue prop changes
+  useEffect(() => {
+    if (!venue) return;
+    const currentDeck = venue.deckData || {};
+    setDeckWidth(currentDeck.width || 880);
+    setDeckHeight(currentDeck.height || 520);
+    setDeckName(venue.name || 'Верхняя палуба «Рок Хит Нева»');
+    setElementsScale(currentDeck.elementsScale || 1.0);
+    setBgImage(currentDeck.bg_image || null);
+    setBgScale(currentDeck.bg_scale || 1.0);
+    setBgOffsetX(currentDeck.bg_offset_x || 0);
+    setBgOffsetY(currentDeck.bg_offset_y || 0);
+
+    if (currentDeck.categories && currentDeck.categories.length > 0) {
+      setCategories(currentDeck.categories);
+      setActiveCategoryId(currentDeck.categories[0].id);
     }
-  ]);
+    if (currentDeck.zones) {
+      setZones(currentDeck.zones);
+    }
+    const normalized = normalizeTables(currentDeck.tables);
+    if (normalized && normalized.length > 0) {
+      setTables(normalized);
+    }
+    setSelectedTableId(null);
+    setSelectedSeatId(null);
+    setSelectedZoneId(null);
+    setSelectedSeatIds(new Set());
+  }, [venue?.id]);
 
   // Selections
   const [selectedTableId, setSelectedTableId] = useState(null);
@@ -246,6 +318,9 @@ export default function DeckBuilder({ venue, onSave, onCancel }) {
   // Zone selection marquee box
   const [isSelectingZone, setIsSelectingZone] = useState(false);
   const [selectionBox, setSelectionBox] = useState(null);
+
+  // View / Orientation mode for DeckBuilder: 'edit' (standard horizontal canvas) | 'preview_vertical' (mobile vertical preview)
+  const [previewOrientation, setPreviewOrientation] = useState('edit');
 
   const [savedSuccess, setSavedSuccess] = useState(false);
   const svgRef = useRef(null);
@@ -321,7 +396,7 @@ export default function DeckBuilder({ venue, onSave, onCancel }) {
       const insideSeats = new Set();
       tables.forEach((t) => {
         const positions = computeSeatPositions(t.type, t.seatsCount, t.width, t.height, elementsScale, t.radius);
-        t.seats.forEach((s, idx) => {
+        (t.seats || []).forEach((s, idx) => {
           const pos = positions[idx] || { relX: 0, relY: 0 };
           const absX = t.x + pos.relX;
           const absY = t.y + pos.relY;
@@ -407,7 +482,7 @@ export default function DeckBuilder({ venue, onSave, onCancel }) {
     setTables((prev) =>
       prev.map((t) => {
         if (t.id !== tableId) return t;
-        const newSeats = t.seats.map((s) => (s.id === seatId ? { ...s, categoryId: catId } : s));
+        const newSeats = (t.seats || []).map((s) => (s.id === seatId ? { ...s, categoryId: catId } : s));
         return { ...t, seats: newSeats };
       })
     );
@@ -418,7 +493,7 @@ export default function DeckBuilder({ venue, onSave, onCancel }) {
     setTables((prev) =>
       prev.map((t) => {
         if (t.id !== tableId) return t;
-        const newSeats = t.seats.map((s) => ({ ...s, categoryId: catId }));
+        const newSeats = (t.seats || []).map((s) => ({ ...s, categoryId: catId }));
         return { ...t, categoryId: catId, seats: newSeats };
       })
     );
@@ -434,7 +509,7 @@ export default function DeckBuilder({ venue, onSave, onCancel }) {
     setTables((prev) =>
       prev.map((t) => {
         let changed = false;
-        const newSeats = t.seats.map((s) => {
+        const newSeats = (t.seats || []).map((s) => {
           if (selectedSeatIds.has(s.id)) {
             changed = true;
             return { ...s, categoryId: catId };
@@ -545,7 +620,14 @@ export default function DeckBuilder({ venue, onSave, onCancel }) {
     if (!current) return;
     const newNum = tables.length + 1;
     const newId = `T${newNum}`;
-    const newSeats = current.seats.map((s, idx) => ({
+    const currentSeats = current.seats && current.seats.length > 0 
+      ? current.seats 
+      : Array.from({ length: current.seatsCount || 4 }, (_, i) => ({
+          id: `${current.id}-${i + 1}`,
+          seatNumber: i + 1,
+          categoryId: current.categoryId || 'standard'
+        }));
+    const newSeats = currentSeats.map((s, idx) => ({
       ...s,
       id: `${newId}-${idx + 1}`,
       seatNumber: idx + 1
@@ -595,7 +677,7 @@ export default function DeckBuilder({ venue, onSave, onCancel }) {
       prev.map((t) => ({
         ...t,
         categoryId: t.categoryId === catId ? filtered[0].id : t.categoryId,
-        seats: t.seats.map((s) => (s.categoryId === catId ? { ...s, categoryId: filtered[0].id } : s))
+        seats: (t.seats || []).map((s) => (s.categoryId === catId ? { ...s, categoryId: filtered[0].id } : s))
       }))
     );
   };
@@ -733,7 +815,7 @@ export default function DeckBuilder({ venue, onSave, onCancel }) {
   };
 
   const selectedTable = tables.find((t) => t.id === selectedTableId);
-  const selectedSeat = selectedTable?.seats.find((s) => s.id === selectedSeatId);
+  const selectedSeat = selectedTable?.seats?.find((s) => s.id === selectedSeatId);
   const selectedZone = zones.find((z) => z.id === selectedZoneId);
 
   // Total stats
@@ -858,31 +940,56 @@ export default function DeckBuilder({ venue, onSave, onCancel }) {
           {/* Background Alignment Controls if Blueprint is uploaded */}
           {bgImage && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '12px', color: '#64748b' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span>Масштаб плана:</span>
-                <input
-                  type="range"
-                  min="0.5"
-                  max="2.0"
-                  step="0.05"
-                  value={bgScale}
-                  onChange={(e) => setBgScale(parseFloat(e.target.value))}
-                  style={{ width: '80px', cursor: 'pointer' }}
-                />
-                <span>{Math.round(bgScale * 100)}%</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span>Прозрачность:</span>
-                <input
-                  type="range"
-                  min="0.1"
-                  max="1.0"
-                  step="0.05"
-                  value={bgOpacity}
-                  onChange={(e) => setBgOpacity(parseFloat(e.target.value))}
-                  style={{ width: '70px', cursor: 'pointer' }}
-                />
-              </div>
+              <button
+                type="button"
+                onClick={() => setShowBg(!showBg)}
+                style={{
+                  padding: '5px 10px',
+                  borderRadius: '6px',
+                  border: showBg ? '1px solid #2563eb' : '1px solid #cbd5e1',
+                  background: showBg ? '#eff6ff' : '#ffffff',
+                  color: showBg ? '#1e40af' : '#475569',
+                  fontWeight: '600',
+                  fontSize: '12px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+                title={showBg ? 'Чертеж включен. Нажмите, чтобы скрыть и оставить чистый контур' : 'Показать фоновый чертеж корабля'}
+              >
+                <Layers size={14} /> {showBg ? '📄 Чертеж включен' : '✨ Чистый контур (без задвоений)'}
+              </button>
+
+              {showBg && (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span>Масштаб:</span>
+                    <input
+                      type="range"
+                      min="0.5"
+                      max="2.0"
+                      step="0.05"
+                      value={bgScale}
+                      onChange={(e) => setBgScale(parseFloat(e.target.value))}
+                      style={{ width: '70px', cursor: 'pointer' }}
+                    />
+                    <span>{Math.round(bgScale * 100)}%</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span>Прозрачность:</span>
+                    <input
+                      type="range"
+                      min="0.1"
+                      max="1.0"
+                      step="0.05"
+                      value={bgOpacity}
+                      onChange={(e) => setBgOpacity(parseFloat(e.target.value))}
+                      style={{ width: '60px', cursor: 'pointer' }}
+                    />
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>
@@ -972,6 +1079,52 @@ export default function DeckBuilder({ venue, onSave, onCancel }) {
             </button>
           </div>
 
+          {/* View / Orientation Toggle (Mobile Vertical vs Desktop Editor) */}
+          <div style={{ display: 'inline-flex', background: '#e2e8f0', padding: '3px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+            <button
+              type="button"
+              onClick={() => setPreviewOrientation('edit')}
+              style={{
+                padding: '5px 10px',
+                borderRadius: '6px',
+                border: 'none',
+                background: previewOrientation === 'edit' ? '#ffffff' : 'transparent',
+                color: previewOrientation === 'edit' ? '#0f172a' : '#64748b',
+                fontWeight: previewOrientation === 'edit' ? 'bold' : 'normal',
+                fontSize: '12px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                boxShadow: previewOrientation === 'edit' ? '0 1px 2px rgba(0,0,0,0.08)' : 'none'
+              }}
+              title="Редактор расстановки столов (горизонтальный чертеж)"
+            >
+              💻 Редактор
+            </button>
+            <button
+              type="button"
+              onClick={() => setPreviewOrientation('preview_vertical')}
+              style={{
+                padding: '5px 10px',
+                borderRadius: '6px',
+                border: 'none',
+                background: previewOrientation === 'preview_vertical' ? '#2563eb' : 'transparent',
+                color: previewOrientation === 'preview_vertical' ? '#ffffff' : '#475569',
+                fontWeight: previewOrientation === 'preview_vertical' ? 'bold' : 'normal',
+                fontSize: '12px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                boxShadow: previewOrientation === 'preview_vertical' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none'
+              }}
+              title="Предпросмотр схемы вертикально (нос вверху как на смартфонах)"
+            >
+              <Smartphone size={13} /> 📱 Вертикально
+            </button>
+          </div>
+
           {/* Quick Active Category Badge for Paint Mode */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
             <span style={{ color: '#64748b' }}>Активная категория:</span>
@@ -1057,72 +1210,199 @@ export default function DeckBuilder({ venue, onSave, onCancel }) {
           </div>
         )}
 
-        {/* Interactive SVG Canvas */}
-        <div
-          style={{
-            background: '#ffffff',
-            borderRadius: '12px',
-            border: '1px solid #e2e8f0',
-            padding: '12px',
-            overflowX: 'auto',
-            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
-          }}
-        >
-          <svg
-            ref={svgRef}
-            width={deckWidth}
-            height={deckHeight}
-            onMouseDown={handleCanvasMouseDown}
-            onMouseMove={handleCanvasMouseMove}
-            onMouseUp={handleCanvasMouseUp}
+        {/* Interactive SVG Canvas or Vertical Live Preview */}
+        {previewOrientation === 'preview_vertical' ? (
+          <div
             style={{
-              display: 'block',
-              margin: '0 auto',
-              background: '#f8fafc',
-              borderRadius: '8px',
-              border: '2px dashed #cbd5e1',
-              cursor: toolMode === 'zone_select' ? 'crosshair' : toolMode === 'paint' ? 'cell' : 'default'
+              background: '#ffffff',
+              borderRadius: '12px',
+              border: '1px solid #e2e8f0',
+              padding: '16px',
+              boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
             }}
           >
-            {/* Custom Deck Blueprint (if uploaded) */}
-            {bgImage ? (
+            <div style={{ textAlign: 'center', marginBottom: '12px', color: '#1e40af', fontSize: '13px', fontWeight: 'bold' }}>
+              🚢 Точная архитектурная 2-палубная векторная схема теплохода (70 посадочных мест)
+            </div>
+            <RockHitNevaVesselScheme
+              readOnly={true}
+              selectedSeat={selectedSeatId ? { seatNumber: parseInt(selectedSeatId.split('-')[1] || 1, 10) } : null}
+            />
+          </div>
+        ) : (
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: '12px',
+              border: '1px solid #e2e8f0',
+              padding: '12px',
+              overflowX: 'auto',
+              boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
+            }}
+          >
+            <svg
+              ref={svgRef}
+              width={deckWidth}
+              height={deckHeight}
+              onMouseDown={handleCanvasMouseDown}
+              onMouseMove={handleCanvasMouseMove}
+              onMouseUp={handleCanvasMouseUp}
+              style={{
+                display: 'block',
+                margin: '0 auto',
+                background: '#f8fafc',
+                borderRadius: '8px',
+                border: '2px dashed #cbd5e1',
+                cursor: toolMode === 'zone_select' ? 'crosshair' : toolMode === 'paint' ? 'cell' : 'default'
+              }}
+            >
+            {/* Custom Deck Blueprint (if uploaded and enabled) */}
+            {bgImage && showBg ? (
               <g transform={`translate(${bgOffsetX}, ${bgOffsetY}) scale(${bgScale})`}>
                 <image href={bgImage} x="0" y="0" width={deckWidth} height={deckHeight} opacity={bgOpacity} preserveAspectRatio="none" />
               </g>
             ) : (
-              /* Default Ship Deck Contour & Scene */
-              <g pointerEvents="none">
+              /* Elegant Maritime Ship Hull & Deck Architecture */
+              <g pointerEvents="none" className="ship-deck-vector-base">
+                <defs>
+                  <linearGradient id="deckGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#f8fafc" />
+                    <stop offset="50%" stopColor="#f1f5f9" />
+                    <stop offset="100%" stopColor="#e2e8f0" />
+                  </linearGradient>
+                  <linearGradient id="hullBorderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#94a3b8" />
+                    <stop offset="50%" stopColor="#64748b" />
+                    <stop offset="100%" stopColor="#475569" />
+                  </linearGradient>
+                  <linearGradient id="sceneGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#1e293b" />
+                    <stop offset="100%" stopColor="#334155" />
+                  </linearGradient>
+                  <linearGradient id="barGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#0f172a" />
+                    <stop offset="100%" stopColor="#1e293b" />
+                  </linearGradient>
+                  <filter id="deckShadow" x="-5%" y="-5%" width="110%" height="110%">
+                    <feDropShadow dx="0" dy="8" stdDeviation="12" floodColor="#0f172a" floodOpacity="0.06" />
+                  </filter>
+                </defs>
+
+                {/* Outer Hull with Bulwark */}
                 <path
-                  d={`M 60,30 L ${deckWidth - 90},30 Q ${deckWidth - 10},${deckHeight / 2} ${deckWidth - 90},${deckHeight - 30} L 60,${deckHeight - 30} Q 15,${deckHeight / 2} 60,30 Z`}
+                  d={`M 55,20 L ${deckWidth - 140},20 C ${deckWidth - 50},20 ${deckWidth - 5},${deckHeight * 0.28} ${deckWidth - 5},${deckHeight / 2} C ${deckWidth - 5},${deckHeight * 0.72} ${deckWidth - 50},${deckHeight - 20} ${deckWidth - 140},${deckHeight - 20} L 55,${deckHeight - 20} C 30,${deckHeight - 20} 20,${deckHeight * 0.75} 20,${deckHeight / 2} C 20,${deckHeight * 0.25} 30,20 55,20 Z`}
                   fill="#ffffff"
-                  stroke="#94a3b8"
-                  strokeWidth="2"
-                  strokeDasharray="5 3"
+                  stroke="url(#hullBorderGrad)"
+                  strokeWidth="3.5"
+                  filter="url(#deckShadow)"
                 />
-                <rect x="75" y={deckHeight / 2 - 55} width="40" height="110" rx="8" fill="#e2e8f0" stroke="#cbd5e1" />
+
+                {/* Inner Deck Walking Surface */}
+                <path
+                  d={`M 65,30 L ${deckWidth - 145},30 C ${deckWidth - 60},30 ${deckWidth - 18},${deckHeight * 0.29} ${deckWidth - 18},${deckHeight / 2} C ${deckWidth - 18},${deckHeight * 0.71} ${deckWidth - 60},${deckHeight - 30} ${deckWidth - 145},${deckHeight - 30} L 65,${deckHeight - 30} C 42,${deckHeight - 30} 32,${deckHeight * 0.73} 32,${deckHeight / 2} C 32,${deckHeight * 0.27} 42,30 65,30 Z`}
+                  fill="url(#deckGrad)"
+                  stroke="#cbd5e1"
+                  strokeWidth="1"
+                />
+
+                {/* Planking deck lines (accents) */}
+                <line x1="160" y1="35" x2="160" y2={deckHeight - 35} stroke="#e2e8f0" strokeWidth="1" strokeDasharray="4 4" />
+                <line x1={deckWidth - 220} y1="35" x2={deckWidth - 220} y2={deckHeight - 35} stroke="#e2e8f0" strokeWidth="1" strokeDasharray="4 4" />
+
+                {/* Bow Panoramic Lounge Area (Right side / Bow) */}
+                <path
+                  d={`M ${deckWidth - 215},35 C ${deckWidth - 130},35 ${deckWidth - 24},${deckHeight * 0.3} ${deckWidth - 24},${deckHeight / 2} C ${deckWidth - 24},${deckHeight * 0.7} ${deckWidth - 130},${deckHeight - 35} ${deckWidth - 215},${deckHeight - 35} Z`}
+                  fill="#f0fdf4"
+                  opacity="0.4"
+                  stroke="#86efac"
+                  strokeWidth="1"
+                  strokeDasharray="3 3"
+                />
                 <text
-                  x="95"
+                  x={deckWidth - 100}
                   y={deckHeight / 2 + 4}
-                  fill="#475569"
-                  fontSize="11"
+                  fill="#15803d"
+                  fontSize="10"
                   fontWeight="bold"
-                  transform={`rotate(-90, 95, ${deckHeight / 2})`}
+                  letterSpacing="1"
                   textAnchor="middle"
                 >
-                  СЦЕНА / ПАНОРАМА
+                  НОС / ПАНОРАМА
                 </text>
 
-                <rect x={deckWidth - 75} y={deckHeight / 2 - 45} width="25" height="90" rx="6" fill="#e2e8f0" stroke="#cbd5e1" />
+                {/* Professional Concert Stage (Left side / Saloon) */}
+                <g filter="url(#deckShadow)">
+                  <rect 
+                    x="70" 
+                    y={deckHeight / 2 - 65} 
+                    width="55" 
+                    height="130" 
+                    rx="10" 
+                    fill="url(#sceneGrad)" 
+                    stroke="#475569" 
+                    strokeWidth="1.5" 
+                  />
+                  <rect 
+                    x="74" 
+                    y={deckHeight / 2 - 61} 
+                    width="47" 
+                    height="122" 
+                    rx="7" 
+                    fill="none" 
+                    stroke="rgba(255,255,255,0.2)" 
+                    strokeWidth="1" 
+                  />
+                  <text
+                    x="98"
+                    y={deckHeight / 2 + 4}
+                    fill="#f8fafc"
+                    fontSize="11"
+                    fontWeight="bold"
+                    letterSpacing="2"
+                    transform={`rotate(-90, 98, ${deckHeight / 2})`}
+                    textAnchor="middle"
+                  >
+                    🎸 СЦЕНА
+                  </text>
+                </g>
+
+                {/* Ship Bar & Promenade */}
+                <g>
+                  <rect 
+                    x="135" 
+                    y={deckHeight - 75} 
+                    width="60" 
+                    height="38" 
+                    rx="6" 
+                    fill="url(#barGrad)" 
+                    stroke="#334155" 
+                    strokeWidth="1" 
+                  />
+                  <text
+                    x="165"
+                    y={deckHeight - 52}
+                    fill="#f8fafc"
+                    fontSize="9"
+                    fontWeight="bold"
+                    letterSpacing="1"
+                    textAnchor="middle"
+                  >
+                    🍹 БАР
+                  </text>
+                </g>
+
+                {/* Stern Promenade (Leftmost) */}
                 <text
-                  x={deckWidth - 62}
+                  x="42"
                   y={deckHeight / 2 + 4}
-                  fill="#64748b"
+                  fill="#94a3b8"
                   fontSize="9"
                   fontWeight="bold"
-                  transform={`rotate(90, ${deckWidth - 62}, ${deckHeight / 2})`}
+                  letterSpacing="1"
+                  transform={`rotate(-90, 42, ${deckHeight / 2})`}
                   textAnchor="middle"
                 >
-                  БАР / ВХОД
+                  КОРМА
                 </text>
               </g>
             )}
@@ -1287,11 +1567,11 @@ export default function DeckBuilder({ venue, onSave, onCancel }) {
                   </g>
 
                   {/* Individual Seats around Table */}
-                  {table.seats.map((seat, seatIdx) => {
+                  {(table.seats || []).map((seat, seatIdx) => {
                     const pos = positions[seatIdx] || { relX: 0, relY: 0 };
                     const cat = getCategory(seat.categoryId);
                     const isSeatSelected = selectedSeatId === seat.id || selectedSeatIds.has(seat.id);
-                    const seatR = Math.max(7, 10 * elementsScale);
+                    const seatR = Math.max(6, 7.5 * elementsScale);
 
                     return (
                       <g
@@ -1348,6 +1628,7 @@ export default function DeckBuilder({ venue, onSave, onCancel }) {
             )}
           </svg>
         </div>
+        )}
 
         {/* Action Toolbar Below Canvas */}
         <div style={{ display: 'flex', gap: '10px', marginTop: '16px', flexWrap: 'wrap', alignItems: 'center' }}>

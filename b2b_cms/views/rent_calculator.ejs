@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор аренды теплохода — <%= calcSettings.boat_name %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --primary-navy: #0f172a;
+            --accent-blue: #0284c7;
+            --accent-gold: #f59e0b;
+        }
+        body {
+            background-color: #f1f5f9;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #1e293b;
+        }
+        .hero-banner {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: #fff;
+            padding: 50px 20px 40px;
+            border-bottom: 3px solid var(--accent-gold);
+        }
+        .calc-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            border: 1px solid #e2e8f0;
+        }
+        .price-badge {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #0284c7;
+        }
+        .form-check-input:checked {
+            background-color: #0284c7;
+            border-color: #0284c7;
+        }
+        .option-pill {
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 12px 16px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .option-pill:hover {
+            border-color: #0284c7;
+            background-color: #f0f9ff;
+        }
+        .option-pill input:checked + label {
+            color: #0284c7;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="hero-banner text-center mb-5">
+        <div class="container">
+            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold text-uppercase mb-3">
+                <i class="bi bi-water me-1"></i> Навигация в Санкт-Петербурге
+            </span>
+            <h1 class="fw-bold mb-3">Онлайн-калькулятор аренды теплохода</h1>
+            <p class="lead text-light opacity-90 max-w-2xl mx-auto">
+                Рассчитайте точную стоимость аренды <strong>«<%= calcSettings.boat_name %>»</strong> под банкет, свадьбу, корпоратив или ночной развод мостов
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Calculator Container -->
+    <main class="container mb-5">
+        <div class="row g-4">
+            <!-- Left: Settings & Sliders -->
+            <div class="col-lg-7">
+                <div class="calc-card p-4 p-md-5">
+                    <h4 class="fw-bold mb-4 d-flex align-items-center">
+                        <span class="badge bg-primary rounded-circle me-2 p-2 fs-6">1</span>
+                        Параметры рейса
+                    </h4>
+
+                    <!-- Time Mode -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-secondary small text-uppercase">Время суток и маршрут</label>
+                        <div class="d-flex flex-column gap-2">
+                            <label class="option-pill d-flex align-items-center justify-content-between">
+                                <div class="form-check mb-0">
+                                    <input class="form-check-input" type="radio" name="timeSlot" id="slotDay" value="day" checked onchange="calculateTotal()">
+                                    <span class="ms-2 fw-semibold">Дневной круиз (до 18:00)</span>
+                                </div>
+                                <span class="badge bg-light text-dark border"><%= Number(calcSettings.hourly_rate_day).toLocaleString('ru-RU') %> ₽/ч</span>
+                            </label>
+                            <label class="option-pill d-flex align-items-center justify-content-between">
+                                <div class="form-check mb-0">
+                                    <input class="form-check-input" type="radio" name="timeSlot" id="slotEvening" value="evening" onchange="calculateTotal()">
+                                    <span class="ms-2 fw-semibold">Вечерний рейс (18:00 – 23:30)</span>
+                                </div>
+                                <span class="badge bg-light text-dark border"><%= Number(calcSettings.hourly_rate_evening).toLocaleString('ru-RU') %> ₽/ч</span>
+                            </label>
+                            <label class="option-pill d-flex align-items-center justify-content-between">
+                                <div class="form-check mb-0">
+                                    <input class="form-check-input" type="radio" name="timeSlot" id="slotNight" value="night" onchange="calculateTotal()">
+                                    <span class="ms-2 fw-semibold">Ночной рейс на развод мостов (23:30 – 03:00)</span>
+                                </div>
+                                <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle"><%= Number(calcSettings.hourly_rate_night_bridges).toLocaleString('ru-RU') %> ₽/ч</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Sliders: Hours and Guests -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label fw-semibold mb-0">Время аренды:</label>
+                                <span class="badge bg-primary fs-6" id="hoursVal">3 часа</span>
+                            </div>
+                            <input type="range" class="form-range" id="hoursInput" min="<%= calcSettings.min_hours || 2 %>" max="8" value="3" oninput="calculateTotal()">
+                            <div class="d-flex justify-content-between text-muted small">
+                                <span>Мин: <%= calcSettings.min_hours || 2 %> ч.</span>
+                                <span>8 ч.</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label fw-semibold mb-0">Количество гостей:</label>
+                                <span class="badge bg-primary fs-6" id="guestsVal">35 чел.</span>
+                            </div>
+                            <input type="range" class="form-range" id="guestsInput" min="10" max="<%= calcSettings.capacity || 80 %>" value="35" oninput="calculateTotal()">
+                            <div class="d-flex justify-content-between text-muted small">
+                                <span>10 чел.</span>
+                                <span>Вместимость: <%= calcSettings.capacity || 80 %> чел.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Catering -->
+                    <h4 class="fw-bold mb-3 d-flex align-items-center">
+                        <span class="badge bg-primary rounded-circle me-2 p-2 fs-6">2</span>
+                        Питание & Кейтеринг
+                    </h4>
+                    <div class="row g-2 mb-4">
+                        <div class="col-md-4">
+                            <label class="option-pill d-block text-center h-100">
+                                <input class="form-check-input" type="radio" name="catering" id="catNone" value="none" onchange="calculateTotal()">
+                                <div class="mt-2 fw-semibold">Свое питание</div>
+                                <small class="text-muted d-block">или без кейтеринга</small>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="option-pill d-block text-center h-100">
+                                <input class="form-check-input" type="radio" name="catering" id="catBuffet" value="buffet" checked onchange="calculateTotal()">
+                                <div class="mt-2 fw-semibold">Фуршет</div>
+                                <small class="text-primary fw-semibold"><%= Number(calcSettings.buffet_price_per_person).toLocaleString('ru-RU') %> ₽ / чел.</small>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="option-pill d-block text-center h-100">
+                                <input class="form-check-input" type="radio" name="catering" id="catBanquet" value="banquet" onchange="calculateTotal()">
+                                <div class="mt-2 fw-semibold">Банкет</div>
+                                <small class="text-primary fw-semibold"><%= Number(calcSettings.banquet_price_per_person).toLocaleString('ru-RU') %> ₽ / чел.</small>
+                            </label>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Entertainment & Extra -->
+                    <h4 class="fw-bold mb-3 d-flex align-items-center">
+                        <span class="badge bg-primary rounded-circle me-2 p-2 fs-6">3</span>
+                        Оснащение и шоу-программа
+                    </h4>
+                    <div class="d-flex flex-column gap-2 mb-2">
+                        <div class="form-check form-switch p-3 bg-light rounded border">
+                            <input class="form-check-input ms-0 me-3" type="checkbox" id="optDj" checked onchange="calculateTotal()">
+                            <label class="form-check-label fw-semibold" for="optDj">
+                                Профессиональный звук + DJ на все время круиза (+<%= Number(calcSettings.dj_sound_price).toLocaleString('ru-RU') %> ₽)
+                            </label>
+                        </div>
+                        <div class="form-check form-switch p-3 bg-light rounded border">
+                            <input class="form-check-input ms-0 me-3" type="checkbox" id="optHost" onchange="calculateTotal()">
+                            <label class="form-check-label fw-semibold" for="optHost">
+                                Харизматичный ведущий с индивидуальным сценарием (+<%= Number(calcSettings.host_price).toLocaleString('ru-RU') %> ₽)
+                            </label>
+                        </div>
+                        <div class="form-check form-switch p-3 bg-light rounded border">
+                            <input class="form-check-input ms-0 me-3" type="checkbox" id="optBand" onchange="calculateTotal()">
+                            <label class="form-check-label fw-semibold" for="optBand">
+                                Живая кавер / рок-группа (полный живой звук) (+<%= Number(calcSettings.live_band_price).toLocaleString('ru-RU') %> ₽)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Summary & Lead Form -->
+            <div class="col-lg-5">
+                <div class="calc-card p-4 p-md-5 sticky-top" style="top: 20px;">
+                    <h4 class="fw-bold mb-3">Итоговая смета</h4>
+                    
+                    <div class="price-badge mb-1" id="totalPriceDisplay">0 ₽</div>
+                    <p class="text-muted small mb-4">Включает финальную уборку судна (<%= Number(calcSettings.cleaning_fee).toLocaleString('ru-RU') %> ₽)</p>
+
+                    <!-- Breakdown Details -->
+                    <div class="bg-light p-3 rounded border mb-4 small">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Аренда судна (<span id="detHours">3</span> ч.):</span>
+                            <span class="fw-semibold" id="detRentCost">0 ₽</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Кейтеринг (<span id="detGuests">35</span> чел.):</span>
+                            <span class="fw-semibold" id="detCateringCost">0 ₽</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Оборудование и программа:</span>
+                            <span class="fw-semibold" id="detOptionsCost">0 ₽</span>
+                        </div>
+                        <div class="d-flex justify-content-between pt-2 border-top">
+                            <span class="text-muted">Клининг / подготовка:</span>
+                            <span class="fw-semibold"><%= Number(calcSettings.cleaning_fee).toLocaleString('ru-RU') %> ₽</span>
+                        </div>
+                    </div>
+
+                    <!-- Lead Submission Form -->
+                    <form id="leadForm" onsubmit="submitLead(event)">
+                        <h6 class="fw-bold mb-3">Забронировать дату или зафиксировать смету:</h6>
+                        
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Ваше имя *</label>
+                            <input type="text" class="form-control" id="custName" required placeholder="Константин">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Номер телефона *</label>
+                            <input type="tel" class="form-control" id="custPhone" required placeholder="+7 (999) 000-00-00">
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold">Желаемая дата</label>
+                                <input type="date" class="form-control form-control-sm" id="custDate">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold">Время начала</label>
+                                <input type="time" class="form-control form-control-sm" id="custTime" value="19:00">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Пожелания / маршрут</label>
+                            <textarea class="form-control form-control-sm" id="custNotes" rows="2" placeholder="Хотим выход в Финский залив к Лахте..."></textarea>
+                        </div>
+
+                        <button type="submit" id="submitBtn" class="btn btn-primary w-100 py-3 fw-bold fs-6 shadow">
+                            <i class="bi bi-send-fill me-2"></i> Отправить расчет менеджеру
+                        </button>
+                        <small class="text-muted text-center d-block mt-2" style="font-size: 0.78rem;">
+                            Бронь не обязывает к оплате. Мы проверим доступность причала и теплохода.
+                        </small>
+                    </form>
+
+                    <!-- Success Alert -->
+                    <div id="successBox" class="alert alert-success mt-3 d-none">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        <strong>Заявка успешно принята!</strong> Менеджер свяжется с вами в течение 15 минут для подтверждения времени и брони.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const CFG = {
+            domainId: <%= domain.id %>,
+            boatName: "<%= calcSettings.boat_name %>",
+            hourlyDay: <%= calcSettings.hourly_rate_day || 15000 %>,
+            hourlyEvening: <%= calcSettings.hourly_rate_evening || 20000 %>,
+            hourlyNight: <%= calcSettings.hourly_rate_night_bridges || 28000 %>,
+            buffetPrice: <%= calcSettings.buffet_price_per_person || 2200 %>,
+            banquetPrice: <%= calcSettings.banquet_price_per_person || 3500 %>,
+            djPrice: <%= calcSettings.dj_sound_price || 15000 %>,
+            hostPrice: <%= calcSettings.host_price || 25000 %>,
+            bandPrice: <%= calcSettings.live_band_price || 45000 %>,
+            cleaningFee: <%= calcSettings.cleaning_fee || 5000 %>
+        };
+
+        let currentCalculation = {};
+
+        function calculateTotal() {
+            const hours = parseInt(document.getElementById('hoursInput').value) || 2;
+            const guests = parseInt(document.getElementById('guestsInput').value) || 20;
+
+            document.getElementById('hoursVal').textContent = hours + ' ' + (hours === 1 ? 'час' : (hours < 5 ? 'часа' : 'часов'));
+            document.getElementById('guestsVal').textContent = guests + ' чел.';
+            document.getElementById('detHours').textContent = hours;
+            document.getElementById('detGuests').textContent = guests;
+
+            const timeSlot = document.querySelector('input[name="timeSlot"]:checked').value;
+            let hourlyRate = CFG.hourlyDay;
+            if (timeSlot === 'evening') hourlyRate = CFG.hourlyEvening;
+            if (timeSlot === 'night') hourlyRate = CFG.hourlyNight;
+
+            const rentCost = hourlyRate * hours;
+
+            const cateringType = document.querySelector('input[name="catering"]:checked').value;
+            let cateringCost = 0;
+            let cateringLabel = 'Без питания';
+            if (cateringType === 'buffet') {
+                cateringCost = CFG.buffetPrice * guests;
+                cateringLabel = 'Фуршет';
+            } else if (cateringType === 'banquet') {
+                cateringCost = CFG.banquetPrice * guests;
+                cateringLabel = 'Банкет';
+            }
+
+            let optionsCost = 0;
+            const options = {
+                dj: document.getElementById('optDj').checked,
+                host: document.getElementById('optHost').checked,
+                band: document.getElementById('optBand').checked
+            };
+            if (options.dj) optionsCost += CFG.djPrice;
+            if (options.host) optionsCost += CFG.hostPrice;
+            if (options.band) optionsCost += CFG.bandPrice;
+
+            const total = rentCost + cateringCost + optionsCost + CFG.cleaningFee;
+
+            document.getElementById('totalPriceDisplay').textContent = total.toLocaleString('ru-RU') + ' ₽';
+            document.getElementById('detRentCost').textContent = rentCost.toLocaleString('ru-RU') + ' ₽';
+            document.getElementById('detCateringCost').textContent = cateringCost.toLocaleString('ru-RU') + ' ₽';
+            document.getElementById('detOptionsCost').textContent = optionsCost.toLocaleString('ru-RU') + ' ₽';
+
+            currentCalculation = {
+                hours,
+                guests,
+                timeSlot,
+                cateringLabel,
+                options,
+                total
+            };
+        }
+
+        async function submitLead(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Отправка...';
+
+            const payload = {
+                domain_id: CFG.domainId,
+                customer_name: document.getElementById('custName').value,
+                customer_phone: document.getElementById('custPhone').value,
+                boat_name: CFG.boatName,
+                event_date: document.getElementById('custDate').value,
+                start_time: document.getElementById('custTime').value,
+                duration_hours: currentCalculation.hours,
+                guests_count: currentCalculation.guests,
+                catering_type: currentCalculation.cateringLabel,
+                options_json: currentCalculation.options,
+                total_estimated_price: currentCalculation.total,
+                notes: document.getElementById('custNotes').value
+            };
+
+            try {
+                const res = await fetch('/api/calc/lead', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('leadForm').classList.add('d-none');
+                    document.getElementById('successBox').classList.remove('d-none');
+                } else {
+                    alert('Ошибка: ' + (data.error || 'Не удалось отправить заявку'));
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-send-fill me-2"></i> Отправить расчет менеджеру';
+                }
+            } catch (err) {
+                alert('Ошибка соединения с сервером');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-send-fill me-2"></i> Отправить расчет менеджеру';
+            }
+        }
+
+        // Initialize calculation
+        calculateTotal();
+    </script>
+</body>
+</html>

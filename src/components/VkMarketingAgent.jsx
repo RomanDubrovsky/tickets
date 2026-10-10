@@ -12,7 +12,10 @@ export default function VkMarketingAgent({ initialTab = 'overview' }) {
   // Selected program for marketing
   const [selectedProgram, setSelectedProgram] = useState('rock_bridges');
   const [targetAudienceFocus, setTargetAudienceFocus] = useState('all');
-  const [vkToken, setVkToken] = useState('');
+  const DEFAULT_VK_TOKEN = '5b2202775b2202775b220277755866540355b225b22027731e47e1e537d57ea32eddc3b';
+  const [vkToken, setVkToken] = useState(() => {
+    return localStorage.getItem('vk_service_token') || DEFAULT_VK_TOKEN;
+  });
   const [isTokenSaved, setIsTokenSaved] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [copiedIndex, setCopiedIndex] = useState(null);
@@ -340,6 +343,25 @@ export default function VkMarketingAgent({ initialTab = 'overview' }) {
           }}
         >
           <Bot size={16} /> Возможности & ИИ-Парсинг (Roadmap)
+        </button>
+
+        <button
+          onClick={() => setActiveTab('manual')}
+          style={{
+            background: activeTab === 'manual' ? '#f0fdf4' : 'transparent',
+            border: 'none',
+            borderBottom: activeTab === 'manual' ? '3px solid #16a34a' : '3px solid transparent',
+            padding: '10px 18px',
+            fontWeight: activeTab === 'manual' ? '800' : '600',
+            color: activeTab === 'manual' ? '#16a34a' : '#15803d',
+            cursor: 'pointer',
+            fontSize: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}
+        >
+          <FileText size={16} color="#16a34a" /> 📘 Пошаговая инструкция (Как запускать)
         </button>
       </div>
 
@@ -799,6 +821,7 @@ export default function VkMarketingAgent({ initialTab = 'overview' }) {
 
             <button
               onClick={() => {
+                localStorage.setItem('vk_service_token', vkToken);
                 setIsTokenSaved(true);
                 setTimeout(() => setIsTokenSaved(false), 3000);
               }}
@@ -1001,6 +1024,121 @@ export default function VkMarketingAgent({ initialTab = 'overview' }) {
             >
               Вернуться к генерации офферов
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 5: STEP-BY-STEP USER GUIDE (КАК ЗАПУСКАТЬ РЕКЛАМУ)                     */}
+      {/* ========================================================================= */}
+      {activeTab === 'manual' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          {/* Header Banner */}
+          <div style={{
+            background: 'linear-gradient(135deg, #15803d 0%, #166534 100%)',
+            color: '#ffffff',
+            borderRadius: '16px',
+            padding: '24px 28px',
+            boxShadow: '0 8px 24px rgba(22, 101, 52, 0.25)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+              <FileText size={24} color="#86efac" />
+              <h2 style={{ margin: 0, fontSize: '22px', fontWeight: '800' }}>
+                Пошаговая инструкция: Как запустить рекламу концерта за 5 минут
+              </h2>
+            </div>
+            <p style={{ margin: 0, fontSize: '14px', opacity: 0.9, lineHeight: '1.6', maxWidth: '850px' }}>
+              Полное руководство для маркетолога, таргетолога и заказчика. Все тексты, ключевые слова и доноры уже подготовлены ИИ-движком — вам остается только перенести их в рекламный кабинет.
+            </p>
+          </div>
+
+          {/* Steps Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '20px' }}>
+            
+            {/* Step 1 */}
+            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '22px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                <span style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#dcfce7', color: '#15803d', fontWeight: '800', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>1</span>
+                <h3 style={{ margin: 0, fontSize: '16px', color: '#0f172a' }}>Выберите программу теплохода</h3>
+              </div>
+              <p style={{ fontSize: '13px', color: '#475569', lineHeight: '1.6', margin: '0 0 12px 0' }}>
+                Вверху страницы переключитесь на нужный концерт («Рок под мостами», «Брат», «Джаз на Неве» или «Сказка»).
+              </p>
+              <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '8px', fontSize: '12px', color: '#334155', border: '1px solid #e2e8f0' }}>
+                💡 <strong>Результат:</strong> ИИ мгновенно обновит боли аудитории, офферы и фразы под специфику именно этого рейса.
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '22px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                <span style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#dcfce7', color: '#15803d', fontWeight: '800', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>2</span>
+                <h3 style={{ margin: 0, fontSize: '16px', color: '#0f172a' }}>Скопируйте текст и ключевые фразы</h3>
+              </div>
+              <p style={{ fontSize: '13px', color: '#475569', lineHeight: '1.6', margin: '0 0 12px 0' }}>
+                Во вкладке <strong>«Связки и Креативы»</strong> выберите целевой сегмент (например, «Пары и свидания») и нажмите кнопку <strong>«Скопировать для VK Рекламы»</strong>.
+              </p>
+              <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '8px', fontSize: '12px', color: '#334155', border: '1px solid #e2e8f0' }}>
+                📋 <strong>В буфере обмена:</strong> Готовый продающий текст с триггерами тепла, музыки и призывом купить билет.
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '22px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                <span style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#dcfce7', color: '#15803d', fontWeight: '800', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>3</span>
+                <h3 style={{ margin: 0, fontSize: '16px', color: '#0f172a' }}>Создайте объявление в VK Рекламе</h3>
+              </div>
+              <p style={{ fontSize: '13px', color: '#475569', lineHeight: '1.6', margin: '0 0 12px 0' }}>
+                Перейдите по синей кнопке <strong>«В кабинет VK»</strong> (или откройте <code>ads.vk.com</code>). Создайте кампанию с целью <strong>«Сайт»</strong> или <strong>«Сообщество»</strong>.
+              </p>
+              <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '8px', fontSize: '12px', color: '#334155', border: '1px solid #e2e8f0' }}>
+                🎯 <strong>Формат:</strong> «Универсальная запись» или «Запись с кнопкой» (ссылку ставьте на страницу бронирования билета).
+              </div>
+            </div>
+
+            {/* Step 4 */}
+            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '22px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                <span style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#dcfce7', color: '#15803d', fontWeight: '800', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>4</span>
+                <h3 style={{ margin: 0, fontSize: '16px', color: '#0f172a' }}>Укажите аудитории и сообщества</h3>
+              </div>
+              <p style={{ fontSize: '13px', color: '#475569', lineHeight: '1.6', margin: '0 0 12px 0' }}>
+                Во вкладке <strong>«Базы аудиторий»</strong> возьмите список сообществ-доноров (KudaGo, Наше Радио СПб, конкуренты по прогулкам) и укажите их в блоке «Сообщества» рекламного кабинета.
+              </p>
+              <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '8px', fontSize: '12px', color: '#334155', border: '1px solid #e2e8f0' }}>
+                ⚡ <strong>Лайфхак:</strong> Ставьте галочку «Только активные участники за последние 30 дней» — это снизит цену клика на 40%.
+              </div>
+            </div>
+
+            {/* Step 5 */}
+            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '22px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                <span style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#dcfce7', color: '#15803d', fontWeight: '800', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>5</span>
+                <h3 style={{ margin: 0, fontSize: '16px', color: '#0f172a' }}>Локальный гео-таргетинг (Набережные)</h3>
+              </div>
+              <p style={{ fontSize: '13px', color: '#475569', lineHeight: '1.6', margin: '0 0 12px 0' }}>
+                Во вкладке <strong>«GEO & AI-Видимость»</strong> указаны точные координаты причалов. В кабинете рекламы поставьте точку на причал с радиусом 1-2 км и показом «Тем, кто находится прямо сейчас».
+              </p>
+              <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '8px', fontSize: '12px', color: '#334155', border: '1px solid #e2e8f0' }}>
+                📍 <strong>Супер-конверсия:</strong> Ловит туристов и гуляющих по центру СПб за 2-3 часа до отправления рейса.
+              </div>
+            </div>
+
+            {/* Step 6 */}
+            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '22px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                <span style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#dcfce7', color: '#15803d', fontWeight: '800', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>6</span>
+                <h3 style={{ margin: 0, fontSize: '16px', color: '#0f172a' }}>Подключенный VK Service Token</h3>
+              </div>
+              <p style={{ fontSize: '13px', color: '#475569', lineHeight: '1.6', margin: '0 0 12px 0' }}>
+                Во вкладке <strong>«Архитектура VK API»</strong> уже сохранен ваш персональный сервисный ключ. Он в фоне позволяет парсить участников, лайки и комментарии без сторонних платных подписок.
+              </p>
+              <div style={{ background: '#ecfdf5', padding: '12px', borderRadius: '8px', fontSize: '12px', color: '#15803d', border: '1px solid #bbf7d0', fontWeight: '700' }}>
+                ✅ Токен активен, автономен и привязан к проекту теплоходов.
+              </div>
+            </div>
+
           </div>
         </div>
       )}

@@ -27,4 +27,113 @@ dist-ssr
 .env
 .env.local
 .env.*.local
+*.env
 
+# SQLite and DB dumps
+*.db
+*.sqlite
+*.sqlite3
+cms_head.db
+b2b_cms/cms.db
+*.scheme
+
+# Archives and build artifacts
+*.tar.gz
+*.zip
+
+# Office & PDF working documents
+*.xlsx
+*.docx
+*.pdf
+
+# Root temporary scratch scripts & dumps
+check_*.py
+test_*.mjs
+test_*.py
+debug_*.py
+debug_*.mjs
+scratch_*.py
+scratch_*.js
+scratch_*.mjs
+inspect_*.py
+inspect_*.mjs
+scan_*.py
+verify_*.py
+verify_*.mjs
+detect_*.py
+dl_*.py
+extract_*.py
+fast_*.py
+find_*.py
+get_*.py
+make_*.py
+parse_*.py
+read_*.py
+remote_*.py
+repair_*.py
+resolve_*.py
+restore_*.py
+run_*.py
+setup_*.py
+snap.py
+summary_*.py
+sync_*.py
+tools_*.py
+update_*.py
+upload_*.py
+import_*.py
+clean_*.py
+assemble_*.py
+audit_*.py
+compare_*.py
+count_*.py
+create_*.py
+deploy_*.py
+fix_*.py
+generate_*.py
+patch_*.py
+print_*.py
+take_*.mjs
+capture_*.mjs
+
+# Root image screenshots and inspection artifacts
+/*.png
+/*.jpg
+/*.ico
+/*.html
+/*.txt
+/*.json
+!package.json
+!package-lock.json
+
+# Chrome temp debug profiles
+.*chrome*
+.*debug*
+.*verify*
+.*screenshot*
+.*scroll*
+__pycache__/
+
+# Scratch scripts in repo root
+/*.py
+/*.cjs
+/*.mjs
+/*.yaml
+/Caddyfile*
+/DEPLOY_PLAYBOOK.md
+
+# Downloaded scrapers & extracted data
+
+downloaded_*/
+docx_extracted/
+promo.gradnaneve.ru/
+public/pr/
+public/*.png
+
+# Nginx config dumps
+*.conf
+!b2b_cms/nginx_b2b.conf
+livekit.service
+livekit.yaml
+astra_app.js
+tl_loader.js

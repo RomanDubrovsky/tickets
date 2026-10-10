@@ -177,6 +177,13 @@
                                         <span class="badge <%= isActive ? 'bg-light text-dark' : 'bg-secondary' %> rounded-pill" title="Страниц">
                                             <%= domainCounts[domain.id] || 0 %>
                                         </span>
+                                        <a href="https://<%= domain.name %>" target="_blank" 
+                                           onclick="event.stopPropagation();" 
+                                           class="btn btn-sm <%= isActive ? 'btn-light text-primary' : 'btn-outline-secondary' %> py-0 px-1.5" 
+                                           style="font-size: 0.75rem; border-radius: 4px;"
+                                           title="Открыть <%= domain.name %> в новой вкладке">
+                                            <i class="bi bi-box-arrow-up-right"></i>
+                                        </a>
                                     </div>
                                 </div>
                             <% }); %>
@@ -247,6 +254,19 @@
                                 <li class="nav-item">
                                     <button class="nav-link <%= activeTab === 'settings' ? 'active' : '' %>" onclick="window.location.href='/?domain_id=<%= currentDomain.id %>&tab=settings'">
                                         <i class="bi bi-gear me-1"></i> Настройки & Кассы
+                                    </button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link <%= activeTab === 'finance' ? 'active' : '' %>" onclick="window.location.href='/?domain_id=<%= currentDomain.id %>&tab=finance'">
+                                        <i class="bi bi-cash-stack me-1 text-success"></i> Финансы & ДДС
+                                    </button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link <%= activeTab === 'calc' ? 'active' : '' %>" onclick="window.location.href='/?domain_id=<%= currentDomain.id %>&tab=calc'">
+                                        <i class="bi bi-calculator me-1 text-primary"></i> Аренда & Калькулятор
+                                        <% if ((rentLeads || []).filter(l => l.status === 'new').length > 0) { %>
+                                            <span class="badge bg-danger rounded-pill ms-1"><%= (rentLeads || []).filter(l => l.status === 'new').length %></span>
+                                        <% } %>
                                     </button>
                                 </li>
                             </ul>
@@ -1053,6 +1073,445 @@
 
                                     <button type="submit" class="btn btn-primary px-4">Сохранить настройки домена</button>
                                 </form>
+
+                            <!-- TAB 7: FINANCE & CASH FLOW (ПОД ПАРОЛЕМ АДМИНИСТРАТОРА) -->
+                            <% } else if (activeTab === 'finance') { %>
+                                <div class="guide-box d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="bi bi-shield-lock-fill text-success me-2"></i>
+                                        <strong>Финансовый контур (Studio Ledger & Decima):</strong> Закрытый раздел для руководства. Позволяет контролировать фактические доходы с билетов и аренды, расходы на содержание флота, а также рассчитывать <em>«Зимнюю подушку безопасности»</em> для защиты от кассовых разрывов в период ледостава (ноябрь–апрель).
+                                    </div>
+                                    <button class="btn btn-success btn-sm text-nowrap ms-3" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
+                                        <i class="bi bi-plus-lg me-1"></i> Добавить проводку
+                                    </button>
+                                </div>
+
+                                <!-- 4 KPI Cards -->
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-3">
+                                        <div class="stat-card border-start border-4 border-success shadow-sm">
+                                            <span class="text-muted small fw-semibold text-uppercase">Выручка сезона (Доходы)</span>
+                                            <h3 class="fw-bold text-success mt-1 mb-1"><%= Number(financeData.totalIncome).toLocaleString('ru-RU') %> ₽</h3>
+                                            <small class="text-muted"><i class="bi bi-arrow-up-right text-success"></i> Билеты, бар, аренда</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stat-card border-start border-4 border-danger shadow-sm">
+                                            <span class="text-muted small fw-semibold text-uppercase">Операционные расходы</span>
+                                            <h3 class="fw-bold text-danger mt-1 mb-1"><%= Number(financeData.totalExpense).toLocaleString('ru-RU') %> ₽</h3>
+                                            <small class="text-muted"><i class="bi bi-arrow-down-right text-danger"></i> Топливо, артисты, экипаж, причал</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stat-card border-start border-4 border-primary shadow-sm">
+                                            <span class="text-muted small fw-semibold text-uppercase">Операционная прибыль</span>
+                                            <h3 class="fw-bold text-primary mt-1 mb-1"><%= Number(financeData.netProfit).toLocaleString('ru-RU') %> ₽</h3>
+                                            <small class="text-muted">Рентабельность: <strong class="text-dark"><%= financeData.profitMargin %>%</strong></small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stat-card border-start border-4 <%= financeData.winterCoveredPercent >= 100 ? 'border-success' : (financeData.winterCoveredPercent >= 50 ? 'border-warning' : 'border-danger') %> shadow-sm">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="text-muted small fw-semibold text-uppercase">Зимний резерв (Decima)</span>
+                                                <span class="badge <%= financeData.winterCoveredPercent >= 100 ? 'bg-success' : 'bg-warning text-dark' %>"><%= financeData.winterRunwayMonths %> мес.</span>
+                                            </div>
+                                            <h3 class="fw-bold text-dark mt-1 mb-1"><%= financeData.winterCoveredPercent %>%</h3>
+                                            <div class="progress mb-1" style="height: 6px;">
+                                                <div class="progress-bar <%= financeData.winterCoveredPercent >= 100 ? 'bg-success' : (financeData.winterCoveredPercent >= 50 ? 'bg-warning' : 'bg-danger') %>" style="width: <%= financeData.winterCoveredPercent %>%"></div>
+                                            </div>
+                                            <small class="text-muted">Потребность ноябрь–апрель: <strong><%= Number(financeData.winterNeededTotal).toLocaleString('ru-RU') %> ₽</strong></small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Legal Entities & Monthly ДДС -->
+                                <div class="row g-4 mb-4">
+                                    <!-- Юрлица -->
+                                    <div class="col-lg-5">
+                                        <div class="card border h-100 shadow-sm">
+                                            <div class="card-header bg-white py-3">
+                                                <h6 class="fw-bold mb-0"><i class="bi bi-building me-2 text-primary"></i>Распределение по юрлицам & кассам</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <% Object.keys(financeData.legalEntityStats).forEach(ent => { 
+                                                    const st = financeData.legalEntityStats[ent];
+                                                %>
+                                                    <div class="p-3 mb-3 border rounded bg-light">
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span class="fw-bold text-dark"><%= ent %></span>
+                                                            <span class="badge <%= st.balance >= 0 ? 'bg-success' : 'bg-danger' %>"><%= st.balance >= 0 ? '+' : '' %><%= Number(st.balance).toLocaleString('ru-RU') %> ₽</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between small text-muted mb-1">
+                                                            <span>Доходы:</span>
+                                                            <span class="fw-semibold text-success">+<%= Number(st.income).toLocaleString('ru-RU') %> ₽</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between small text-muted">
+                                                            <span>Расходы:</span>
+                                                            <span class="fw-semibold text-danger">-<%= Number(st.expense).toLocaleString('ru-RU') %> ₽</span>
+                                                        </div>
+                                                    </div>
+                                                <% }); %>
+                                                
+                                                <div class="alert alert-light border small text-muted mb-0">
+                                                    <i class="bi bi-info-circle me-1"></i> Разделение по юрлицам позволяет точно распределять билетную выручку Ticketland и расчеты по договорам аренды судна.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Помесячный ДДС (Cash Flow) -->
+                                    <div class="col-lg-7">
+                                        <div class="card border h-100 shadow-sm">
+                                            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                                                <h6 class="fw-bold mb-0"><i class="bi bi-graph-up-arrow me-2 text-success"></i>Движение Денежных Средств (ДДС по месяцам)</h6>
+                                                <span class="badge bg-light text-dark border">Сезон 2026</span>
+                                            </div>
+                                            <div class="card-body p-0">
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover align-middle mb-0">
+                                                        <thead class="table-light small">
+                                                            <tr>
+                                                                <th>Месяц</th>
+                                                                <th class="text-end">Поступления</th>
+                                                                <th class="text-end">Выплаты</th>
+                                                                <th class="text-end">Сальдо за месяц</th>
+                                                                <th class="text-center">Статус</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <% 
+                                                            const sortedMonths = Object.keys(financeData.monthlyStats).sort();
+                                                            sortedMonths.forEach(m => { 
+                                                                const ms = financeData.monthlyStats[m];
+                                                            %>
+                                                                <tr>
+                                                                    <td class="fw-semibold"><%= m %></td>
+                                                                    <td class="text-end text-success fw-semibold">+<%= Number(ms.income).toLocaleString('ru-RU') %> ₽</td>
+                                                                    <td class="text-end text-danger fw-semibold">-<%= Number(ms.expense).toLocaleString('ru-RU') %> ₽</td>
+                                                                    <td class="text-end fw-bold <%= ms.balance >= 0 ? 'text-primary' : 'text-danger' %>">
+                                                                        <%= ms.balance >= 0 ? '+' : '' %><%= Number(ms.balance).toLocaleString('ru-RU') %> ₽
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                        <% if (ms.balance >= 0) { %>
+                                                                            <span class="badge bg-success-subtle text-success border border-success-subtle">Профицит</span>
+                                                                        <% } else { %>
+                                                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Дефицит</span>
+                                                                        <% } %>
+                                                                    </td>
+                                                                </tr>
+                                                            <% }); %>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Реестр финансовых проводок -->
+                                <div class="card border shadow-sm">
+                                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                                        <h6 class="fw-bold mb-0"><i class="bi bi-journal-text me-2 text-dark"></i>Журнал финансовых операций (<%= financeData.transactions.length %>)</h6>
+                                        <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
+                                            <i class="bi bi-plus-lg me-1"></i> Добавить операцию
+                                        </button>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover align-middle mb-0">
+                                                <thead class="table-light small">
+                                                    <tr>
+                                                        <th style="width: 12%;">Дата</th>
+                                                        <th style="width: 18%;">Юрлицо</th>
+                                                        <th style="width: 20%;">Статья / Категория</th>
+                                                        <th style="width: 30%;">Назначение / Описание</th>
+                                                        <th style="width: 15%;" class="text-end">Сумма</th>
+                                                        <th style="width: 5%;" class="text-center"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% if (financeData.transactions.length === 0) { %>
+                                                        <tr>
+                                                            <td colspan="6" class="text-center py-4 text-muted">Операций пока нет. Нажмите «Добавить операцию», чтобы внести первую запись.</td>
+                                                        </tr>
+                                                    <% } else { %>
+                                                        <% financeData.transactions.forEach(t => { %>
+                                                            <tr>
+                                                                <td class="text-muted small"><%= t.transaction_date %></td>
+                                                                <td class="small fw-semibold"><%= t.legal_entity %></td>
+                                                                <td>
+                                                                    <% if (t.type === 'income') { %>
+                                                                        <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                                                            <i class="bi bi-arrow-up-circle me-1"></i><%= t.category %>
+                                                                        </span>
+                                                                    <% } else { %>
+                                                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                                                                            <i class="bi bi-arrow-down-circle me-1"></i><%= t.category %>
+                                                                        </span>
+                                                                    <% } %>
+                                                                </td>
+                                                                <td class="small"><%= t.description || '—' %></td>
+                                                                <td class="text-end fw-bold <%= t.type === 'income' ? 'text-success' : 'text-danger' %>">
+                                                                    <%= t.type === 'income' ? '+' : '-' %><%= Number(t.amount).toLocaleString('ru-RU') %> ₽
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <form action="/api/finance/transaction/delete/<%= t.id %>" method="POST" onsubmit="return confirm('Удалить эту финансовую операцию?');">
+                                                                        <input type="hidden" name="domain_id" value="<%= currentDomain.id %>">
+                                                                        <button type="submit" class="btn btn-link text-danger p-0" title="Удалить"><i class="bi bi-trash"></i></button>
+                                                                    </form>
+                                                                </td>
+                                                            </tr>
+                                                        <% }); %>
+                                                    <% } %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            <!-- TAB 8: RENT CALCULATOR & LEADS -->
+                            <% } else if (activeTab === 'calc') { %>
+                                <div class="guide-box d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="bi bi-calculator-fill text-primary me-2"></i>
+                                        <strong>Модуль аренды теплохода (IDA Organizer Calc):</strong> Позволяет настраивать тарифные ставки аренды теплоходов (день/вечер/мосты), рассчитывать сметы под корпоративы, свадьбы и выпускные, а также обрабатывать входящие заявки от клиентов в одном окне.
+                                    </div>
+                                    <div>
+                                        <a href="/rent" target="_blank" class="btn btn-outline-primary btn-sm me-2">
+                                            <i class="bi bi-box-arrow-up-right me-1"></i> Открыть виджет на сайте
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="row g-4 mb-4">
+                                    <!-- Interactive Simulator -->
+                                    <div class="col-lg-6">
+                                        <div class="card border shadow-sm h-100">
+                                            <div class="card-header bg-white py-3">
+                                                <h6 class="fw-bold mb-0 text-primary"><i class="bi bi-sliders2 me-2"></i>Интерактивный симулятор сметы</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label small fw-semibold">Теплоход & Тарифный период</label>
+                                                    <select id="simBoat" class="form-select form-select-sm" onchange="recalculateSimulator()">
+                                                        <option value="day"><%= calcSettings.boat_name %> (Дневной тариф — <%= Number(calcSettings.hourly_rate_day).toLocaleString('ru-RU') %> ₽/час)</option>
+                                                        <option value="evening"><%= calcSettings.boat_name %> (Вечерний тариф — <%= Number(calcSettings.hourly_rate_evening).toLocaleString('ru-RU') %> ₽/час)</option>
+                                                        <option value="night"><%= calcSettings.boat_name %> (Ночной развод мостов — <%= Number(calcSettings.hourly_rate_night_bridges).toLocaleString('ru-RU') %> ₽/час)</option>
+                                                    </select>
+                                                </div>
+                                                <div class="row g-3 mb-3">
+                                                    <div class="col-6">
+                                                        <label class="form-label small fw-semibold">Продолжительность: <span id="simHoursLabel" class="fw-bold text-primary">3</span> ч.</label>
+                                                        <input type="range" class="form-range" id="simHours" min="2" max="8" value="3" oninput="recalculateSimulator()">
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <label class="form-label small fw-semibold">Количество гостей: <span id="simGuestsLabel" class="fw-bold text-primary">40</span> чел.</label>
+                                                        <input type="range" class="form-range" id="simGuests" min="10" max="<%= calcSettings.capacity %>" value="40" oninput="recalculateSimulator()">
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label small fw-semibold">Питание на борту</label>
+                                                    <div class="d-flex gap-3">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio" name="simCatering" id="catNone" value="none" onchange="recalculateSimulator()">
+                                                            <label class="form-check-label small" for="catNone">Без питания</label>
+                                                        </div>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio" name="simCatering" id="catBuffet" value="buffet" checked onchange="recalculateSimulator()">
+                                                            <label class="form-check-label small" for="catBuffet">Фуршет (<%= Number(calcSettings.buffet_price_per_person).toLocaleString('ru-RU') %> ₽/чел)</label>
+                                                        </div>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio" name="simCatering" id="catBanquet" value="banquet" onchange="recalculateSimulator()">
+                                                            <label class="form-check-label small" for="catBanquet">Банкет (<%= Number(calcSettings.banquet_price_per_person).toLocaleString('ru-RU') %> ₽/чел)</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label small fw-semibold">Опции программы</label>
+                                                    <div class="form-check form-switch mb-1">
+                                                        <input class="form-check-input" type="checkbox" id="simDj" checked onchange="recalculateSimulator()">
+                                                        <label class="form-check-label small" for="simDj">Звуковое оборудование + DJ (+<%= Number(calcSettings.dj_sound_price).toLocaleString('ru-RU') %> ₽)</label>
+                                                    </div>
+                                                    <div class="form-check form-switch mb-1">
+                                                        <input class="form-check-input" type="checkbox" id="simHost" onchange="recalculateSimulator()">
+                                                        <label class="form-check-label small" for="simHost">Ведущий мероприятия (+<%= Number(calcSettings.host_price).toLocaleString('ru-RU') %> ₽)</label>
+                                                    </div>
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" id="simBand" onchange="recalculateSimulator()">
+                                                        <label class="form-check-label small" for="simBand">Живая рок-группа / трибьют (+<%= Number(calcSettings.live_band_price).toLocaleString('ru-RU') %> ₽)</label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="p-3 bg-light rounded border mt-3">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="fw-bold text-dark">Расчетная смета:</span>
+                                                        <span class="h4 fw-bold text-primary mb-0" id="simTotalDisplay">0 ₽</span>
+                                                    </div>
+                                                    <small class="text-muted d-block mt-1" id="simBreakdown"></small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Settings Form -->
+                                    <div class="col-lg-6">
+                                        <div class="card border shadow-sm h-100">
+                                            <div class="card-header bg-white py-3">
+                                                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-gear-fill me-2 text-secondary"></i>Тарифные ставки для <%= currentDomain.name %></h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <form action="/api/calc/settings" method="POST">
+                                                    <input type="hidden" name="domain_id" value="<%= currentDomain.id %>">
+                                                    <div class="row g-2 mb-3">
+                                                        <div class="col-md-8">
+                                                            <label class="form-label small fw-semibold">Название судна</label>
+                                                            <input type="text" class="form-control form-control-sm" name="boat_name" value="<%= calcSettings.boat_name %>" required>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="form-label small fw-semibold">Вместимость (чел.)</label>
+                                                            <input type="number" class="form-control form-control-sm" name="capacity" value="<%= calcSettings.capacity %>" required>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row g-2 mb-3">
+                                                        <div class="col-md-4">
+                                                            <label class="form-label small fw-semibold">День (до 18:00) ₽/ч</label>
+                                                            <input type="number" class="form-control form-control-sm" name="hourly_rate_day" value="<%= calcSettings.hourly_rate_day %>" required>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="form-label small fw-semibold">Вечер (18-23) ₽/ч</label>
+                                                            <input type="number" class="form-control form-control-sm" name="hourly_rate_evening" value="<%= calcSettings.hourly_rate_evening %>" required>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="form-label small fw-semibold">Мосты (ночь) ₽/ч</label>
+                                                            <input type="number" class="form-control form-control-sm" name="hourly_rate_night_bridges" value="<%= calcSettings.hourly_rate_night_bridges %>" required>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row g-2 mb-3">
+                                                        <div class="col-md-6">
+                                                            <label class="form-label small fw-semibold">Фуршет (₽ на человека)</label>
+                                                            <input type="number" class="form-control form-control-sm" name="buffet_price_per_person" value="<%= calcSettings.buffet_price_per_person %>" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-label small fw-semibold">Банкет (₽ на человека)</label>
+                                                            <input type="number" class="form-control form-control-sm" name="banquet_price_per_person" value="<%= calcSettings.banquet_price_per_person %>" required>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row g-2 mb-3">
+                                                        <div class="col-md-4">
+                                                            <label class="form-label small fw-semibold">Звук + DJ (₽)</label>
+                                                            <input type="number" class="form-control form-control-sm" name="dj_sound_price" value="<%= calcSettings.dj_sound_price %>" required>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="form-label small fw-semibold">Ведущий (₽)</label>
+                                                            <input type="number" class="form-control form-control-sm" name="host_price" value="<%= calcSettings.host_price %>" required>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="form-label small fw-semibold">Рок-группа (₽)</label>
+                                                            <input type="number" class="form-control form-control-sm" name="live_band_price" value="<%= calcSettings.live_band_price %>" required>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row g-2 mb-3">
+                                                        <div class="col-md-6">
+                                                            <label class="form-label small fw-semibold">Клининг / уборка (₽)</label>
+                                                            <input type="number" class="form-control form-control-sm" name="cleaning_fee" value="<%= calcSettings.cleaning_fee %>" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-label small fw-semibold">Мин. заказ (часов)</label>
+                                                            <input type="number" class="form-control form-control-sm" name="min_hours" value="<%= calcSettings.min_hours %>" required>
+                                                        </div>
+                                                    </div>
+
+                                                    <button type="submit" class="btn btn-primary btn-sm px-4">Сохранить тарифы</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Входящие заявки на аренду (Лиды) -->
+                                <div class="card border shadow-sm">
+                                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                                        <h6 class="fw-bold mb-0"><i class="bi bi-inbox-fill me-2 text-primary"></i>Входящие заявки на аренду судна (<%= rentLeads.length %>)</h6>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover align-middle mb-0">
+                                                <thead class="table-light small">
+                                                    <tr>
+                                                        <th>Дата заявки</th>
+                                                        <th>Заказчик</th>
+                                                        <th>Контакты</th>
+                                                        <th>Дата & Время события</th>
+                                                        <th>Гости & Часы</th>
+                                                        <th>Питание & Опции</th>
+                                                        <th class="text-end">Смета</th>
+                                                        <th class="text-center">Статус</th>
+                                                        <th class="text-end">Действие</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% if (rentLeads.length === 0) { %>
+                                                        <tr>
+                                                            <td colspan="9" class="text-center py-4 text-muted">Заявок пока нет. Клиенты могут оставлять расчет на странице калькулятора.</td>
+                                                        </tr>
+                                                    <% } else { %>
+                                                        <% rentLeads.forEach(lead => { %>
+                                                            <tr>
+                                                                <td class="small text-muted"><%= (lead.created_at || '').substring(0, 16) %></td>
+                                                                <td class="fw-bold small"><%= lead.customer_name %></td>
+                                                                <td class="small">
+                                                                    <a href="tel:<%= lead.customer_phone %>" class="text-decoration-none fw-semibold"><%= lead.customer_phone %></a>
+                                                                    <% if (lead.customer_email) { %><br><small class="text-muted"><%= lead.customer_email %></small><% } %>
+                                                                </td>
+                                                                <td class="small">
+                                                                    <strong><%= lead.event_date || 'Не указана' %></strong>
+                                                                    <% if (lead.start_time) { %><span class="text-muted">в <%= lead.start_time %></span><% } %>
+                                                                </td>
+                                                                <td class="small">
+                                                                    <span class="badge bg-light text-dark border"><%= lead.guests_count %> чел.</span>
+                                                                    <span class="badge bg-light text-dark border"><%= lead.duration_hours %> ч.</span>
+                                                                </td>
+                                                                <td class="small">
+                                                                    <span class="badge bg-info-subtle text-info border border-info-subtle"><%= lead.catering_type %></span>
+                                                                    <% if (lead.notes) { %><br><small class="text-muted" title="<%= lead.notes %>"><%= lead.notes.length > 35 ? lead.notes.substring(0, 35) + '...' : lead.notes %></small><% } %>
+                                                                </td>
+                                                                <td class="text-end fw-bold text-primary">
+                                                                    <%= Number(lead.total_estimated_price).toLocaleString('ru-RU') %> ₽
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <% if (lead.status === 'new') { %>
+                                                                        <span class="badge bg-warning text-dark">Новая</span>
+                                                                    <% } else if (lead.status === 'contacted') { %>
+                                                                        <span class="badge bg-info text-dark">В работе</span>
+                                                                    <% } else if (lead.status === 'confirmed') { %>
+                                                                        <span class="badge bg-success">Подтверждена</span>
+                                                                    <% } else { %>
+                                                                        <span class="badge bg-secondary">Отклонена</span>
+                                                                    <% } %>
+                                                                </td>
+                                                                <td class="text-end">
+                                                                    <form action="/api/calc/lead/status/<%= lead.id %>" method="POST" class="d-inline">
+                                                                        <input type="hidden" name="domain_id" value="<%= currentDomain.id %>">
+                                                                        <select name="status" class="form-select form-select-sm d-inline-block w-auto" onchange="this.form.submit()">
+                                                                            <option value="new" <%= lead.status === 'new' ? 'selected' : '' %>>Новая</option>
+                                                                            <option value="contacted" <%= lead.status === 'contacted' ? 'selected' : '' %>>В работе</option>
+                                                                            <option value="confirmed" <%= lead.status === 'confirmed' ? 'selected' : '' %>>Подтверждена</option>
+                                                                            <option value="cancelled" <%= lead.status === 'cancelled' ? 'selected' : '' %>>Отклонена</option>
+                                                                        </select>
+                                                                    </form>
+                                                                </td>
+                                                            </tr>
+                                                        <% }); %>
+                                                    <% } %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
                             <% } %>
                         </div>
                     </div>
@@ -1060,9 +1519,151 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal: Добавить финансовую проводку -->
+    <div class="modal fade" id="addTransactionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="/api/finance/transaction" method="POST">
+                    <input type="hidden" name="domain_id" value="<%= currentDomain.id %>">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold">Новая финансовая проводка</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Тип операции</label>
+                            <select class="form-select" name="type" id="transType" onchange="updateCategories()" required>
+                                <option value="income">Поступление (Доход)</option>
+                                <option value="expense" selected>Выплата (Расход)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Юридическое лицо</label>
+                            <select class="form-select" name="legal_entity" required>
+                                <option value="ООО «Акватур»">ООО «Акватур» (Рок Хит Нева)</option>
+                                <option value="ООО «Акватория Звука»">ООО «Акватория Звука»</option>
+                                <option value="ИП Организатор">ИП Организатор</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Категория / Статья</label>
+                            <select class="form-select" name="category" id="transCategory" required>
+                                <!-- Populated via JS -->
+                            </select>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold">Сумма (₽)</label>
+                                <input type="number" class="form-control" name="amount" required placeholder="50000">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold">Дата операции</label>
+                                <input type="date" class="form-control" name="transaction_date" required value="<%= new Date().toISOString().substring(0, 10) %>">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Назначение платежа / Комментарий</label>
+                            <textarea class="form-control" name="description" rows="2" placeholder="Номер акта, договора или описание статьи..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-success">Сохранить операцию</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Category options for Finance
+        const categories = {
+            income: [
+                'Билетные продажи',
+                'Аренда под спецобслуживание',
+                'Бар на борту',
+                'Спонсорские пакеты',
+                'Прочее поступление'
+            ],
+            expense: [
+                'Гонорары артистам',
+                'Топливо',
+                'Аренда причала',
+                'Зарплата экипажа',
+                'Техобслуживание судна',
+                'Зимняя стоянка (аванс)',
+                'Комиссия билетных операторов',
+                'Маркетинг & Реклама',
+                'Прочие расходы'
+            ]
+        };
+
+        function updateCategories() {
+            const type = document.getElementById('transType').value;
+            const select = document.getElementById('transCategory');
+            select.innerHTML = '';
+            (categories[type] || []).forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.textContent = cat;
+                select.appendChild(opt);
+            });
+        }
+        if (document.getElementById('transType')) {
+            updateCategories();
+        }
+
+        // Rent Simulator Calculation
+        const calcConfig = {
+            hourlyDay: <%= (calcSettings && calcSettings.hourly_rate_day) || 15000 %>,
+            hourlyEvening: <%= (calcSettings && calcSettings.hourly_rate_evening) || 20000 %>,
+            hourlyNight: <%= (calcSettings && calcSettings.hourly_rate_night_bridges) || 28000 %>,
+            buffetPerPerson: <%= (calcSettings && calcSettings.buffet_price_per_person) || 2200 %>,
+            banquetPerPerson: <%= (calcSettings && calcSettings.banquet_price_per_person) || 3500 %>,
+            djPrice: <%= (calcSettings && calcSettings.dj_sound_price) || 15000 %>,
+            hostPrice: <%= (calcSettings && calcSettings.host_price) || 25000 %>,
+            bandPrice: <%= (calcSettings && calcSettings.live_band_price) || 45000 %>,
+            cleaningFee: <%= (calcSettings && calcSettings.cleaning_fee) || 5000 %>
+        };
+
+        function recalculateSimulator() {
+            const hoursEl = document.getElementById('simHours');
+            const guestsEl = document.getElementById('simGuests');
+            if (!hoursEl || !guestsEl) return;
+
+            const hours = parseInt(hoursEl.value) || 2;
+            const guests = parseInt(guestsEl.value) || 20;
+
+            document.getElementById('simHoursLabel').textContent = hours;
+            document.getElementById('simGuestsLabel').textContent = guests;
+
+            const boatMode = document.getElementById('simBoat').value;
+            let hourlyRate = calcConfig.hourlyDay;
+            if (boatMode === 'evening') hourlyRate = calcConfig.hourlyEvening;
+            if (boatMode === 'night') hourlyRate = calcConfig.hourlyNight;
+
+            const rentCost = hourlyRate * hours;
+
+            let cateringCost = 0;
+            const cateringType = document.querySelector('input[name="simCatering"]:checked').value;
+            if (cateringType === 'buffet') cateringCost = calcConfig.buffetPerPerson * guests;
+            if (cateringType === 'banquet') cateringCost = calcConfig.banquetPerPerson * guests;
+
+            let optionsCost = 0;
+            if (document.getElementById('simDj').checked) optionsCost += calcConfig.djPrice;
+            if (document.getElementById('simHost').checked) optionsCost += calcConfig.hostPrice;
+            if (document.getElementById('simBand').checked) optionsCost += calcConfig.bandPrice;
+
+            const total = rentCost + cateringCost + optionsCost + calcConfig.cleaningFee;
+
+            document.getElementById('simTotalDisplay').textContent = total.toLocaleString('ru-RU') + ' ₽';
+            document.getElementById('simBreakdown').textContent = `Аренда (${hours}ч): ${rentCost.toLocaleString('ru-RU')} ₽ + Питание: ${cateringCost.toLocaleString('ru-RU')} ₽ + Опции: ${optionsCost.toLocaleString('ru-RU')} ₽ + Клининг: ${calcConfig.cleaningFee.toLocaleString('ru-RU')} ₽`;
+        }
+        if (document.getElementById('simHours')) {
+            recalculateSimulator();
+        }
         function addGatewayCard(domainId) {
             const container = document.getElementById('gatewaysContainer' + domainId);
             const count = container.querySelectorAll('.gateway-item').length + 1;

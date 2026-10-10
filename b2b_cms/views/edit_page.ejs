@@ -113,12 +113,22 @@
     <script>
         const domainsData = <%- JSON.stringify(domains.map(d => ({ 
             id: d.id, 
-            gateways: d.gateways || [
-                { id: 1, name: d.script_1_name || 'Юрлицо 1' },
-                { id: 2, name: d.script_2_name || 'Юрлицо 2' }
-            ]
+            gateways: ((d.gateways && d.gateways.length > 0) ? d.gateways : [
+                { id: 1, name: d.script_1_name || 'Юрлицо 1', code: d.script_1_code || '' },
+                { id: 2, name: d.script_2_name || 'Юрлицо 2', code: d.script_2_code || '' }
+            ]).map(g => ({
+                id: g.id,
+                name: g.name,
+                code: g.code || ''
+            }))
         }))).replace(/</g, '\\u003c') %>;
         
+        function getGatewayToken(code) {
+            if (!code) return '';
+            const match = code.match(/accessHash:\s*["']([^"']+)["']/i);
+            return match ? match[1] : '';
+        }
+
         const pageScriptChoice = <%= (page && page.script_choice) ? page.script_choice : 1 %>;
         
         const domainSelect = document.querySelector('select[name="domain_id"]');
@@ -134,7 +144,9 @@
                 domain.gateways.forEach(gw => {
                     const opt = document.createElement('option');
                     opt.value = gw.id;
-                    opt.textContent = gw.name || ('Шлюз #' + gw.id);
+                    const token = getGatewayToken(gw.code);
+                    const name = gw.name || ('Шлюз #' + gw.id);
+                    opt.textContent = name + (token ? ` — ${token}` : ' (нет токена)');
                     if (gw.id === pageScriptChoice) {
                         opt.selected = true;
                     }

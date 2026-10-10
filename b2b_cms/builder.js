@@ -7,6 +7,10 @@ const TEMPLATES = {
     flatsome_event: path.join(__dirname, 'templates', 'flatsome_event.html'),
     aqua_main: path.join(__dirname, 'templates', 'aqua_main.html'),
     aqua_event: path.join(__dirname, 'templates', 'aqua_event.html'),
+    nevaconcert_main: path.join(__dirname, 'templates', 'nevaconcert_main.html'),
+    nevaconcert_event: path.join(__dirname, 'templates', 'nevaconcert_event.html'),
+    gradnaneve_main: path.join(__dirname, 'templates', 'gradnaneve_main.html'),
+    gradnaneve_event: path.join(__dirname, 'templates', 'gradnaneve_event.html'),
     spectral: path.join(__dirname, 'templates', 'base.html'),
     spectral_event: path.join(__dirname, 'templates', 'base_event.html')
 };
@@ -16,6 +20,29 @@ const DIST_DIR = path.join(__dirname, 'dist');
 if (!fs.existsSync(DIST_DIR)) {
     fs.mkdirSync(DIST_DIR, { recursive: true });
 }
+
+const STANDARD_TICKETLAND_GATEWAYS = [
+    {
+        id: 3,
+        name: 'ИП Юницына Валерия Николаевна (Рок Хит Нева)',
+        code: '<script type="text/javascript">\n    var TLConf = {\n        accessHash: "389069140c1ca808d0da0b0007a4fe33",\n        version: 1,\n    };\n</script>\n<script async src="https://www.ticketland.ru/iframe/loaderJs/"></script>'
+    },
+    {
+        id: 4,
+        name: 'ИП Юницына Валерия Николаевна (Акватория)',
+        code: '<script type="text/javascript">\n    var TLConf = {\n        accessHash: "DH6tIrnYRIsz8Gc3kudLy8b6qM2Iwdm1",\n        version: 1,\n    };\n</script>\n<script async src="https://www.ticketland.ru/iframe/loaderJs/"></script>'
+    },
+    {
+        id: 1,
+        name: 'ООО «Морские корабли» (Рок Хит Нева)',
+        code: '<script type="text/javascript">\n    var TLConf = {\n        accessHash: "0b2b641d60f7f9443e566d47c89d208f",\n        version: 1,\n    };\n</script>\n<script async src="https://www.ticketland.ru/iframe/loaderJs/"></script>'
+    },
+    {
+        id: 2,
+        name: 'ООО «Морские корабли» (Акватория)',
+        code: '<script type="text/javascript">\n    var TLConf = {\n        accessHash: "8c8d43b735f10cc868462481cd0b51d5",\n        version: 1,\n    };\n</script>\n<script async src="https://www.ticketland.ru/iframe/loaderJs/"></script>'
+    }
+];
 
 async function getDomainData(domainId) {
     return new Promise((resolve, reject) => {
@@ -215,7 +242,11 @@ async function buildPage(page) {
 
     // Выбираем оригинальный шаблон для соответствующего домена
     let templateFile;
-    if (domain.name.includes('aquasound')) {
+    if (domain.name.includes('nevaconcert')) {
+        templateFile = isHomePage ? TEMPLATES.nevaconcert_main : TEMPLATES.nevaconcert_event;
+    } else if (domain.name.includes('gradnaneve')) {
+        templateFile = isHomePage ? TEMPLATES.gradnaneve_main : TEMPLATES.gradnaneve_event;
+    } else if (domain.name.includes('aquasound')) {
         templateFile = isHomePage ? TEMPLATES.aqua_main : TEMPLATES.aqua_event;
     } else if (domain.name.includes('rockhit') || domain.template === 'flatsome') {
         templateFile = isHomePage ? TEMPLATES.flatsome : TEMPLATES.flatsome_event;
@@ -290,7 +321,10 @@ async function buildPage(page) {
     }
     
     const choiceId = (page.script_choice !== undefined && page.script_choice !== null) ? parseInt(page.script_choice) : 1;
-    const selectedGateway = gateways.find(g => g.id === choiceId) || gateways[0];
+    let selectedGateway = gateways.find(g => g.id === choiceId);
+    if (!selectedGateway) {
+        selectedGateway = STANDARD_TICKETLAND_GATEWAYS.find(g => g.id === choiceId) || gateways[0];
+    }
     if (selectedGateway) {
         ticketScript = selectedGateway.code || '';
     } else {
@@ -366,6 +400,7 @@ async function rebuildDomain(domainId) {
 }
 
 module.exports = {
+    getDomainData,
     buildPage,
     deletePage,
     rebuildDomain,

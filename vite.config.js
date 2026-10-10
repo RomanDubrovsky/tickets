@@ -79,6 +79,7 @@ ${data.technicalSolution || 'Будет сформировано разрабо�
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: './',
   plugins: [react(), customerTzPlugin()],
   build: {
     rollupOptions: {

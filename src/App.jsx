@@ -40,6 +40,8 @@ export default function App() {
         setCurrentView('sessions');
       } else if (hash === '#musicians') {
         setCurrentView('musicians');
+      } else if (hash === '#piers') {
+        setCurrentView('piers');
       } else if (hash === '#venues' || hash === '#fleet') {
         setCurrentView('venues');
       } else if (hash === '#afisha') {
@@ -95,6 +97,8 @@ export default function App() {
         return <ProgramsManager defaultSection="venues" onSelectEvent={handleSelectEvent} navigateTo={navigateTo} />;
       case 'musicians':
         return <ProgramsManager defaultSection="musicians" onSelectEvent={handleSelectEvent} navigateTo={navigateTo} />;
+      case 'piers':
+        return <ProgramsManager defaultSection="piers" onSelectEvent={handleSelectEvent} navigateTo={navigateTo} />;
       case 'sites':
         return <ProgramsManager defaultSection="sites" onSelectEvent={handleSelectEvent} navigateTo={navigateTo} />;
       case 'occupancy':
@@ -112,17 +116,8 @@ export default function App() {
       case 'admin':
         return <AdminPanel />;
       case 'marketing':
-        return (
-          <div style={{ padding: '24px', maxWidth: '1440px', margin: '0 auto' }}>
-            <VkMarketingAgent initialTab="overview" />
-          </div>
-        );
       case 'geo':
-        return (
-          <div style={{ padding: '24px', maxWidth: '1440px', margin: '0 auto' }}>
-            <VkMarketingAgent initialTab="geo" />
-          </div>
-        );
+        return <ProgramsManager defaultSection="marketing" onSelectEvent={handleSelectEvent} navigateTo={navigateTo} />;
       case 'agent':
         return <AgentPanel />;
       case 'promo':
@@ -148,11 +143,11 @@ export default function App() {
               <span>ПЛАТФОРМА</span>
             </div>
             <div className="nav-links">
-              {/* 1. Менеджер (Репертуар & Расписание & Площадки & Афиша & Сайты) */}
+              {/* 1. Менеджер (Репертуар, Расписание, Флот, Афиша, Сайты, Монитор мест, Маркетинг & AI) */}
               <button
-                className={`nav-link ${currentView === 'programs' || currentView === 'sessions' || currentView === 'venues' || currentView === 'musicians' || currentView === 'afisha' || currentView === 'sites' ? 'active' : ''}`}
+                className={`nav-link ${currentView === 'programs' || currentView === 'sessions' || currentView === 'venues' || currentView === 'musicians' || currentView === 'afisha' || currentView === 'sites' || currentView === 'occupancy' || currentView === 'marketing' || currentView === 'geo' ? 'active' : ''}`}
                 onClick={() => navigateTo('programs', '#programs')}
-                title="Рабочее место менеджера (Репертуар, расписание, судна, афиша, сайты)"
+                title="Рабочее место менеджера (Репертуар, расписание, судна, афиша, сайты, маркетинг & AI)"
               >
                 <Music size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
                 Менеджер
@@ -196,26 +191,6 @@ export default function App() {
               >
                 <Shield size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
                 Администратор
-              </button>
-
-              {/* 6. AI-Таргетинг & VK Маркетинг */}
-              <button
-                className={`nav-link ${currentView === 'marketing' ? 'active' : ''}`}
-                onClick={() => navigateTo('marketing', '#marketing')}
-                title="AI-Таргетинг ВКонтакте и генератор конверсионных офферов для рейсов"
-                style={{
-                  background: currentView === 'marketing'
-                    ? 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)'
-                    : 'transparent',
-                  color: currentView === 'marketing' ? '#ffffff' : 'inherit',
-                  borderColor: currentView === 'marketing' ? '#0284c7' : 'transparent',
-                  display: 'flex',
-                  alignItems: 'center',
-                  fontWeight: currentView === 'marketing' ? '700' : 'normal'
-                }}
-              >
-                <Target size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} color={currentView === 'marketing' ? '#ffffff' : '#0284c7'} />
-                AI-Таргетинг
               </button>
 
               {/* 6. База знаний / Документация для заказчика (с ИИ) */}
@@ -314,9 +289,40 @@ export default function App() {
       />
 
       {showChrome && (
-        <footer className="glass" style={{ margin: '40px 16px 24px', padding: '24px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '13px' }}>
-          <p>© 2026 Единая платформа теплоходных прогулок Санкт-Петербурга. Все права защищены.</p>
-          <p style={{ marginTop: '4px', fontSize: '11px' }}>Инфраструктура Yandex Cloud (152-ФЗ) • Доступ без паролей для менеджеров</p>
+        <footer className="glass" style={{ margin: '40px 16px 24px', padding: '28px 24px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '13px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '18px', marginBottom: '14px', fontSize: '13px', fontWeight: '500' }}>
+            <a href="/pr/offer.html" target="_blank" rel="noopener noreferrer" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={e => e.target.style.color = '#38bdf8'} onMouseLeave={e => e.target.style.color = '#94a3b8'}>
+              📄 Договор оферты
+            </a>
+            <span style={{ color: '#475569' }}>•</span>
+            <a href="/pr/privacy.html" target="_blank" rel="noopener noreferrer" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={e => e.target.style.color = '#38bdf8'} onMouseLeave={e => e.target.style.color = '#94a3b8'}>
+              🔒 Политика конфиденциальности (152-ФЗ)
+            </a>
+            <span style={{ color: '#475569' }}>•</span>
+            <a href="/pr/offer.html#refund" target="_blank" rel="noopener noreferrer" style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={e => e.target.style.color = '#38bdf8'} onMouseLeave={e => e.target.style.color = '#94a3b8'}>
+              🔄 Правила возврата билетов
+            </a>
+            <span style={{ color: '#475569' }}>•</span>
+            <a href="#venues" onClick={(e) => { e.preventDefault(); navigateTo('venues', '#venues'); }} style={{ color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={e => e.target.style.color = '#38bdf8'} onMouseLeave={e => e.target.style.color = '#94a3b8'}>
+              ⚓ Причалы и флот
+            </a>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '12px', color: '#64748b', marginRight: '6px' }}>Безопасные онлайн-платежи через <strong>ПАО Сбербанк</strong>:</span>
+            <span style={{ background: '#0079c2', color: '#ffffff', padding: '2px 7px', borderRadius: '4px', fontSize: '11px', fontWeight: '800' }}>МИР</span>
+            <span style={{ background: '#1a1f71', color: '#ffffff', padding: '2px 7px', borderRadius: '4px', fontSize: '11px', fontWeight: '800' }}>VISA</span>
+            <span style={{ background: '#eb001b', color: '#ffffff', padding: '2px 7px', borderRadius: '4px', fontSize: '11px', fontWeight: '800' }}>Mastercard</span>
+            <span style={{ background: '#0f172a', color: '#38bdf8', padding: '2px 7px', borderRadius: '4px', fontSize: '11px', fontWeight: '800' }}>СБП</span>
+            <span style={{ background: '#22c55e', color: '#ffffff', padding: '2px 7px', borderRadius: '4px', fontSize: '11px', fontWeight: '800' }}>SberPay</span>
+          </div>
+
+          <p style={{ margin: '4px 0', color: '#64748b' }}>
+            © 2026 Единая платформа теплоходных концертных прогулок Санкт-Петербурга.
+          </p>
+          <p style={{ marginTop: '4px', fontSize: '11px', color: '#475569' }}>
+            ООО «МОРСКИЕ КОРАБЛИ» (ИНН 7814848882) • ИП Юницына В.Н. (ИНН 470411807452) • ИП Куренной В.Ю. (ИНН 780230933072) • Защищённая инфраструктура Yandex Cloud
+          </p>
         </footer>
       )}
     </div>
