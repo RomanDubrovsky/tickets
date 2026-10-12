@@ -235,6 +235,14 @@ const DEFAULT_DOMAINS = [
         script_choice: 1,
         iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/joe-cocker-tribute/"></div>',
         url: 'https://aquasound.club/joe-cocker-tribute/'
+      },
+      {
+        id: 114,
+        title: 'Комик-Трест',
+        slug: 'comic-trust',
+        script_choice: 1,
+        iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/drugoe/komik-trest-na-neve-ehkscentrichnyy-dinner-teatr-nepolnyy-ratatuy/"></div>',
+        url: 'https://aquasound.club/comic-trust/'
       }
     ]
   },
@@ -413,7 +421,7 @@ export const getOrderedPages = (domain) => {
 
 export default function SitesAdmin({ initialDomainId, initialSelectedPageId }) {
   const [domains, setDomains] = useState(() => {
-    const saved = localStorage.getItem('cms_domains_v9');
+    const saved = localStorage.getItem('cms_domains_v10');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -460,7 +468,7 @@ export default function SitesAdmin({ initialDomainId, initialSelectedPageId }) {
             pages: getOrderedPages(d)
           }));
           setDomains(ordered);
-          localStorage.setItem('cms_domains_v9', JSON.stringify(ordered));
+          localStorage.setItem('cms_domains_v10', JSON.stringify(ordered));
         }
       }
     } catch (err) {
@@ -486,7 +494,7 @@ export default function SitesAdmin({ initialDomainId, initialSelectedPageId }) {
 
   const saveDomainsToStorage = (newDomains) => {
     setDomains(newDomains);
-    localStorage.setItem('cms_domains_v9', JSON.stringify(newDomains));
+    localStorage.setItem('cms_domains_v10', JSON.stringify(newDomains));
     localStorage.setItem('cms_domains_v8', JSON.stringify(newDomains));
   };
 

@@ -360,6 +360,31 @@ async function buildPage(page) {
 
     const indexPath = path.join(targetDir, 'index.html');
     fs.writeFileSync(indexPath, html, 'utf-8');
+
+    // Auto-deploy to live /home/opc/sites/
+    try {
+        const liveSitesDir = path.join('/home/opc/sites', domain.name);
+        if (fs.existsSync(liveSitesDir)) {
+            const liveTargetDir = isHomePage ? liveSitesDir : path.join(liveSitesDir, cleanSlug);
+            if (!fs.existsSync(liveTargetDir)) {
+                fs.mkdirSync(liveTargetDir, { recursive: true });
+            }
+            fs.writeFileSync(path.join(liveTargetDir, 'index.html'), html, 'utf-8');
+
+            // Automatic hyphen <-> underscore alias
+            if (!isHomePage) {
+                const alt = cleanSlug.includes('-') ? cleanSlug.replace(/-/g, '_') : (cleanSlug.includes('_') ? cleanSlug.replace(/_/g, '-') : null);
+                if (alt) {
+                    const altPath = path.join(liveSitesDir, alt);
+                    if (!fs.existsSync(altPath)) {
+                        try { fs.symlinkSync(liveTargetDir, altPath); } catch(e) {}
+                    }
+                }
+            }
+        }
+    } catch(err) {
+        console.error('Auto-deploy to live sites error:', err);
+    }
     
     return indexPath;
 }
