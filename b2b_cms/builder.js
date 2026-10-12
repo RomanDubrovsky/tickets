@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 const db = require('./db');
 
 const TEMPLATES = {
@@ -361,7 +362,7 @@ async function buildPage(page) {
     const indexPath = path.join(targetDir, 'index.html');
     fs.writeFileSync(indexPath, html, 'utf-8');
 
-    // Auto-deploy to live /home/opc/sites/
+    // Auto-deploy to live /home/opc/sites/ and S3
     try {
         const liveSitesDir = path.join('/home/opc/sites', domain.name);
         if (fs.existsSync(liveSitesDir)) {
@@ -381,6 +382,14 @@ async function buildPage(page) {
                     }
                 }
             }
+
+            // Sync to Yandex S3
+            try {
+                const slugArg = isHomePage ? '/' : cleanSlug;
+                execSync(`/home/opc/ida_design_api/venv/bin/python /home/opc/s3_sync_helper.py upload ${domain.name} "${slugArg}"`, { timeout: 10000 });
+            } catch(s3Err) {
+                console.error('S3 sync error:', s3Err.message);
+            }
         }
     } catch(err) {
         console.error('Auto-deploy to live sites error:', err);
@@ -395,16 +404,50 @@ async function deletePage(page) {
     
     const isHomePage = !page.slug || page.slug === '/';
     const domainDir = path.join(DIST_DIR, domain.name);
+    const cleanSlug = isHomePage ? '' : page.slug.replace(/^\/+|\/+$/g, '');
     
+    // 1. Delete from CMS dist
     if (isHomePage) {
         const indexPath = path.join(domainDir, 'index.html');
         if (fs.existsSync(indexPath)) fs.unlinkSync(indexPath);
     } else {
-        const cleanSlug = page.slug.replace(/^\/+|\/+$/g, '');
         const targetDir = path.join(domainDir, cleanSlug);
         if (fs.existsSync(targetDir)) {
             fs.rmSync(targetDir, { recursive: true, force: true });
         }
+    }
+
+    // 2. Delete from live sites directory
+    try {
+        const liveSitesDir = path.join('/home/opc/sites', domain.name);
+        if (fs.existsSync(liveSitesDir)) {
+            if (isHomePage) {
+                const liveIndex = path.join(liveSitesDir, 'index.html');
+                if (fs.existsSync(liveIndex)) fs.unlinkSync(liveIndex);
+            } else {
+                const liveTargetDir = path.join(liveSitesDir, cleanSlug);
+                if (fs.existsSync(liveTargetDir)) {
+                    fs.rmSync(liveTargetDir, { recursive: true, force: true });
+                }
+                const alt = cleanSlug.includes('-') ? cleanSlug.replace(/-/g, '_') : (cleanSlug.includes('_') ? cleanSlug.replace(/_/g, '-') : null);
+                if (alt) {
+                    const altPath = path.join(liveSitesDir, alt);
+                    if (fs.existsSync(altPath)) {
+                        fs.rmSync(altPath, { recursive: true, force: true });
+                    }
+                }
+            }
+
+            // 3. Delete from S3
+            try {
+                const slugArg = isHomePage ? '/' : cleanSlug;
+                execSync(`/home/opc/ida_design_api/venv/bin/python /home/opc/s3_sync_helper.py delete ${domain.name} "${slugArg}"`, { timeout: 10000 });
+            } catch(s3Err) {
+                console.error('S3 delete error:', s3Err.message);
+            }
+        }
+    } catch (err) {
+        console.error('Delete from live sites error:', err);
     }
 }
 
