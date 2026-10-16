@@ -1,0 +1,842 @@
+[
+  {
+    "id": "1",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 1",
+    "rowMetric": "Ряд",
+    "seat": "Место 1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 200,
+      "y": 180
+    }
+  },
+  {
+    "id": "2",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 1",
+    "rowMetric": "Ряд",
+    "seat": "Место 2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 230,
+      "y": 180
+    }
+  },
+  {
+    "id": "3",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 1",
+    "rowMetric": "Ряд",
+    "seat": "Место 3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 260,
+      "y": 180
+    }
+  },
+  {
+    "id": "4",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 1",
+    "rowMetric": "Ряд",
+    "seat": "Место 4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 290,
+      "y": 180
+    }
+  },
+  {
+    "id": "5",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 1",
+    "rowMetric": "Ряд",
+    "seat": "Место 5",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 320,
+      "y": 180
+    }
+  },
+  {
+    "id": "6",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 1",
+    "rowMetric": "Ряд",
+    "seat": "Место 6",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 350,
+      "y": 180
+    }
+  },
+  {
+    "id": "7",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 1",
+    "rowMetric": "Ряд",
+    "seat": "Место 7",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 380,
+      "y": 180
+    }
+  },
+  {
+    "id": "8",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 1",
+    "rowMetric": "Ряд",
+    "seat": "Место 8",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 410,
+      "y": 180
+    }
+  },
+  {
+    "id": "9",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 1",
+    "rowMetric": "Ряд",
+    "seat": "Место 9",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 440,
+      "y": 180
+    }
+  },
+  {
+    "id": "10",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 1",
+    "rowMetric": "Ряд",
+    "seat": "Место 10",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 470,
+      "y": 180
+    }
+  },
+  {
+    "id": "11",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 1",
+    "rowMetric": "Ряд",
+    "seat": "Место 11",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 500,
+      "y": 180
+    }
+  },
+  {
+    "id": "12",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 1",
+    "rowMetric": "Ряд",
+    "seat": "Место 12",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 530,
+      "y": 180
+    }
+  },
+  {
+    "id": "13",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 1",
+    "rowMetric": "Ряд",
+    "seat": "Место 13",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 560,
+      "y": 180
+    }
+  },
+  {
+    "id": "14",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 1",
+    "rowMetric": "Ряд",
+    "seat": "Место 14",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 590,
+      "y": 180
+    }
+  },
+  {
+    "id": "15",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 1",
+    "rowMetric": "Ряд",
+    "seat": "Место 15",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 620,
+      "y": 180
+    }
+  },
+  {
+    "id": "16",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 2",
+    "rowMetric": "Ряд",
+    "seat": "Место 1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 200,
+      "y": 215
+    }
+  },
+  {
+    "id": "17",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 2",
+    "rowMetric": "Ряд",
+    "seat": "Место 2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 230,
+      "y": 215
+    }
+  },
+  {
+    "id": "18",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 2",
+    "rowMetric": "Ряд",
+    "seat": "Место 3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 260,
+      "y": 215
+    }
+  },
+  {
+    "id": "19",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 2",
+    "rowMetric": "Ряд",
+    "seat": "Место 4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 290,
+      "y": 215
+    }
+  },
+  {
+    "id": "20",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 2",
+    "rowMetric": "Ряд",
+    "seat": "Место 5",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 320,
+      "y": 215
+    }
+  },
+  {
+    "id": "21",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 2",
+    "rowMetric": "Ряд",
+    "seat": "Место 6",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 350,
+      "y": 215
+    }
+  },
+  {
+    "id": "22",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 2",
+    "rowMetric": "Ряд",
+    "seat": "Место 7",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 380,
+      "y": 215
+    }
+  },
+  {
+    "id": "23",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 2",
+    "rowMetric": "Ряд",
+    "seat": "Место 8",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 410,
+      "y": 215
+    }
+  },
+  {
+    "id": "24",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 2",
+    "rowMetric": "Ряд",
+    "seat": "Место 9",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 440,
+      "y": 215
+    }
+  },
+  {
+    "id": "25",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 2",
+    "rowMetric": "Ряд",
+    "seat": "Место 10",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 470,
+      "y": 215
+    }
+  },
+  {
+    "id": "26",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 2",
+    "rowMetric": "Ряд",
+    "seat": "Место 11",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 500,
+      "y": 215
+    }
+  },
+  {
+    "id": "27",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 2",
+    "rowMetric": "Ряд",
+    "seat": "Место 12",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 530,
+      "y": 215
+    }
+  },
+  {
+    "id": "28",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 2",
+    "rowMetric": "Ряд",
+    "seat": "Место 13",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 560,
+      "y": 215
+    }
+  },
+  {
+    "id": "29",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 2",
+    "rowMetric": "Ряд",
+    "seat": "Место 14",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 590,
+      "y": 215
+    }
+  },
+  {
+    "id": "30",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 2",
+    "rowMetric": "Ряд",
+    "seat": "Место 15",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 620,
+      "y": 215
+    }
+  },
+  {
+    "id": "31",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 3",
+    "rowMetric": "Ряд",
+    "seat": "Место 1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 200,
+      "y": 250
+    }
+  },
+  {
+    "id": "32",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 3",
+    "rowMetric": "Ряд",
+    "seat": "Место 2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 230,
+      "y": 250
+    }
+  },
+  {
+    "id": "33",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 3",
+    "rowMetric": "Ряд",
+    "seat": "Место 3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 260,
+      "y": 250
+    }
+  },
+  {
+    "id": "34",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 3",
+    "rowMetric": "Ряд",
+    "seat": "Место 4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 290,
+      "y": 250
+    }
+  },
+  {
+    "id": "35",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 3",
+    "rowMetric": "Ряд",
+    "seat": "Место 5",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 320,
+      "y": 250
+    }
+  },
+  {
+    "id": "36",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 3",
+    "rowMetric": "Ряд",
+    "seat": "Место 6",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 350,
+      "y": 250
+    }
+  },
+  {
+    "id": "37",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 3",
+    "rowMetric": "Ряд",
+    "seat": "Место 7",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 380,
+      "y": 250
+    }
+  },
+  {
+    "id": "38",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 3",
+    "rowMetric": "Ряд",
+    "seat": "Место 8",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 410,
+      "y": 250
+    }
+  },
+  {
+    "id": "39",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 3",
+    "rowMetric": "Ряд",
+    "seat": "Место 9",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 440,
+      "y": 250
+    }
+  },
+  {
+    "id": "40",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 3",
+    "rowMetric": "Ряд",
+    "seat": "Место 10",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 470,
+      "y": 250
+    }
+  },
+  {
+    "id": "41",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 3",
+    "rowMetric": "Ряд",
+    "seat": "Место 11",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 500,
+      "y": 250
+    }
+  },
+  {
+    "id": "42",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 3",
+    "rowMetric": "Ряд",
+    "seat": "Место 12",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 530,
+      "y": 250
+    }
+  },
+  {
+    "id": "43",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 3",
+    "rowMetric": "Ряд",
+    "seat": "Место 13",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 560,
+      "y": 250
+    }
+  },
+  {
+    "id": "44",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 3",
+    "rowMetric": "Ряд",
+    "seat": "Место 14",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 590,
+      "y": 250
+    }
+  },
+  {
+    "id": "45",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 3",
+    "rowMetric": "Ряд",
+    "seat": "Место 15",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 620,
+      "y": 250
+    }
+  },
+  {
+    "id": "46",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 4",
+    "rowMetric": "Ряд",
+    "seat": "Место 1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 200,
+      "y": 285
+    }
+  },
+  {
+    "id": "47",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 4",
+    "rowMetric": "Ряд",
+    "seat": "Место 2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 230,
+      "y": 285
+    }
+  },
+  {
+    "id": "48",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 4",
+    "rowMetric": "Ряд",
+    "seat": "Место 3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 260,
+      "y": 285
+    }
+  },
+  {
+    "id": "49",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 4",
+    "rowMetric": "Ряд",
+    "seat": "Место 4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 290,
+      "y": 285
+    }
+  },
+  {
+    "id": "50",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 4",
+    "rowMetric": "Ряд",
+    "seat": "Место 5",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 320,
+      "y": 285
+    }
+  },
+  {
+    "id": "51",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 4",
+    "rowMetric": "Ряд",
+    "seat": "Место 6",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 350,
+      "y": 285
+    }
+  },
+  {
+    "id": "52",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 4",
+    "rowMetric": "Ряд",
+    "seat": "Место 7",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 380,
+      "y": 285
+    }
+  },
+  {
+    "id": "53",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 4",
+    "rowMetric": "Ряд",
+    "seat": "Место 8",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 410,
+      "y": 285
+    }
+  },
+  {
+    "id": "54",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 4",
+    "rowMetric": "Ряд",
+    "seat": "Место 9",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 440,
+      "y": 285
+    }
+  },
+  {
+    "id": "55",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 4",
+    "rowMetric": "Ряд",
+    "seat": "Место 10",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 470,
+      "y": 285
+    }
+  },
+  {
+    "id": "56",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 4",
+    "rowMetric": "Ряд",
+    "seat": "Место 11",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 500,
+      "y": 285
+    }
+  },
+  {
+    "id": "57",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 4",
+    "rowMetric": "Ряд",
+    "seat": "Место 12",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 530,
+      "y": 285
+    }
+  },
+  {
+    "id": "58",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 4",
+    "rowMetric": "Ряд",
+    "seat": "Место 13",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 560,
+      "y": 285
+    }
+  },
+  {
+    "id": "59",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 4",
+    "rowMetric": "Ряд",
+    "seat": "Место 14",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 590,
+      "y": 285
+    }
+  },
+  {
+    "id": "60",
+    "sectionId": "1",
+    "sectionName": "Салон теплохода (Свободная посадка)",
+    "deck": "main",
+    "row": "Ряд 4",
+    "rowMetric": "Ряд",
+    "seat": "Место 15",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 620,
+      "y": 285
+    }
+  }
+]

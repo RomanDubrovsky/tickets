@@ -44,16 +44,74 @@ export const ensureStandardGateways = (gateways) => {
 const DEFAULT_DOMAINS = [
   {
     id: 1,
+    name: 'aquasound.club',
+    title: 'AquaSound Club — Музыка на воде',
+    primary_color: '#446084',
+    logo_url: 'https://aquasound.club/wp-content/uploads/2024/04/logo.png',
+    bg_image_url: '',
+    global_scripts: '<!-- Yandex.Metrika counter -->\n<script type="text/javascript">\n(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");\nym(48530885, "init", {clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});\n</script>\n<noscript><div><img src="https://mc.yandex.ru/watch/48530885" style="position:absolute; left:-9999px;" alt="" /></div></noscript>',
+    script_1_name: 'Основное юрлицо (Акватория Звука)',
+    script_1_code: '<script type="text/javascript">\n    var TLConf = {\n        accessHash: "DH6tIrnYRIsz8Gc3kudLy8b6qM2Iwdm1",\n        version: 1,\n    };\n</script>\n<script async src="https://www.ticketland.ru/iframe/loaderJs/"></script>',
+    script_2_name: 'Второе юрлицо',
+    script_2_code: '<script type="text/javascript">\n    var TLConf = {\n        accessHash: "8c8d43b735f10cc868462481cd0b51d5",\n        version: 1,\n    };\n</script>\n<script async src="https://www.ticketland.ru/iframe/loaderJs/"></script>',
+    gateways: [...STANDARD_TICKETLAND_GATEWAYS],
+    footer_text: 'ИП Юницына Валерия Николаевна\nИНН: 470411807452 | ОГРН: 322470400014155\nСанкт-Петербург, Причал Набережная Макарова, 34',
+    cloud_url: 'https://aquasound.club/',
+    pages: [
+      {
+        id: 23,
+        title: 'Главная страница',
+        slug: '/',
+        script_choice: 2,
+        iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/zmmtx9lqG5pK93YiuhlnQBQWXlJJLWm/"></div>',
+        url: 'https://aquasound.club/'
+      },
+      {
+        id: 24,
+        title: 'JOE COCKER (tribute)',
+        slug: 'joe-cocker-tribute',
+        script_choice: 2,
+        iframe_code: '<div id="tlFrameContainer" data-start="https://www.ticketland.ru/iframe-direct-sale/sCfvEQ3faerOUTvfWcTGZCD7cTtX3hM2/"></div>',
+        url: 'https://aquasound.club/joe-cocker-tribute/'
+      },
+      {
+        id: 25,
+        title: 'Большое петербургское кольцо',
+        slug: 'bigring',
+        script_choice: 2,
+        iframe_code: '<div id="tlFrameContainer" data-start="https://www.ticketland.ru/iframe-direct-sale/IHyw2ULOuXrG2UYbHyIIVI0GtIfBDU_k/"></div>',
+        url: 'https://aquasound.club/bigring/'
+      },
+      {
+        id: 26,
+        title: 'Мегаполис и разводные мосты',
+        slug: 'bridges',
+        script_choice: 2,
+        iframe_code: '<div id="tlFrameContainer" data-start="https://www.ticketland.ru/iframe-direct-sale/EzdnsfJUfnMOMYi98uM5gKFVBGinK/"></div>',
+        url: 'https://aquasound.club/bridges/'
+      },
+      {
+        id: 36,
+        title: 'Политика обработки персональных данных (PR)',
+        slug: 'pr',
+        script_choice: 1,
+        iframe_code: '',
+        url: 'https://aquasound.club/pr/'
+      }
+    ]
+  },
+  {
+    id: 2,
     name: 'rockhitneva.ru',
     title: 'Рок Хит Нева — Рок-круизы по Неве',
     primary_color: '#e55f2e',
     logo_url: 'https://rockhitneva.ru/wp-content/uploads/2024/03/logo1.png',
     bg_image_url: '',
     global_scripts: '<!-- Yandex.Metrika counter -->\n<script type="text/javascript">\n(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");\nym(97638164, "init", {clickmap:true,trackLinks:true,accurateTrackBounce:true,ecommerce:"dataLayer"});\n</script>\n<noscript><div><img src="https://mc.yandex.ru/watch/97638164" style="position:absolute; left:-9999px;" alt="" /></div></noscript>',
-    script_1_name: 'ООО «Морские корабли» (Рок Хит Нева)',
-    script_1_code: '<script>var TLConf = { accessHash: "0b2b641d60f7f9443e566d47c89d208f", version: 1 };</script>\n<script async src="https://www.ticketland.ru/iframe/loaderJs/"></script>',
-    script_2_name: 'ИП Юницына Валерия Николаевна (Рок Хит Нева)',
-    script_2_code: '<script>var TLConf = { accessHash: "389069140c1ca808d0da0b0007a4fe33", version: 1 };</script>\n<script async src="https://www.ticketland.ru/iframe/loaderJs/"></script>',
+    script_1_name: 'Основное юрлицо (Акватур)',
+    script_1_code: '<script type="text/javascript">\n    var TLConf = {\n        accessHash: "0b2b641d60f7f9443e566d47c89d208f",\n        version: 1,\n    };\n</script>\n<script async src="https://www.ticketland.ru/iframe/loaderJs/"></script>',
+    script_2_name: 'Второе юрлицо',
+    script_2_code: '<script type="text/javascript">\n    var TLConf = {\n        accessHash: "389069140c1ca808d0da0b0007a4fe33",\n        version: 1,\n    };\n</script>\n<script async src="https://www.ticketland.ru/iframe/loaderJs/"></script>',
     gateways: [...STANDARD_TICKETLAND_GATEWAYS],
     footer_text: 'ООО "МОРСКИЕ КОРАБЛИ"\nИНН: 7814848882 | КПП: 781401001 | ОГРН: 1257800013459\nст. м. Спортивная, г. Санкт-Петербург, Набережная Макарова, дом 20',
     cloud_url: 'https://rockhitneva.ru/',
@@ -67,39 +125,15 @@ const DEFAULT_DOMAINS = [
         url: 'https://rockhitneva.ru/'
       },
       {
-        id: 101,
-        title: 'Договор оферты',
-        slug: 'оферта',
-        script_choice: 1,
-        iframe_code: '',
-        url: 'https://rockhitneva.ru/оферта/'
-      },
-      {
-        id: 102,
-        title: 'Политика обработки персональных данных (PR)',
-        slug: 'pr',
-        script_choice: 1,
-        iframe_code: '',
-        url: 'https://rockhitneva.ru/pr/'
-      },
-      {
-        id: 103,
-        title: 'Правила заказа билетов',
-        slug: 'правила-заказа-билетов',
-        script_choice: 1,
-        iframe_code: '',
-        url: 'https://rockhitneva.ru/правила-заказа-билетов/'
-      },
-      {
-        id: 2,
+        id: 13,
         title: 'Брат (Саундтреки к фильму)',
         slug: 'brother',
         script_choice: 1,
-        iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/brother/"></div>',
+        iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/CeGGEGNqHHrX7ieobblQXw8IlDHc0TL6/"></div>',
         url: 'https://rockhitneva.ru/brother/'
       },
       {
-        id: 3,
+        id: 4,
         title: 'Громыка',
         slug: 'gromyka',
         script_choice: 1,
@@ -107,7 +141,7 @@ const DEFAULT_DOMAINS = [
         url: 'https://rockhitneva.ru/gromyka/'
       },
       {
-        id: 4,
+        id: 5,
         title: 'JOE COCKER Tribute',
         slug: 'joe-cocker',
         script_choice: 1,
@@ -115,7 +149,7 @@ const DEFAULT_DOMAINS = [
         url: 'https://rockhitneva.ru/joe-cocker/'
       },
       {
-        id: 5,
+        id: 6,
         title: 'STING & The Police',
         slug: 'sting',
         script_choice: 1,
@@ -123,126 +157,68 @@ const DEFAULT_DOMAINS = [
         url: 'https://rockhitneva.ru/sting/'
       },
       {
-        id: 6,
-        title: 'Виктор Цой & Кино',
-        slug: 'viktortsoy',
-        script_choice: 1,
-        iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/viktortsoy/"></div>',
-        url: 'https://rockhitneva.ru/viktortsoy/'
-      },
-      {
         id: 7,
-        title: 'Рок под разводными мостами',
-        slug: 'rock-bridges',
+        title: 'Ностальгия',
+        slug: 'nostalgy',
         script_choice: 1,
-        iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/rock-bridges/"></div>',
-        url: 'https://rockhitneva.ru/rock-bridges/'
+        iframe_code: '',
+        url: 'https://rockhitneva.ru/nostalgy/'
       },
       {
         id: 8,
-        title: 'Led Zeppelin Tribute',
-        slug: 'led-zeppelin-tribute',
+        title: 'Концерт «Цой, Горшок, Егор и Хой» на Неве!',
+        slug: 'pankonneva',
         script_choice: 1,
-        iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/led-zeppelin/"></div>',
-        url: 'https://rockhitneva.ru/led-zeppelin-tribute/'
+        iframe_code: '<div id="tlFrameContainer" data-start="https://www.ticketland.ru/iframe-direct-sale/22gVUg9ZiCdewZCZDXrPTIOuxjBGIZzv/"></div>',
+        url: 'https://rockhitneva.ru/pankonneva/'
       },
       {
         id: 9,
-        title: 'RHCP Tribute Show',
-        slug: 'red-hot-chili-peppers',
+        title: 'Smoke on the water',
+        slug: 'smoke-on-the-water',
         script_choice: 1,
-        iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/rhcp/"></div>',
-        url: 'https://rockhitneva.ru/red-hot-chili-peppers/'
+        iframe_code: '<div id="tlFrameContainer" data-start="https://www.ticketland.ru/iframe-direct-sale/sJSsdv0bNf85_4ZmecVKH3mllI8H8Rvx/"></div>',
+        url: 'https://rockhitneva.ru/smoke-on-the-water/'
       },
       {
         id: 10,
-        title: 'Smoke on the Water',
-        slug: 'smoke-on-the-water',
+        title: 'LED ZEPPELIN (tribute)',
+        slug: 'led-zeppelin-tribute',
         script_choice: 1,
-        iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/smoke-on-the-water/"></div>',
-        url: 'https://rockhitneva.ru/smoke-on-the-water/'
-      }
-    ]
-  },
-  {
-    id: 2,
-    name: 'aquasound.club',
-    title: 'AquaSound Club — Музыка на воде',
-    primary_color: '#446084',
-    logo_url: 'https://aquasound.club/wp-content/uploads/2024/04/Лого-1024x210.png',
-    bg_image_url: '',
-    global_scripts: '<!-- Yandex.Metrika counter -->\n<script type="text/javascript">\n(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");\nym(48530885, "init", {clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});\n</script>\n<noscript><div><img src="https://mc.yandex.ru/watch/48530885" style="position:absolute; left:-9999px;" alt="" /></div></noscript>',
-    script_1_name: 'ООО «Морские корабли» (Акватория)',
-    script_1_code: '<script>var TLConf = { accessHash: "8c8d43b735f10cc868462481cd0b51d5", version: 1 };</script>\n<script async src="https://www.ticketland.ru/iframe/loaderJs/"></script>',
-    script_2_name: 'ИП Юницына Валерия Николаевна (Акватория)',
-    script_2_code: '<script>var TLConf = { accessHash: "DH6tIrnYRIsz8Gc3kudLy8b6qM2Iwdm1", version: 1 };</script>\n<script async src="https://www.ticketland.ru/iframe/loaderJs/"></script>',
-    gateways: [...STANDARD_TICKETLAND_GATEWAYS],
-    footer_text: 'ИП Юницына Валерия Николаевна\nИНН: 470411807452 | ОГРН: 322470400014155\nСанкт-Петербург, Причал Набережная Макарова, 34',
-    cloud_url: 'https://aquasound.club/',
-    pages: [
-      {
-        id: 23,
-        title: 'Главная страница',
-        slug: '/',
-        script_choice: 2,
-        iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/drugoe/akvatoriya-zvuka-angliyskaya-nab-28"></div>',
-        url: 'https://aquasound.club/'
+        iframe_code: '<div id="tlFrameContainer" data-start="https://www.ticketland.ru/iframe-direct-sale/sMT3REkFSfpLqW67pBOFXjrOpuhXXG6/"></div>',
+        url: 'https://rockhitneva.ru/led-zeppelin-tribute/'
       },
       {
-        id: 111,
-        title: 'Договор оферты',
-        slug: 'оферта',
+        id: 11,
+        title: 'Рок и мосты',
+        slug: 'rock-bridges',
         script_choice: 1,
-        iframe_code: '',
-        url: 'https://aquasound.club/оферта/'
-      },
-      {
-        id: 112,
-        title: 'Политика обработки персональных данных (PR)',
-        slug: 'pr',
-        script_choice: 1,
-        iframe_code: '',
-        url: 'https://aquasound.club/pr/'
-      },
-      {
-        id: 113,
-        title: 'Правила заказа билетов',
-        slug: 'правила-заказа-билетов',
-        script_choice: 1,
-        iframe_code: '',
-        url: 'https://aquasound.club/правила-заказа-билетов/'
+        iframe_code: '<div id="tlFrameContainer" data-start="https://www.ticketland.ru/iframe-direct-sale/rmIEeXSIWF9k4ijRud1b4V8A0yNBj7cM/"></div>',
+        url: 'https://rockhitneva.ru/rock-bridges/'
       },
       {
         id: 12,
-        title: 'Большой круг по Неве',
-        slug: 'bigring',
+        title: 'Red Hot Chili Peppers',
+        slug: 'red-hot-chili-peppers',
         script_choice: 1,
-        iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/bigring/"></div>',
-        url: 'https://aquasound.club/bigring/'
+        iframe_code: '<div id="tlFrameContainer" data-start="https://www.ticketland.ru/iframe-direct-sale/AincrWh0vl0zibBFLsg9kfUW2uvStkz/"></div>',
+        url: 'https://rockhitneva.ru/red-hot-chili-peppers/'
       },
       {
-        id: 13,
-        title: 'Разводные мосты',
-        slug: 'bridges',
+        id: 22,
+        title: 'Концерт «Легенда Жива: Ностальгический Круиз в Ленинград 80-х»',
+        slug: 'viktortsoy',
         script_choice: 1,
-        iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/bridges/"></div>',
-        url: 'https://aquasound.club/bridges/'
+        iframe_code: '<div id="tlFrameContainer" data-start="https://www.ticketland.ru/iframe-direct-sale/WBMdksD3Rb2UvQXz2KEY9Rg9lmi3YEdq/"></div>',
+        url: 'https://rockhitneva.ru/viktortsoy/'
       },
       {
-        id: 14,
-        title: 'Joe Cocker на воде',
-        slug: 'joe-cocker-tribute',
+        id: 37,
+        title: 'Политика конфиденциальности (152-ФЗ)',
+        slug: 'pr',
         script_choice: 1,
-        iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/joe-cocker-tribute/"></div>',
-        url: 'https://aquasound.club/joe-cocker-tribute/'
-      },
-      {
-        id: 114,
-        title: 'Комик-Трест',
-        slug: 'comic-trust',
-        script_choice: 1,
-        iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/drugoe/komik-trest-na-neve-ehkscentrichnyy-dinner-teatr-nepolnyy-ratatuy/"></div>',
-        url: 'https://aquasound.club/comic-trust/'
+        iframe_code: '',
+        url: 'https://rockhitneva.ru/pr/'
       }
     ]
   },
@@ -271,7 +247,7 @@ const DEFAULT_DOMAINS = [
         url: 'https://nevaconcert.ru/'
       },
       {
-        id: 22,
+        id: 28,
         title: 'Договор оферты',
         slug: 'оферта',
         script_choice: 1,
@@ -279,7 +255,15 @@ const DEFAULT_DOMAINS = [
         url: 'https://nevaconcert.ru/оферта/'
       },
       {
-        id: 23,
+        id: 29,
+        title: 'Договор оферты (oferta)',
+        slug: 'oferta',
+        script_choice: 1,
+        iframe_code: '',
+        url: 'https://nevaconcert.ru/oferta/'
+      },
+      {
+        id: 30,
         title: 'Политика обработки персональных данных (PR)',
         slug: 'pr',
         script_choice: 1,
@@ -287,7 +271,7 @@ const DEFAULT_DOMAINS = [
         url: 'https://nevaconcert.ru/pr/'
       },
       {
-        id: 24,
+        id: 31,
         title: 'Правила заказа билетов',
         slug: 'правила-заказа-билетов',
         script_choice: 1,
@@ -321,28 +305,28 @@ const DEFAULT_DOMAINS = [
         url: 'https://gradnaneve.ru/'
       },
       {
-        id: 32,
-        title: 'Договор оферты',
+        id: 33,
+        title: 'Договор оферты (oferta)',
+        slug: 'oferta',
+        script_choice: 1,
+        iframe_code: '',
+        url: 'https://gradnaneve.ru/oferta/'
+      },
+      {
+        id: 34,
+        title: 'Договор оферты (оферта)',
         slug: 'оферта',
         script_choice: 1,
         iframe_code: '',
         url: 'https://gradnaneve.ru/оферта/'
       },
       {
-        id: 33,
+        id: 35,
         title: 'Политика обработки персональных данных (PR)',
         slug: 'pr',
         script_choice: 1,
         iframe_code: '',
         url: 'https://gradnaneve.ru/pr/'
-      },
-      {
-        id: 34,
-        title: 'Правила заказа билетов',
-        slug: 'правила-заказа-билетов',
-        script_choice: 1,
-        iframe_code: '',
-        url: 'https://gradnaneve.ru/правила-заказа-билетов/'
       }
     ]
   }
@@ -370,16 +354,36 @@ export const getOrderedPages = (domain) => {
     homePage = homeCandidates.find(p => p.id && p.id < 1000) || homeCandidates[0];
   } else {
     // Дефолтная главная страница для домена, если ее еще нет в списке
-    const isAquasound = domain.id === 2 || domain.name === 'aquasound.club';
-    const defaultIframe = isAquasound
-      ? '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/drugoe/akvatoriya-zvuka-angliyskaya-nab-28"></div>'
-      : '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/JHgCdar1f2RgfwwTnasWr9ScZXK_hHlR/"></div>';
+    const isAquasound = domain.name === 'aquasound.club' || domain.id === 1;
+    const isRockhitneva = domain.name === 'rockhitneva.ru' || domain.id === 2;
+    const isNevaconcert = domain.name === 'nevaconcert.ru' || domain.id === 6;
+    const isGradnaneve = domain.name === 'gradnaneve.ru' || domain.id === 7;
+
+    let defaultIframe = '';
+    let defaultHomeId = Date.now();
+    let defaultScriptChoice = 1;
+
+    if (isAquasound) {
+      defaultHomeId = 23;
+      defaultScriptChoice = 2;
+      defaultIframe = '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/zmmtx9lqG5pK93YiuhlnQBQWXlJJLWm/"></div>';
+    } else if (isRockhitneva) {
+      defaultHomeId = 3;
+      defaultScriptChoice = 1;
+      defaultIframe = '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/JHgCdar1f2RgfwwTnasWr9ScZXK_hHlR/"></div>';
+    } else if (isNevaconcert) {
+      defaultHomeId = 27;
+      defaultScriptChoice = 1;
+    } else if (isGradnaneve) {
+      defaultHomeId = 32;
+      defaultScriptChoice = 1;
+    }
 
     homePage = {
-      id: isAquasound ? 23 : 3,
+      id: defaultHomeId,
       title: domain.title || `Главная афиша`,
       slug: '/',
-      script_choice: isAquasound ? 2 : 1,
+      script_choice: defaultScriptChoice,
       iframe_code: defaultIframe,
       url: domain.cloud_url || `https://${domain.name}/`
     };
@@ -421,7 +425,12 @@ export const getOrderedPages = (domain) => {
 
 export default function SitesAdmin({ initialDomainId, initialSelectedPageId }) {
   const [domains, setDomains] = useState(() => {
-    const saved = localStorage.getItem('cms_domains_v10');
+    // Чистим старые невалидные кеши с перепутанными доменами
+    ['cms_domains_v6', 'cms_domains_v7', 'cms_domains_v8', 'cms_domains_v9', 'cms_domains_v10', 'cms_domains_v11'].forEach(k => {
+      try { localStorage.removeItem(k); } catch (e) {}
+    });
+
+    const saved = localStorage.getItem('cms_domains_v12');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -432,23 +441,10 @@ export default function SitesAdmin({ initialDomainId, initialSelectedPageId }) {
         console.error(e);
       }
     }
-    const oldSaved = localStorage.getItem('cms_domains_v8') || localStorage.getItem('cms_domains_v7');
-    if (oldSaved) {
-      try {
-        const parsedOld = JSON.parse(oldSaved);
-        if (Array.isArray(parsedOld) && parsedOld.length > 0) {
-          const updated = parsedOld.map(d => ({ ...d, gateways: ensureStandardGateways(d.gateways), pages: getOrderedPages(d) }));
-          localStorage.setItem('cms_domains_v9', JSON.stringify(updated));
-          return updated;
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }
     return DEFAULT_DOMAINS.map(d => ({ ...d, gateways: ensureStandardGateways(d.gateways), pages: getOrderedPages(d) }));
   });
 
-  const [selectedDomainId, setSelectedDomainId] = useState(initialDomainId || 1); // 1 = rockhitneva.ru
+  const [selectedDomainId, setSelectedDomainId] = useState(initialDomainId || 2); // 2 = rockhitneva.ru
 
   useEffect(() => {
     if (initialDomainId) {
@@ -468,7 +464,7 @@ export default function SitesAdmin({ initialDomainId, initialSelectedPageId }) {
             pages: getOrderedPages(d)
           }));
           setDomains(ordered);
-          localStorage.setItem('cms_domains_v10', JSON.stringify(ordered));
+          localStorage.setItem('cms_domains_v12', JSON.stringify(ordered));
         }
       }
     } catch (err) {
@@ -494,8 +490,7 @@ export default function SitesAdmin({ initialDomainId, initialSelectedPageId }) {
 
   const saveDomainsToStorage = (newDomains) => {
     setDomains(newDomains);
-    localStorage.setItem('cms_domains_v10', JSON.stringify(newDomains));
-    localStorage.setItem('cms_domains_v8', JSON.stringify(newDomains));
+    localStorage.setItem('cms_domains_v12', JSON.stringify(newDomains));
   };
 
   const updateCurrentDomain = (key, value) => {
@@ -541,7 +536,7 @@ export default function SitesAdmin({ initialDomainId, initialSelectedPageId }) {
     setPageForm({
       title: '',
       slug: '',
-      script_choice: (currentDomain && currentDomain.id === 1) ? 2 : 1,
+      script_choice: (currentDomain && (currentDomain.name === 'aquasound.club' || currentDomain.id === 1)) ? 2 : 1,
       iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/..."></div>'
     });
     setIsModalOpen(true);
@@ -584,10 +579,10 @@ export default function SitesAdmin({ initialDomainId, initialSelectedPageId }) {
     // Точный реальный id главной страницы из БД
     let effectivePageId = editingPageId;
     if (isEditingHome && (typeof editingPageId === 'string' || !editingPageId || editingPageId > 1000000000)) {
-      if (currentDomain.id === 2) effectivePageId = 3;
-      else if (currentDomain.id === 1) effectivePageId = 23;
-      else if (currentDomain.id === 6) effectivePageId = 27;
-      else if (currentDomain.id === 7) effectivePageId = 32;
+      if (currentDomain.name === 'rockhitneva.ru' || currentDomain.id === 2) effectivePageId = 3;
+      else if (currentDomain.name === 'aquasound.club' || currentDomain.id === 1) effectivePageId = 23;
+      else if (currentDomain.name === 'nevaconcert.ru' || currentDomain.id === 6) effectivePageId = 27;
+      else if (currentDomain.name === 'gradnaneve.ru' || currentDomain.id === 7) effectivePageId = 32;
     }
 
     const pagePayload = {

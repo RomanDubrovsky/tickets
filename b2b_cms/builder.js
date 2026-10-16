@@ -308,28 +308,31 @@ async function buildPage(page) {
 
     // Билетный скрипт (динамические кассовые шлюзы)
     let ticketScript = '';
-    let gateways = [];
-    if (domain.gateways_json) {
-        try {
-            gateways = typeof domain.gateways_json === 'string' ? JSON.parse(domain.gateways_json) : domain.gateways_json;
-        } catch(e) {}
-    }
-    if (!Array.isArray(gateways) || gateways.length === 0) {
-        gateways = [
-            { id: 1, name: domain.script_1_name || 'Юрлицо 1', code: domain.script_1_code || '' },
-            { id: 2, name: domain.script_2_name || 'Юрлицо 2', code: domain.script_2_code || '' }
-        ];
-    }
-    
-    const choiceId = (page.script_choice !== undefined && page.script_choice !== null) ? parseInt(page.script_choice) : 1;
-    let selectedGateway = gateways.find(g => g.id === choiceId);
-    if (!selectedGateway) {
-        selectedGateway = STANDARD_TICKETLAND_GATEWAYS.find(g => g.id === choiceId) || gateways[0];
-    }
-    if (selectedGateway) {
-        ticketScript = selectedGateway.code || '';
-    } else {
-        ticketScript = domain.script_1_code || '';
+    const usesTicketland = contentToInject.includes('tlFrameContainer') || contentToInject.includes('ticketland.ru');
+    if (usesTicketland) {
+        let gateways = [];
+        if (domain.gateways_json) {
+            try {
+                gateways = typeof domain.gateways_json === 'string' ? JSON.parse(domain.gateways_json) : domain.gateways_json;
+            } catch(e) {}
+        }
+        if (!Array.isArray(gateways) || gateways.length === 0) {
+            gateways = [
+                { id: 1, name: domain.script_1_name || 'Юрлицо 1', code: domain.script_1_code || '' },
+                { id: 2, name: domain.script_2_name || 'Юрлицо 2', code: domain.script_2_code || '' }
+            ];
+        }
+        
+        const choiceId = (page.script_choice !== undefined && page.script_choice !== null) ? parseInt(page.script_choice) : 1;
+        let selectedGateway = gateways.find(g => g.id === choiceId);
+        if (!selectedGateway) {
+            selectedGateway = STANDARD_TICKETLAND_GATEWAYS.find(g => g.id === choiceId) || gateways[0];
+        }
+        if (selectedGateway) {
+            ticketScript = selectedGateway.code || '';
+        } else {
+            ticketScript = domain.script_1_code || '';
+        }
     }
     html = html.replace(/{{TICKET_SCRIPT}}/g, ticketScript);
     
@@ -347,8 +350,8 @@ async function buildPage(page) {
 
     let staticPrefix = './static';
     let targetDir = domainDir;
+    const cleanSlug = isHomePage ? '' : (page.slug || '').replace(/^\/+|\/+$/g, '');
     if (!isHomePage) {
-        const cleanSlug = page.slug.replace(/^\/+|\/+$/g, '');
         const depth = cleanSlug.split('/').filter(Boolean).length;
         staticPrefix = depth > 0 ? '../'.repeat(depth) + 'static' : './static';
         targetDir = path.join(domainDir, cleanSlug);

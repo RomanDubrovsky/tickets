@@ -1,0 +1,2102 @@
+[
+  {
+    "id": "1",
+    "sectionId": "1",
+    "sectionName": "Главная палуба — VIP Нос (Панорама)",
+    "deck": "main",
+    "row": "Стол VIP 1",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 788,
+      "y": 188
+    }
+  },
+  {
+    "id": "2",
+    "sectionId": "1",
+    "sectionName": "Главная палуба — VIP Нос (Панорама)",
+    "deck": "main",
+    "row": "Стол VIP 1",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 812,
+      "y": 188
+    }
+  },
+  {
+    "id": "3",
+    "sectionId": "1",
+    "sectionName": "Главная палуба — VIP Нос (Панорама)",
+    "deck": "main",
+    "row": "Стол VIP 1",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 788,
+      "y": 212
+    }
+  },
+  {
+    "id": "4",
+    "sectionId": "1",
+    "sectionName": "Главная палуба — VIP Нос (Панорама)",
+    "deck": "main",
+    "row": "Стол VIP 1",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 812,
+      "y": 212
+    }
+  },
+  {
+    "id": "5",
+    "sectionId": "1",
+    "sectionName": "Главная палуба — VIP Нос (Панорама)",
+    "deck": "main",
+    "row": "Стол VIP 2",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 738,
+      "y": 228
+    }
+  },
+  {
+    "id": "6",
+    "sectionId": "1",
+    "sectionName": "Главная палуба — VIP Нос (Панорама)",
+    "deck": "main",
+    "row": "Стол VIP 2",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 762,
+      "y": 228
+    }
+  },
+  {
+    "id": "7",
+    "sectionId": "1",
+    "sectionName": "Главная палуба — VIP Нос (Панорама)",
+    "deck": "main",
+    "row": "Стол VIP 2",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 738,
+      "y": 252
+    }
+  },
+  {
+    "id": "8",
+    "sectionId": "1",
+    "sectionName": "Главная палуба — VIP Нос (Панорама)",
+    "deck": "main",
+    "row": "Стол VIP 2",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 762,
+      "y": 252
+    }
+  },
+  {
+    "id": "9",
+    "sectionId": "1",
+    "sectionName": "Главная палуба — VIP Нос (Панорама)",
+    "deck": "main",
+    "row": "Стол VIP 3",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 738,
+      "y": 148
+    }
+  },
+  {
+    "id": "10",
+    "sectionId": "1",
+    "sectionName": "Главная палуба — VIP Нос (Панорама)",
+    "deck": "main",
+    "row": "Стол VIP 3",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 762,
+      "y": 148
+    }
+  },
+  {
+    "id": "11",
+    "sectionId": "1",
+    "sectionName": "Главная палуба — VIP Нос (Панорама)",
+    "deck": "main",
+    "row": "Стол VIP 3",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 738,
+      "y": 172
+    }
+  },
+  {
+    "id": "12",
+    "sectionId": "1",
+    "sectionName": "Главная палуба — VIP Нос (Панорама)",
+    "deck": "main",
+    "row": "Стол VIP 3",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 762,
+      "y": 172
+    }
+  },
+  {
+    "id": "13",
+    "sectionId": "1",
+    "sectionName": "Главная палуба — VIP Нос (Панорама)",
+    "deck": "main",
+    "row": "Стол VIP 4",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 688,
+      "y": 228
+    }
+  },
+  {
+    "id": "14",
+    "sectionId": "1",
+    "sectionName": "Главная палуба — VIP Нос (Панорама)",
+    "deck": "main",
+    "row": "Стол VIP 4",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 712,
+      "y": 228
+    }
+  },
+  {
+    "id": "15",
+    "sectionId": "1",
+    "sectionName": "Главная палуба — VIP Нос (Панорама)",
+    "deck": "main",
+    "row": "Стол VIP 4",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 688,
+      "y": 252
+    }
+  },
+  {
+    "id": "16",
+    "sectionId": "1",
+    "sectionName": "Главная палуба — VIP Нос (Панорама)",
+    "deck": "main",
+    "row": "Стол VIP 4",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 712,
+      "y": 252
+    }
+  },
+  {
+    "id": "17",
+    "sectionId": "1",
+    "sectionName": "Главная палуба — VIP Нос (Панорама)",
+    "deck": "main",
+    "row": "Стол VIP 5",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 688,
+      "y": 148
+    }
+  },
+  {
+    "id": "18",
+    "sectionId": "1",
+    "sectionName": "Главная палуба — VIP Нос (Панорама)",
+    "deck": "main",
+    "row": "Стол VIP 5",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 712,
+      "y": 148
+    }
+  },
+  {
+    "id": "19",
+    "sectionId": "1",
+    "sectionName": "Главная палуба — VIP Нос (Панорама)",
+    "deck": "main",
+    "row": "Стол VIP 5",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 688,
+      "y": 172
+    }
+  },
+  {
+    "id": "20",
+    "sectionId": "1",
+    "sectionName": "Главная палуба — VIP Нос (Панорама)",
+    "deck": "main",
+    "row": "Стол VIP 5",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 712,
+      "y": 172
+    }
+  },
+  {
+    "id": "21",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 6",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 608,
+      "y": 228
+    }
+  },
+  {
+    "id": "22",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 6",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 632,
+      "y": 228
+    }
+  },
+  {
+    "id": "23",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 6",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 608,
+      "y": 252
+    }
+  },
+  {
+    "id": "24",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 6",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 632,
+      "y": 252
+    }
+  },
+  {
+    "id": "25",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 8",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 558,
+      "y": 228
+    }
+  },
+  {
+    "id": "26",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 8",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 582,
+      "y": 228
+    }
+  },
+  {
+    "id": "27",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 8",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 558,
+      "y": 252
+    }
+  },
+  {
+    "id": "28",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 8",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 582,
+      "y": 252
+    }
+  },
+  {
+    "id": "29",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 10",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 508,
+      "y": 228
+    }
+  },
+  {
+    "id": "30",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 10",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 532,
+      "y": 228
+    }
+  },
+  {
+    "id": "31",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 10",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 508,
+      "y": 252
+    }
+  },
+  {
+    "id": "32",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 10",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 532,
+      "y": 252
+    }
+  },
+  {
+    "id": "33",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 7",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 608,
+      "y": 148
+    }
+  },
+  {
+    "id": "34",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 7",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 632,
+      "y": 148
+    }
+  },
+  {
+    "id": "35",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 7",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 608,
+      "y": 172
+    }
+  },
+  {
+    "id": "36",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 7",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 632,
+      "y": 172
+    }
+  },
+  {
+    "id": "37",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 9",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 558,
+      "y": 148
+    }
+  },
+  {
+    "id": "38",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 9",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 582,
+      "y": 148
+    }
+  },
+  {
+    "id": "39",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 9",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 558,
+      "y": 172
+    }
+  },
+  {
+    "id": "40",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 9",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 582,
+      "y": 172
+    }
+  },
+  {
+    "id": "41",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 11",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 508,
+      "y": 148
+    }
+  },
+  {
+    "id": "42",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 11",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 532,
+      "y": 148
+    }
+  },
+  {
+    "id": "43",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 11",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 508,
+      "y": 172
+    }
+  },
+  {
+    "id": "44",
+    "sectionId": "2",
+    "sectionName": "Главная палуба — VIP Салон у сцены",
+    "deck": "main",
+    "row": "Стол 11",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 532,
+      "y": 172
+    }
+  },
+  {
+    "id": "45",
+    "sectionId": "3",
+    "sectionName": "Главная палуба — Салон (Танцпол и Бар)",
+    "deck": "main",
+    "row": "Стол 12",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 458,
+      "y": 228
+    }
+  },
+  {
+    "id": "46",
+    "sectionId": "3",
+    "sectionName": "Главная палуба — Салон (Танцпол и Бар)",
+    "deck": "main",
+    "row": "Стол 12",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 482,
+      "y": 228
+    }
+  },
+  {
+    "id": "47",
+    "sectionId": "3",
+    "sectionName": "Главная палуба — Салон (Танцпол и Бар)",
+    "deck": "main",
+    "row": "Стол 12",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 458,
+      "y": 252
+    }
+  },
+  {
+    "id": "48",
+    "sectionId": "3",
+    "sectionName": "Главная палуба — Салон (Танцпол и Бар)",
+    "deck": "main",
+    "row": "Стол 12",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 482,
+      "y": 252
+    }
+  },
+  {
+    "id": "49",
+    "sectionId": "3",
+    "sectionName": "Главная палуба — Салон (Танцпол и Бар)",
+    "deck": "main",
+    "row": "Стол 14",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 408,
+      "y": 228
+    }
+  },
+  {
+    "id": "50",
+    "sectionId": "3",
+    "sectionName": "Главная палуба — Салон (Танцпол и Бар)",
+    "deck": "main",
+    "row": "Стол 14",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 432,
+      "y": 228
+    }
+  },
+  {
+    "id": "51",
+    "sectionId": "3",
+    "sectionName": "Главная палуба — Салон (Танцпол и Бар)",
+    "deck": "main",
+    "row": "Стол 14",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 408,
+      "y": 252
+    }
+  },
+  {
+    "id": "52",
+    "sectionId": "3",
+    "sectionName": "Главная палуба — Салон (Танцпол и Бар)",
+    "deck": "main",
+    "row": "Стол 14",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 432,
+      "y": 252
+    }
+  },
+  {
+    "id": "53",
+    "sectionId": "3",
+    "sectionName": "Главная палуба — Салон (Танцпол и Бар)",
+    "deck": "main",
+    "row": "Стол 16",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 358,
+      "y": 228
+    }
+  },
+  {
+    "id": "54",
+    "sectionId": "3",
+    "sectionName": "Главная палуба — Салон (Танцпол и Бар)",
+    "deck": "main",
+    "row": "Стол 16",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 382,
+      "y": 228
+    }
+  },
+  {
+    "id": "55",
+    "sectionId": "3",
+    "sectionName": "Главная палуба — Салон (Танцпол и Бар)",
+    "deck": "main",
+    "row": "Стол 16",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 358,
+      "y": 252
+    }
+  },
+  {
+    "id": "56",
+    "sectionId": "3",
+    "sectionName": "Главная палуба — Салон (Танцпол и Бар)",
+    "deck": "main",
+    "row": "Стол 16",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 382,
+      "y": 252
+    }
+  },
+  {
+    "id": "57",
+    "sectionId": "3",
+    "sectionName": "Главная палуба — Салон (Танцпол и Бар)",
+    "deck": "main",
+    "row": "Стол 13",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 458,
+      "y": 148
+    }
+  },
+  {
+    "id": "58",
+    "sectionId": "3",
+    "sectionName": "Главная палуба — Салон (Танцпол и Бар)",
+    "deck": "main",
+    "row": "Стол 13",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 482,
+      "y": 148
+    }
+  },
+  {
+    "id": "59",
+    "sectionId": "3",
+    "sectionName": "Главная палуба — Салон (Танцпол и Бар)",
+    "deck": "main",
+    "row": "Стол 13",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 458,
+      "y": 172
+    }
+  },
+  {
+    "id": "60",
+    "sectionId": "3",
+    "sectionName": "Главная палуба — Салон (Танцпол и Бар)",
+    "deck": "main",
+    "row": "Стол 13",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 482,
+      "y": 172
+    }
+  },
+  {
+    "id": "61",
+    "sectionId": "3",
+    "sectionName": "Главная палуба — Салон (Танцпол и Бар)",
+    "deck": "main",
+    "row": "Стол 15",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 408,
+      "y": 148
+    }
+  },
+  {
+    "id": "62",
+    "sectionId": "3",
+    "sectionName": "Главная палуба — Салон (Танцпол и Бар)",
+    "deck": "main",
+    "row": "Стол 15",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 432,
+      "y": 148
+    }
+  },
+  {
+    "id": "63",
+    "sectionId": "3",
+    "sectionName": "Главная палуба — Салон (Танцпол и Бар)",
+    "deck": "main",
+    "row": "Стол 15",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 408,
+      "y": 172
+    }
+  },
+  {
+    "id": "64",
+    "sectionId": "3",
+    "sectionName": "Главная палуба — Салон (Танцпол и Бар)",
+    "deck": "main",
+    "row": "Стол 15",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 432,
+      "y": 172
+    }
+  },
+  {
+    "id": "65",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 20",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 618,
+      "y": 578
+    }
+  },
+  {
+    "id": "66",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 20",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 642,
+      "y": 578
+    }
+  },
+  {
+    "id": "67",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 20",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 618,
+      "y": 602
+    }
+  },
+  {
+    "id": "68",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 20",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 642,
+      "y": 602
+    }
+  },
+  {
+    "id": "69",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 22",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 568,
+      "y": 578
+    }
+  },
+  {
+    "id": "70",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 22",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 592,
+      "y": 578
+    }
+  },
+  {
+    "id": "71",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 22",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 568,
+      "y": 602
+    }
+  },
+  {
+    "id": "72",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 22",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 592,
+      "y": 602
+    }
+  },
+  {
+    "id": "73",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 24",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 518,
+      "y": 578
+    }
+  },
+  {
+    "id": "74",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 24",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 542,
+      "y": 578
+    }
+  },
+  {
+    "id": "75",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 24",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 518,
+      "y": 602
+    }
+  },
+  {
+    "id": "76",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 24",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 542,
+      "y": 602
+    }
+  },
+  {
+    "id": "77",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 26",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 468,
+      "y": 578
+    }
+  },
+  {
+    "id": "78",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 26",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 492,
+      "y": 578
+    }
+  },
+  {
+    "id": "79",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 26",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 468,
+      "y": 602
+    }
+  },
+  {
+    "id": "80",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 26",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 492,
+      "y": 602
+    }
+  },
+  {
+    "id": "81",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 28",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 418,
+      "y": 578
+    }
+  },
+  {
+    "id": "82",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 28",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 442,
+      "y": 578
+    }
+  },
+  {
+    "id": "83",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 28",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 418,
+      "y": 602
+    }
+  },
+  {
+    "id": "84",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 28",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 442,
+      "y": 602
+    }
+  },
+  {
+    "id": "85",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 30",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 368,
+      "y": 578
+    }
+  },
+  {
+    "id": "86",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 30",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 392,
+      "y": 578
+    }
+  },
+  {
+    "id": "87",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 30",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 368,
+      "y": 602
+    }
+  },
+  {
+    "id": "88",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 30",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 392,
+      "y": 602
+    }
+  },
+  {
+    "id": "89",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 21",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 618,
+      "y": 498
+    }
+  },
+  {
+    "id": "90",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 21",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 642,
+      "y": 498
+    }
+  },
+  {
+    "id": "91",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 21",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 618,
+      "y": 522
+    }
+  },
+  {
+    "id": "92",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 21",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 642,
+      "y": 522
+    }
+  },
+  {
+    "id": "93",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 23",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 568,
+      "y": 498
+    }
+  },
+  {
+    "id": "94",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 23",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 592,
+      "y": 498
+    }
+  },
+  {
+    "id": "95",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 23",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 568,
+      "y": 522
+    }
+  },
+  {
+    "id": "96",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 23",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 592,
+      "y": 522
+    }
+  },
+  {
+    "id": "97",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 25",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 518,
+      "y": 498
+    }
+  },
+  {
+    "id": "98",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 25",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 542,
+      "y": 498
+    }
+  },
+  {
+    "id": "99",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 25",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 518,
+      "y": 522
+    }
+  },
+  {
+    "id": "100",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 25",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 542,
+      "y": 522
+    }
+  },
+  {
+    "id": "101",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 27",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 468,
+      "y": 498
+    }
+  },
+  {
+    "id": "102",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 27",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 492,
+      "y": 498
+    }
+  },
+  {
+    "id": "103",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 27",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 468,
+      "y": 522
+    }
+  },
+  {
+    "id": "104",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 27",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 492,
+      "y": 522
+    }
+  },
+  {
+    "id": "105",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 29",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 418,
+      "y": 498
+    }
+  },
+  {
+    "id": "106",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 29",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 442,
+      "y": 498
+    }
+  },
+  {
+    "id": "107",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 29",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 418,
+      "y": 522
+    }
+  },
+  {
+    "id": "108",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 29",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 442,
+      "y": 522
+    }
+  },
+  {
+    "id": "109",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 31",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 368,
+      "y": 498
+    }
+  },
+  {
+    "id": "110",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 31",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 392,
+      "y": 498
+    }
+  },
+  {
+    "id": "111",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 31",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 368,
+      "y": 522
+    }
+  },
+  {
+    "id": "112",
+    "sectionId": "4",
+    "sectionName": "Верхняя палуба — Закрытый салон",
+    "deck": "upper",
+    "row": "Стол 31",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 392,
+      "y": 522
+    }
+  },
+  {
+    "id": "113",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Стол 34",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 268,
+      "y": 578
+    }
+  },
+  {
+    "id": "114",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Стол 34",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 292,
+      "y": 578
+    }
+  },
+  {
+    "id": "115",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Стол 34",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 268,
+      "y": 602
+    }
+  },
+  {
+    "id": "116",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Стол 34",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 292,
+      "y": 602
+    }
+  },
+  {
+    "id": "117",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Стол 35",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 268,
+      "y": 498
+    }
+  },
+  {
+    "id": "118",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Стол 35",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 292,
+      "y": 498
+    }
+  },
+  {
+    "id": "119",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Стол 35",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 268,
+      "y": 522
+    }
+  },
+  {
+    "id": "120",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Стол 35",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 292,
+      "y": 522
+    }
+  },
+  {
+    "id": "121",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Стол 36",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 208,
+      "y": 578
+    }
+  },
+  {
+    "id": "122",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Стол 36",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 232,
+      "y": 578
+    }
+  },
+  {
+    "id": "123",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Стол 36",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 208,
+      "y": 602
+    }
+  },
+  {
+    "id": "124",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Стол 36",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 232,
+      "y": 602
+    }
+  },
+  {
+    "id": "125",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Стол 37",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 208,
+      "y": 498
+    }
+  },
+  {
+    "id": "126",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Стол 37",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 232,
+      "y": 498
+    }
+  },
+  {
+    "id": "127",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Стол 37",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 208,
+      "y": 522
+    }
+  },
+  {
+    "id": "128",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Стол 37",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 232,
+      "y": 522
+    }
+  },
+  {
+    "id": "129",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Стол 38",
+    "rowMetric": "Стол",
+    "seat": "1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 138,
+      "y": 578
+    }
+  },
+  {
+    "id": "130",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Стол 38",
+    "rowMetric": "Стол",
+    "seat": "2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 162,
+      "y": 578
+    }
+  },
+  {
+    "id": "131",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Стол 38",
+    "rowMetric": "Стол",
+    "seat": "3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 138,
+      "y": 602
+    }
+  },
+  {
+    "id": "132",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Стол 38",
+    "rowMetric": "Стол",
+    "seat": "4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 162,
+      "y": 602
+    }
+  },
+  {
+    "id": "133",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Открытая палуба",
+    "rowMetric": "Сектор",
+    "seat": "Видовое 1",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 82,
+      "y": 550
+    }
+  },
+  {
+    "id": "134",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Открытая палуба",
+    "rowMetric": "Сектор",
+    "seat": "Видовое 2",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 94,
+      "y": 550
+    }
+  },
+  {
+    "id": "135",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Открытая палуба",
+    "rowMetric": "Сектор",
+    "seat": "Видовое 3",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 106,
+      "y": 550
+    }
+  },
+  {
+    "id": "136",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Открытая палуба",
+    "rowMetric": "Сектор",
+    "seat": "Видовое 4",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 118,
+      "y": 550
+    }
+  },
+  {
+    "id": "137",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Открытая палуба",
+    "rowMetric": "Сектор",
+    "seat": "Видовое 5",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 130,
+      "y": 550
+    }
+  },
+  {
+    "id": "138",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Открытая палуба",
+    "rowMetric": "Сектор",
+    "seat": "Видовое 6",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 142,
+      "y": 550
+    }
+  },
+  {
+    "id": "139",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Открытая палуба",
+    "rowMetric": "Сектор",
+    "seat": "Видовое 7",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 154,
+      "y": 550
+    }
+  },
+  {
+    "id": "140",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Открытая палуба",
+    "rowMetric": "Сектор",
+    "seat": "Видовое 8",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 166,
+      "y": 550
+    }
+  },
+  {
+    "id": "141",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Открытая палуба",
+    "rowMetric": "Сектор",
+    "seat": "Видовое 9",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 178,
+      "y": 550
+    }
+  },
+  {
+    "id": "142",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Открытая палуба",
+    "rowMetric": "Сектор",
+    "seat": "Видовое 10",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 190,
+      "y": 550
+    }
+  },
+  {
+    "id": "143",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Открытая палуба",
+    "rowMetric": "Сектор",
+    "seat": "Видовое 11",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 202,
+      "y": 550
+    }
+  },
+  {
+    "id": "144",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Открытая палуба",
+    "rowMetric": "Сектор",
+    "seat": "Видовое 12",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 214,
+      "y": 550
+    }
+  },
+  {
+    "id": "145",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Открытая палуба",
+    "rowMetric": "Сектор",
+    "seat": "Видовое 13",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 226,
+      "y": 550
+    }
+  },
+  {
+    "id": "146",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Открытая палуба",
+    "rowMetric": "Сектор",
+    "seat": "Видовое 14",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 238,
+      "y": 550
+    }
+  },
+  {
+    "id": "147",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Открытая палуба",
+    "rowMetric": "Сектор",
+    "seat": "Видовое 15",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 250,
+      "y": 550
+    }
+  },
+  {
+    "id": "148",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Открытая палуба",
+    "rowMetric": "Сектор",
+    "seat": "Видовое 16",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 262,
+      "y": 550
+    }
+  },
+  {
+    "id": "149",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Открытая палуба",
+    "rowMetric": "Сектор",
+    "seat": "Видовое 17",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 274,
+      "y": 550
+    }
+  },
+  {
+    "id": "150",
+    "sectionId": "5",
+    "sectionName": "Верхняя палуба — Открытая палуба (Корма)",
+    "deck": "upper",
+    "row": "Открытая палуба",
+    "rowMetric": "Сектор",
+    "seat": "Видовое 18",
+    "seatMetric": "Место",
+    "coordinate": {
+      "x": 286,
+      "y": 550
+    }
+  }
+]

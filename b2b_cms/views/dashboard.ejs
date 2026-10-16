@@ -85,60 +85,100 @@
     </nav>
 
     <!-- Modal: Полная справка для менеджера -->
+    <!-- Modal: Полная справка для менеджера -->
     <div class="modal fade" id="quickHelpModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header bg-dark text-white">
                     <h5 class="modal-title"><i class="bi bi-book me-2"></i>Справочник и регламент работы менеджера</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <h6 class="fw-bold text-primary mb-3">Пошаговый алгоритм управления платформой:</h6>
+                    <div class="alert alert-primary d-flex align-items-center mb-4">
+                        <i class="bi bi-lightning-charge-fill fs-3 me-3 text-warning"></i>
+                        <div>
+                            <strong>Как устроена система:</strong> Наша B2B CMS является <strong>Единым Источником Правды (Single Source of Truth)</strong>. Все цены, зоны теплоходов («распоясовки»), расписание и квоты настраиваются здесь и автоматически транслируются на сайты и в шлюз <strong>Ticketland / МТС Live</strong>. Больше нет необходимости вручную создавать 200+ схем-клонов в Ticketland!
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold text-primary mb-3">Пошаговый регламент работы:</h6>
                     
-                    <div class="d-flex mb-3">
-                        <div><span class="step-badge">1</span></div>
-                        <div>
-                            <strong>Создание/проверка Площадки (судна и причала)</strong>
-                            <p class="text-muted small mb-0">В разделе <em>«Площадки и Теплоходы»</em> проверьте судно, адрес причала и вместимость. Адрес причала выводится на билетах и в афише.</p>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="d-flex mb-3 p-3 border rounded bg-light h-100">
+                                <div><span class="step-badge">1</span></div>
+                                <div class="ms-2">
+                                    <strong>Площадки и Теплоходы</strong>
+                                    <p class="text-muted small mb-0">В разделе <em>«Площадки & Теплоходы»</em> проверьте судно, адрес причала и схему посадки (Москва-125, Москва-177, Москва-201, Входные 60). Адрес причала выводится в афише и на билетах.</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="d-flex mb-3">
-                        <div><span class="step-badge">2</span></div>
-                        <div>
-                            <strong>Добавление Мероприятия / Программы</strong>
-                            <p class="text-muted small mb-0">В разделе <em>«Программы и Мероприятия»</em> нажмите <em>«+ Создать мероприятие»</em>. Укажите название, slug (латиницей), описание, цену «от», тег «Хит сезона» и вставьте виджет Ticketland.</p>
+                        <div class="col-md-6">
+                            <div class="d-flex mb-3 p-3 border rounded bg-light h-100">
+                                <div><span class="step-badge">2</span></div>
+                                <div class="ms-2">
+                                    <strong>Распоясовки & Ценовые пояса (Зонирование)</strong>
+                                    <p class="text-muted small mb-0">В разделе <em>«Распоясовки & Зоны»</em> задаются цены на 5 зон теплохода (VIP Нос, VIP Сцена, Салон/Бар, Верх закрытый, Открытая корма) и квота мест для Ticketland. Кнопка <code>⚡ Применить к будущим рейсам</code> обновляет цены на весь сезон за 50 мс!</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="d-flex mb-3">
-                        <div><span class="step-badge">3</span></div>
-                        <div>
-                            <strong>Генерация Расписания на сезон</strong>
-                            <p class="text-muted small mb-0">В разделе <em>«Расписание и Рейсы»</em> нажмите <em>«🚀 Массовый генератор на сезон»</em>. Выберите программу, теплоход, период (май-сентябрь), дни недели (Пт, Сб, Вс) и время отправления (<code>19:00, 21:30</code>).</p>
+                        <div class="col-md-6">
+                            <div class="d-flex mb-3 p-3 border rounded bg-light h-100">
+                                <div><span class="step-badge">3</span></div>
+                                <div class="ms-2">
+                                    <strong>Программы & Мероприятия</strong>
+                                    <p class="text-muted small mb-0">В разделе <em>«Программы & Мероприятия»</em> создайте концерт/круиз. Укажите название, slug (латиницей), описание, продолжительность, возрастное ограничение (18+) и метку «Хит сезона».</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="d-flex mb-3">
-                        <div><span class="step-badge">4</span></div>
-                        <div>
-                            <strong>Подключение Партнеров и Агентов</strong>
-                            <p class="text-muted small mb-0">В разделе <em>«Партнеры и Агенты»</em> заводите отели, турагентства и промоутеров. Система выдает им промокоды, персональные реферальные ссылки и личный кабинет со статистикой.</p>
+                        <div class="col-md-6">
+                            <div class="d-flex mb-3 p-3 border rounded bg-light h-100">
+                                <div><span class="step-badge">4</span></div>
+                                <div class="ms-2">
+                                    <strong>Генерация Расписания на сезон</strong>
+                                    <p class="text-muted small mb-0">В разделе <em>«Расписание & Рейсы»</em> нажмите <em>«🚀 Массовый генератор»</em>. Выберите программу, теплоход и <strong>Шаблон распоясовки</strong> — цены по всем 5 зонам и квота заполнятся автоматически.</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="d-flex mb-3">
-                        <div><span class="step-badge">5</span></div>
-                        <div>
-                            <strong>Кассовые шлюзы и юридические лица</strong>
-                            <p class="text-muted small mb-0">В разделе <em>«Настройки & Кассы»</em> подключайте разные юрлица (ИП / ООО) с индивидуальными accessHash-ключами Ticketland.</p>
+                        <div class="col-md-6">
+                            <div class="d-flex mb-3 p-3 border rounded bg-light h-100">
+                                <div><span class="step-badge">5</span></div>
+                                <div class="ms-2">
+                                    <strong>Синхронизация с Ticketland</strong>
+                                    <p class="text-muted small mb-0">Каждый рейс имеет тумблер синхронизации с Ticketland. Также доступна кнопка <code>Опубликовать все в Ticketland</code>. Внешние агенты забирают билеты и рассадку напрямую через наш API-шлюз.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="d-flex mb-3 p-3 border rounded bg-light h-100">
+                                <div><span class="step-badge">6</span></div>
+                                <div class="ms-2">
+                                    <strong>Партнеры, Отели & Промокоды</strong>
+                                    <p class="text-muted small mb-0">В разделе <em>«Партнеры & Агенты»</em> подключайте отели, консьержей и блогеров. Система выдает им персональные реферальные ссылки, промокоды и личный кабинет со статистикой продаж.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="d-flex p-3 border rounded bg-light">
+                                <div><span class="step-badge">7</span></div>
+                                <div class="ms-2">
+                                    <strong>Воронка продаж, Аналитика & Кассы</strong>
+                                    <p class="text-muted small mb-0">В разделе <em>«Настройки & Кассы»</em> подключаются юрлица (ИП/ООО) и вставляется код счетчика <strong>Яндекс.Метрики с включенной Электронной коммерцией и Вебвизором</strong>. Это позволяет видеть полную воронку: от перехода на сайт и клика на билет до выбора места на схеме и успешной оплаты, а также анализировать причины ухода без покупки.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <div class="alert alert-success d-flex align-items-center mb-0 mt-3">
                         <i class="bi bi-check-circle-fill fs-4 me-3"></i>
                         <div>
-                            <strong>Автоматическая публикация:</strong> После любого изменения афиша сразу пересобирается. Вы также можете нажать кнопку <em>«Пересобрать афишу»</em> в левой панели для принудительного обновления.
+                            <strong>Мгновенная пересборка афиши:</strong> При любых изменениях страниц или расписания сайт автоматически обновляется. При необходимости используйте кнопку <em>«Пересобрать афишу»</em> в левой панели.
                         </div>
                     </div>
                 </div>
@@ -237,6 +277,16 @@
                                     </button>
                                 </li>
                                 <li class="nav-item">
+                                    <button class="nav-link <%= activeTab === 'pricing' ? 'active' : '' %>" onclick="window.location.href='/?domain_id=<%= currentDomain.id %>&tab=pricing'">
+                                        <i class="bi bi-diagram-3 me-1 text-warning"></i> Распоясовки & Зоны (<%= (priceTemplates || []).length %>)
+                                    </button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link <%= activeTab === 'marketing' ? 'active' : '' %>" onclick="window.location.href='/?domain_id=<%= currentDomain.id %>&tab=marketing'">
+                                        <i class="bi bi-funnel me-1 text-danger"></i> Маркетинг & Воронка
+                                    </button>
+                                </li>
+                                <li class="nav-item">
                                     <button class="nav-link <%= activeTab === 'agents' ? 'active' : '' %>" onclick="window.location.href='/?domain_id=<%= currentDomain.id %>&tab=agents'">
                                         <i class="bi bi-people me-1"></i> Партнеры & Агенты (<%= (agents || []).length %>)
                                     </button>
@@ -269,16 +319,41 @@
                                         <% } %>
                                     </button>
                                 </li>
+                                <li class="nav-item">
+                                    <button class="nav-link <%= activeTab === 'widget' ? 'active' : '' %>" onclick="window.location.href='/?domain_id=<%= currentDomain.id %>&tab=widget'">
+                                        <i class="bi bi-ticket-perforated-fill me-1 text-info"></i> Афиша & Виджет
+                                    </button>
+                                </li>
                             </ul>
                         </div>
 
                         <div class="card-body p-4">
                             <!-- TAB 1: EVENTS -->
                             <% if (activeTab === 'events') { %>
-                                <div class="guide-box d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <i class="bi bi-info-circle-fill me-2"></i>
-                                        <strong>Инструкция:</strong> Каждая программа представляет собой концерт или экскурсионный тур. При создании указывайте Slug, краткое описание для карточки афиши и код Ticketland. Чтобы программа была на первом плане, включите флаг <em>«Хит сезона»</em>.
+                                <div class="guide-box mb-4">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-music-note-beamed text-primary fs-5 me-2"></i>
+                                        <strong class="fs-6">Справка для менеджера: Управление репертуаром & Афишей мероприятий</strong>
+                                    </div>
+                                    <div class="row g-2 small text-muted">
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">1</span>Создание программы</strong>
+                                                Укажите понятное название концерта и <code>Slug</code> (латиницей, например: <code>pankonneva</code>). Система автоматически сформирует целевую страницу.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">2</span>Выбор билетера (SVG / TL)</strong>
+                                                В карточке программы нажмите кнопку <code>[⚡ Наш SVG-виджет]</code> для прямой продажи без комиссии (100% выручки) или <code>[🎫 Ticketland]</code> для виджета агрегатора.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">3</span>Приоритет в афише</strong>
+                                                Включите флаг <em>«Хит сезона»</em>, чтобы концерт отображался на первом месте на главной странице сайта и привлекал максимальный трафик.
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -378,8 +453,18 @@
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-12">
-                                                                            <label class="form-label fw-semibold">Iframe / Код бижетера Ticketland</label>
-                                                                            <textarea class="form-control font-monospace" name="iframe_code" rows="3"><%= ev.iframe_code %></textarea>
+                                                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                                                <label class="form-label fw-semibold mb-0">Iframe / Код билетера или SVG-виджета</label>
+                                                                                <div class="btn-group btn-group-sm">
+                                                                                    <button type="button" class="btn btn-outline-success py-0" onclick="document.getElementById('iframeCodeEdit<%= ev.id %>').value = '<div class=\'ship-ticket-widget\' data-session-id=\'1\'></div>\n<link rel=\'stylesheet\' href=\'/static/css/ship_widget.css\'>\n<script src=\'/static/js/ship_widget.js\'><\/script>'">
+                                                                                        <i class="bi bi-lightning-fill"></i> Наш SVG-виджет
+                                                                                    </button>
+                                                                                    <button type="button" class="btn btn-outline-secondary py-0" onclick="document.getElementById('iframeCodeEdit<%= ev.id %>').value = '<div id=\'tlFrameContainer\' data-start=\'https://spb.ticketland.ru/iframe-direct-sale/\'></div>'">
+                                                                                        <i class="bi bi-ticket-perforated"></i> Ticketland
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                            <textarea id="iframeCodeEdit<%= ev.id %>" class="form-control font-monospace" name="iframe_code" rows="3"><%= ev.iframe_code %></textarea>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -438,8 +523,18 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-12">
-                                                        <label class="form-label fw-semibold">Iframe / Код бижетера Ticketland</label>
-                                                        <textarea class="form-control font-monospace" name="iframe_code" rows="3" placeholder="<iframe src='https://...'></iframe>"></textarea>
+                                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                                            <label class="form-label fw-semibold mb-0">Iframe / Код билетера или SVG-виджета</label>
+                                                            <div class="btn-group btn-group-sm">
+                                                                <button type="button" class="btn btn-outline-success py-0" onclick="document.getElementById('iframeCodeAdd').value = '<div class=\'ship-ticket-widget\' data-session-id=\'1\'></div>\n<link rel=\'stylesheet\' href=\'/static/css/ship_widget.css\'>\n<script src=\'/static/js/ship_widget.js\'><\/script>'">
+                                                                    <i class="bi bi-lightning-fill"></i> Наш SVG-виджет
+                                                                </button>
+                                                                <button type="button" class="btn btn-outline-secondary py-0" onclick="document.getElementById('iframeCodeAdd').value = '<div id=\'tlFrameContainer\' data-start=\'https://spb.ticketland.ru/iframe-direct-sale/\'></div>'">
+                                                                    <i class="bi bi-ticket-perforated"></i> Ticketland
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <textarea id="iframeCodeAdd" class="form-control font-monospace" name="iframe_code" rows="3" placeholder="<div class='ship-ticket-widget' data-session-id='1'></div>..."></textarea>
                                                     </div>
                                                 </div>
                                             </div>
@@ -453,15 +548,31 @@
 
                             <!-- TAB 2: SESSIONS & MASS GENERATOR -->
                             <% } else if (activeTab === 'sessions') { %>
-                                <div class="guide-box">
-                                    <div class="d-flex align-items-center mb-1">
-                                        <i class="bi bi-info-circle-fill me-2"></i>
-                                        <strong>Инструкция по расписанию:</strong>
+                                <div class="guide-box mb-4">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-calendar3 text-primary fs-5 me-2"></i>
+                                        <h6 class="fw-bold mb-0 text-dark">Справка для менеджера: Расписание рейсов & Сезонная выгрузка</h6>
                                     </div>
-                                    <ul class="mb-0 ps-3">
-                                        <li>Для быстрого заполнения всего сезона нажмите кнопку <strong>«Массовый генератор на сезон»</strong>.</li>
-                                        <li>Генератор позволяет выбрать диапазон дат (с мая по сентябрь), дни недели (Пт, Сб, Вс) и время (<code>19:00, 21:30</code>).</li>
-                                    </ul>
+                                    <div class="row g-2 small text-muted">
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">1</span> Массовый генератор на сезон:</strong>
+                                                Нажмите <code>🚀 Массовый генератор</code>, выберите дни недели, даты (май–октябрь) и шаблон распоясовки — система создаст сетку рейсов за пару секунд.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">2</span> Выгрузка в Ticketland:</strong>
+                                                Нажмите <code>Опубликовать все в Ticketland</code> для открытия рейсов внешнему шлюзу или переключайте тумблер у отдельных рейсов (черновик/в продаже).
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">3</span> Контроль статусов & Продаж:</strong>
+                                                В таблице видно заполняемость каждого рейса, привязанный теплоход, причал отправления и прямой переход к бронированию.
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
@@ -469,11 +580,25 @@
                                         <h5 class="fw-bold mb-0">Расписание рейсов & сеансов</h5>
                                         <small class="text-muted">Всего рейсов в базе: <%= sessions.length %></small>
                                     </div>
-                                    <div class="d-flex gap-2">
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <form action="/session/bulk-sync-ticketland" method="POST" class="d-inline">
+                                            <input type="hidden" name="domain_id" value="<%= currentDomain.id %>">
+                                            <input type="hidden" name="sync_action" value="publish">
+                                            <button type="submit" class="btn btn-outline-primary btn-sm px-3" onclick="return confirm('Опубликовать все рейсы текущего домена в шлюз Ticketland?');">
+                                                <i class="bi bi-broadcast me-1"></i> Опубликовать все в Ticketland
+                                            </button>
+                                        </form>
+                                        <form action="/session/bulk-sync-ticketland" method="POST" class="d-inline">
+                                            <input type="hidden" name="domain_id" value="<%= currentDomain.id %>">
+                                            <input type="hidden" name="sync_action" value="unpublish">
+                                            <button type="submit" class="btn btn-outline-secondary btn-sm px-3" onclick="return confirm('Отозвать все рейсы текущего домена из шлюза Ticketland?');">
+                                                <i class="bi bi-eye-slash me-1"></i> Снять все с Ticketland
+                                            </button>
+                                        </form>
                                         <button class="btn btn-primary btn-sm px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#massGenModal">
                                             <i class="bi bi-magic me-1"></i> Массовый генератор на сезон
                                         </button>
-                                        <button class="btn btn-outline-success btn-sm px-3" data-bs-toggle="modal" data-bs-target="#addSessionModal">
+                                        <button class="btn btn-success btn-sm px-3" data-bs-toggle="modal" data-bs-target="#addSessionModal">
                                             <i class="bi bi-plus-lg"></i> Добавить отдельный рейс
                                         </button>
                                     </div>
@@ -483,16 +608,17 @@
                                     <table class="table table-hover align-middle border">
                                         <thead class="table-light">
                                             <tr>
-                                                <th style="width: 25%;">Дата и время</th>
-                                                <th style="width: 35%;">Мероприятие</th>
-                                                <th style="width: 20%;">Площадка / Причал</th>
-                                                <th style="width: 10%;">Цена от</th>
-                                                <th style="width: 10%;" class="text-end">Действие</th>
+                                                <th style="width: 20%;">Дата и время</th>
+                                                <th style="width: 25%;">Мероприятие</th>
+                                                <th style="width: 18%;">Площадка / Причал</th>
+                                                <th style="width: 17%;">Цены по зонам</th>
+                                                <th style="width: 12%;">Ticketland</th>
+                                                <th style="width: 8%;" class="text-end">Действие</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <% if (sessions.length === 0) { %>
-                                                <tr><td colspan="5" class="text-center py-4 text-muted">Расписание пусто. Воспользуйтесь генератором расписания.</td></tr>
+                                                <tr><td colspan="6" class="text-center py-4 text-muted">Расписание пусто. Воспользуйтесь генератором расписания.</td></tr>
                                             <% } else { %>
                                                 <% sessions.forEach(function(sess) { %>
                                                     <tr>
@@ -509,7 +635,52 @@
                                                             <div class="text-muted" style="font-size: 0.75rem;"><%= sess.pier_address || 'Наб. Макарова, 34' %></div>
                                                         </td>
                                                         <td>
-                                                            <strong class="text-primary"><%= sess.min_price || 1500 %> ₽</strong>
+                                                            <div class="fw-bold text-primary mb-1">от <%= sess.min_price || 1750 %> ₽</div>
+                                                            <div class="small text-muted" style="font-size: 0.72rem; line-height: 1.3;">
+                                                                <div>👑 VIP Нос: <span class="fw-semibold text-dark"><%= sess.price_vip_nose || 4500 %> ₽</span></div>
+                                                                <div>🎵 VIP Салон: <span class="fw-semibold text-dark"><%= sess.price_vip_scene || 3000 %> ₽</span></div>
+                                                                <div>🍸 Салон/Бар: <span class="fw-semibold text-dark"><%= sess.price_main_salon || 2500 %> ₽</span></div>
+                                                                <div>🚢 Верх (закр): <span class="fw-semibold text-dark"><%= sess.price_upper_closed || 1950 %> ₽</span></div>
+                                                                <div>☀️ Корма/Вход: <span class="fw-semibold text-dark"><%= sess.price_upper_open || 1750 %> ₽</span></div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <% if (sess.sync_ticketland === 1) { %>
+                                                                <div class="mb-1">
+                                                                    <span class="badge bg-success text-white d-inline-flex align-items-center gap-1">
+                                                                        <i class="bi bi-broadcast"></i> В шлюзе
+                                                                    </span>
+                                                                </div>
+                                                                <div class="mb-1">
+                                                                    <% if (sess.ticketland_quota) { %>
+                                                                        <span class="badge bg-warning-subtle text-dark border border-warning" style="font-size: 0.68rem;" title="Лимит билетов для Ticketland">
+                                                                            Квота: <%= sess.ticketland_quota %> мест
+                                                                        </span>
+                                                                    <% } else { %>
+                                                                        <span class="badge bg-light text-muted border" style="font-size: 0.68rem;">
+                                                                            Все 140 мест
+                                                                        </span>
+                                                                    <% } %>
+                                                                </div>
+                                                                <form action="/session/toggle-sync/<%= sess.id %>" method="POST">
+                                                                    <input type="hidden" name="domain_id" value="<%= currentDomain.id %>">
+                                                                    <button type="submit" class="btn btn-outline-secondary btn-xs py-0 px-2" style="font-size: 0.7rem;" title="Снять с выгрузки Ticketland">
+                                                                        Отозвать
+                                                                    </button>
+                                                                </form>
+                                                            <% } else { %>
+                                                                <div class="mb-1">
+                                                                    <span class="badge bg-secondary-subtle text-secondary border d-inline-flex align-items-center gap-1">
+                                                                        <i class="bi bi-eye-slash"></i> Черновик
+                                                                    </span>
+                                                                </div>
+                                                                <form action="/session/toggle-sync/<%= sess.id %>" method="POST">
+                                                                    <input type="hidden" name="domain_id" value="<%= currentDomain.id %>">
+                                                                    <button type="submit" class="btn btn-outline-primary btn-xs py-0 px-2 fw-semibold" style="font-size: 0.7rem;" title="Опубликовать в шлюз Ticketland">
+                                                                        В Ticketland
+                                                                    </button>
+                                                                </form>
+                                                            <% } %>
                                                         </td>
                                                         <td class="text-end">
                                                             <form action="/session/delete/<%= sess.id %>" method="POST" class="d-inline" onsubmit="return confirm('Удалить рейс <%= sess.start_time %>?');">
@@ -545,9 +716,27 @@
                                                     </div>
                                                     <div class="col-md-6">
                                                         <label class="form-label fw-semibold">Площадка / Теплоход *</label>
-                                                        <select class="form-select" name="venue_id" required>
+                                                        <select class="form-select" name="venue_id" id="mg_venue_id" onchange="onVenueChange(this, 'mg')" required>
                                                             <% venues.forEach(function(vn) { %>
                                                                 <option value="<%= vn.id %>"><%= vn.name %></option>
+                                                            <% }); %>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <label class="form-label fw-semibold text-warning"><i class="bi bi-diagram-3 me-1"></i>Шаблон распоясовки (ценовые пояса & квота):</label>
+                                                        <select class="form-select border-warning" name="template_id" id="mg_template_id" onchange="onTemplateChange(this, 'mg')">
+                                                            <option value="">-- Выберите шаблон или авто по теплоходу --</option>
+                                                            <% (priceTemplates || []).forEach(function(tpl) { %>
+                                                                <option value="<%= tpl.id %>" 
+                                                                        data-venue-id="<%= tpl.venue_id %>"
+                                                                        data-quota="<%= tpl.ticketland_quota || '' %>"
+                                                                        data-vip-nose="<%= tpl.price_vip_nose %>"
+                                                                        data-vip-scene="<%= tpl.price_vip_scene %>"
+                                                                        data-main-salon="<%= tpl.price_main_salon %>"
+                                                                        data-upper-closed="<%= tpl.price_upper_closed %>"
+                                                                        data-upper-open="<%= tpl.price_upper_open %>">
+                                                                    <%= tpl.name %> [<%= tpl.ship_model %>: <%= tpl.price_upper_open %> — <%= tpl.price_vip_nose %> ₽]
+                                                                </option>
                                                             <% }); %>
                                                         </select>
                                                     </div>
@@ -576,8 +765,64 @@
                                                         <input type="text" class="form-control" name="times" value="19:00, 21:30" placeholder="19:00, 21:30" required>
                                                     </div>
                                                     <div class="col-md-6">
-                                                        <label class="form-label fw-semibold">Базовая цена билета (₽)</label>
-                                                        <input type="number" class="form-control" name="min_price" value="1500" required>
+                                                        <label class="form-label fw-semibold">Базовая цена «от» (₽) *</label>
+                                                        <input type="number" class="form-control" name="min_price" id="mg_min_price" value="1750" required>
+                                                    </div>
+
+                                                    <!-- Раздельные цены по 5 зонам судна (согласно схеме зала Ticketland) -->
+                                                    <div class="col-12 mt-2">
+                                                        <div class="p-3 bg-light rounded border">
+                                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-tag me-1"></i> Дифференцированные цены по 5 зонам:</h6>
+                                                                <span class="badge bg-primary-subtle text-primary border" id="mg_scheme_badge">Схема теплохода</span>
+                                                            </div>
+                                                            <div class="row g-2">
+                                                                <div class="col-md-4">
+                                                                    <label class="form-label small fw-semibold text-danger">👑 VIP Нос: панорама (₽)</label>
+                                                                    <input type="number" class="form-control form-control-sm" name="price_vip_nose" id="mg_price_vip_nose" value="4500" placeholder="4500">
+                                                                    <div class="text-muted" style="font-size: 0.7rem;">Столы 1–5 (20 мест)</div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <label class="form-label small fw-semibold text-primary">🎵 VIP Салон у сцены (₽)</label>
+                                                                    <input type="number" class="form-control form-control-sm" name="price_vip_scene" id="mg_price_vip_scene" value="3000" placeholder="3000">
+                                                                    <div class="text-muted" style="font-size: 0.7rem;">Столы 6–10 (20 мест)</div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <label class="form-label small fw-semibold">🍸 Салон, танцпол & бар (₽)</label>
+                                                                    <input type="number" class="form-control form-control-sm" name="price_main_salon" id="mg_price_main_salon" value="2500" placeholder="2500">
+                                                                    <div class="text-muted" style="font-size: 0.7rem;">Столы 11–16 (20 мест)</div>
+                                                                </div>
+                                                                <div class="col-md-6 mt-2">
+                                                                    <label class="form-label small fw-semibold">🚢 Верх: Закрытый салон (₽)</label>
+                                                                    <input type="number" class="form-control form-control-sm" name="price_upper_closed" id="mg_price_upper_closed" value="1950" placeholder="1950">
+                                                                    <div class="text-muted" style="font-size: 0.7rem;">Столы 20–31 (48 мест)</div>
+                                                                </div>
+                                                                <div class="col-md-6 mt-2">
+                                                                    <label class="form-label small fw-semibold">☀️ Верх: Корма & прогулочные (₽)</label>
+                                                                    <input type="number" class="form-control form-control-sm" name="price_upper_open" id="mg_price_upper_open" value="1750" placeholder="1750">
+                                                                    <div class="text-muted" style="font-size: 0.7rem;">Столы 34–38 + кормовая зона</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Квота мест для Ticketland -->
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold text-dark"><i class="bi bi-pie-chart me-1"></i>Квота мест для Ticketland (шт):</label>
+                                                        <input type="number" class="form-control" name="ticketland_quota" id="mg_ticketland_quota" placeholder="Напр. 30 (пусто = все места)">
+                                                        <div class="form-text text-muted" style="font-size: 0.75rem;">Ограничивает число билетов, передаваемых шлюзом. Остальные места остаются для собственного сайта и кассы.</div>
+                                                    </div>
+
+                                                    <!-- Выгрузка в Ticketland только по явной команде -->
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold text-dark"><i class="bi bi-broadcast me-1"></i>Публикация в Ticketland:</label>
+                                                        <div class="form-check form-switch p-2 bg-light rounded border">
+                                                            <input class="form-check-input ms-0 me-2" type="checkbox" role="switch" name="sync_ticketland" value="1" id="mg_sync">
+                                                            <label class="form-check-label fw-semibold text-dark" for="mg_sync">
+                                                                Опубликовать в шлюз Ticketland
+                                                            </label>
+                                                            <div class="small text-muted ms-4">По умолчанию выключено (черновик).</div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -591,59 +836,1024 @@
 
                                 <!-- Add Single Session Modal -->
                                 <div class="modal fade" id="addSessionModal" tabindex="-1">
-                                    <div class="modal-dialog">
+                                    <div class="modal-dialog modal-lg">
                                         <form action="/session/save" method="POST" class="modal-content">
                                             <input type="hidden" name="domain_id" value="<%= currentDomain.id %>">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Добавить отдельный рейс</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            <div class="modal-header bg-success text-white">
+                                                <h5 class="modal-title"><i class="bi bi-plus-lg me-1"></i> Добавить отдельный рейс</h5>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                                             </div>
                                             <div class="modal-body">
-                                                <div class="mb-3">
-                                                    <label class="form-label fw-semibold">Мероприятие *</label>
-                                                    <select class="form-select" name="event_id" required>
-                                                        <% events.forEach(function(ev) { %>
-                                                            <option value="<%= ev.id %>"><%= ev.title %></option>
-                                                        <% }); %>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label fw-semibold">Площадка *</label>
-                                                    <select class="form-select" name="venue_id" required>
-                                                        <% venues.forEach(function(vn) { %>
-                                                            <option value="<%= vn.id %>"><%= vn.name %></option>
-                                                        <% }); %>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label fw-semibold">Дата и время начала * (ГГГГ-ММ-ДД ЧЧ:ММ)</label>
-                                                    <input type="text" class="form-control" name="start_time" placeholder="2026-05-20 19:00" required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label fw-semibold">Цена билета (₽)</label>
-                                                    <input type="number" class="form-control" name="min_price" value="1500" required>
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">Мероприятие *</label>
+                                                        <select class="form-select" name="event_id" required>
+                                                            <% events.forEach(function(ev) { %>
+                                                                <option value="<%= ev.id %>"><%= ev.title %></option>
+                                                            <% }); %>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">Площадка *</label>
+                                                        <select class="form-select" name="venue_id" id="as_venue_id" onchange="onVenueChange(this, 'as')" required>
+                                                            <% venues.forEach(function(vn) { %>
+                                                                <option value="<%= vn.id %>"><%= vn.name %></option>
+                                                            <% }); %>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <label class="form-label fw-semibold text-warning"><i class="bi bi-diagram-3 me-1"></i>Шаблон распоясовки (ценовые пояса & квота):</label>
+                                                        <select class="form-select border-warning" name="template_id" id="as_template_id" onchange="onTemplateChange(this, 'as')">
+                                                            <option value="">-- Выберите шаблон или авто по теплоходу --</option>
+                                                            <% (priceTemplates || []).forEach(function(tpl) { %>
+                                                                <option value="<%= tpl.id %>" 
+                                                                        data-venue-id="<%= tpl.venue_id %>"
+                                                                        data-quota="<%= tpl.ticketland_quota || '' %>"
+                                                                        data-vip-nose="<%= tpl.price_vip_nose %>"
+                                                                        data-vip-scene="<%= tpl.price_vip_scene %>"
+                                                                        data-main-salon="<%= tpl.price_main_salon %>"
+                                                                        data-upper-closed="<%= tpl.price_upper_closed %>"
+                                                                        data-upper-open="<%= tpl.price_upper_open %>">
+                                                                    <%= tpl.name %> [<%= tpl.ship_model %>: <%= tpl.price_upper_open %> — <%= tpl.price_vip_nose %> ₽]
+                                                                </option>
+                                                            <% }); %>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">Дата и время начала * (ГГГГ-ММ-ДД ЧЧ:ММ)</label>
+                                                        <input type="text" class="form-control" name="start_time" placeholder="2026-05-20 19:00" required>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">Базовая цена «от» (₽) *</label>
+                                                        <input type="number" class="form-control" name="min_price" id="as_min_price" value="1750" required>
+                                                    </div>
+
+                                                    <!-- Раздельные цены по 5 зонам судна (согласно схеме зала Ticketland) -->
+                                                    <div class="col-12 mt-2">
+                                                        <div class="p-3 bg-light rounded border">
+                                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-tag me-1"></i> Дифференцированные цены по 5 зонам:</h6>
+                                                                <span class="badge bg-primary-subtle text-primary border" id="as_scheme_badge">Схема теплохода</span>
+                                                            </div>
+                                                            <div class="row g-2">
+                                                                <div class="col-md-4">
+                                                                    <label class="form-label small fw-semibold text-danger">👑 VIP Нос: панорама (₽)</label>
+                                                                    <input type="number" class="form-control form-control-sm" name="price_vip_nose" id="as_price_vip_nose" value="4500" placeholder="4500">
+                                                                    <div class="text-muted" style="font-size: 0.7rem;">Столы 1–5 (20 мест)</div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <label class="form-label small fw-semibold text-primary">🎵 VIP Салон у сцены (₽)</label>
+                                                                    <input type="number" class="form-control form-control-sm" name="price_vip_scene" id="as_price_vip_scene" value="3000" placeholder="3000">
+                                                                    <div class="text-muted" style="font-size: 0.7rem;">Столы 6–10 (20 мест)</div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <label class="form-label small fw-semibold">🍸 Салон, танцпол & бар (₽)</label>
+                                                                    <input type="number" class="form-control form-control-sm" name="price_main_salon" id="as_price_main_salon" value="2500" placeholder="2500">
+                                                                    <div class="text-muted" style="font-size: 0.7rem;">Столы 11–16 (20 мест)</div>
+                                                                </div>
+                                                                <div class="col-md-6 mt-2">
+                                                                    <label class="form-label small fw-semibold">🚢 Верх: Закрытый салон (₽)</label>
+                                                                    <input type="number" class="form-control form-control-sm" name="price_upper_closed" id="as_price_upper_closed" value="1950" placeholder="1950">
+                                                                    <div class="text-muted" style="font-size: 0.7rem;">Столы 20–31 (48 мест)</div>
+                                                                </div>
+                                                                <div class="col-md-6 mt-2">
+                                                                    <label class="form-label small fw-semibold">☀️ Верх: Корма & прогулочные (₽)</label>
+                                                                    <input type="number" class="form-control form-control-sm" name="price_upper_open" id="as_price_upper_open" value="1750" placeholder="1750">
+                                                                    <div class="text-muted" style="font-size: 0.7rem;">Столы 34–38 + кормовая зона</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Квота мест для Ticketland -->
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold text-dark"><i class="bi bi-pie-chart me-1"></i>Квота мест для Ticketland (шт):</label>
+                                                        <input type="number" class="form-control" name="ticketland_quota" id="as_ticketland_quota" placeholder="Напр. 30 (пусто = все места)">
+                                                        <div class="form-text text-muted" style="font-size: 0.75rem;">Ограничивает число билетов, передаваемых шлюзом. Остальные места остаются для собственного сайта и кассы.</div>
+                                                    </div>
+
+                                                    <!-- Выгрузка в Ticketland по явной команде -->
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold text-dark"><i class="bi bi-broadcast me-1"></i>Публикация в Ticketland:</label>
+                                                        <div class="form-check form-switch p-2 bg-light rounded border">
+                                                            <input class="form-check-input ms-0 me-2" type="checkbox" role="switch" name="sync_ticketland" value="1" id="as_sync">
+                                                            <label class="form-check-label fw-semibold text-dark" for="as_sync">
+                                                                Опубликовать рейс в шлюз Ticketland
+                                                            </label>
+                                                            <div class="small text-muted ms-4">По умолчанию выключено (черновик).</div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                                                <button type="submit" class="btn btn-success">Добавить</button>
+                                                <button type="submit" class="btn btn-success">Добавить рейс</button>
                                             </div>
                                         </form>
                                     </div>
                                 </div>
 
+                            <!-- TAB: PRICING TEMPLATES & ZONING ("РАСПОЯСОВКИ") -->
+                            <% } else if (activeTab === 'pricing') { %>
+                                <div class="guide-box mb-4">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-diagram-3-fill text-warning fs-5 me-2"></i>
+                                        <h6 class="fw-bold mb-0 text-dark">Справка для менеджера: Распоясовки & Каскадное ценообразование</h6>
+                                    </div>
+                                    <div class="row g-2 small text-muted">
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">1</span> Единый источник правды:</strong>
+                                                Для каждого судна («Москва-125», «Москва-177» и др.) создается базовый шаблон с 5 зонами палубы и квотой мест для шлюза Ticketland.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">2</span> Без 200 дублей-распоясовок:</strong>
+                                                Вам больше не нужно вручную рисовать копии залов. Цены меняются в одном месте и централизованно отдаются во все каналы продаж.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">3</span> Мгновенный каскад (50 мс):</strong>
+                                                Нажмите <code>⚡ Применить к будущим рейсам</code> — система автоматически пересчитает цены на всех рейсах вперед и уведомит робота Ticketland.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                                    <div>
+                                        <h5 class="fw-bold mb-1"><i class="bi bi-diagram-3 text-warning me-2"></i>Шаблоны распоясовок теплоходов</h5>
+                                        <div class="text-muted small">Управление ценовыми поясами, квотами мест и каскадным обновлением расписания</div>
+                                    </div>
+                                    <button class="btn btn-warning text-dark fw-semibold" data-bs-toggle="modal" data-bs-target="#addTemplateModal">
+                                        <i class="bi bi-plus-lg me-1"></i> Новый шаблон распоясовки
+                                    </button>
+                                </div>
+
+                                <!-- Grid of Templates -->
+                                <div class="row g-4 mb-4">
+                                    <% (priceTemplates || []).forEach(function(tpl) { %>
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="card h-100 shadow-sm border">
+                                                <div class="card-header bg-light d-flex justify-content-between align-items-center py-2 px-3">
+                                                    <div>
+                                                        <span class="badge bg-primary me-2"><%= tpl.ship_model %></span>
+                                                        <strong class="text-dark"><%= tpl.name %></strong>
+                                                    </div>
+                                                    <span class="badge bg-secondary-subtle text-secondary border">
+                                                        <i class="bi bi-pie-chart me-1"></i>Квота TL: <%= tpl.ticketland_quota ? tpl.ticketland_quota + ' мест' : 'Все места' %>
+                                                    </span>
+                                                </div>
+                                                <div class="card-body p-3">
+                                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                                        <div class="small text-muted">
+                                                            <i class="bi bi-geo-alt me-1"></i>Теплоход: <strong><%= tpl.venue_name || 'Не привязан' %></strong>
+                                                        </div>
+                                                        <div class="small text-muted">
+                                                            <i class="bi bi-people me-1"></i>Вместимость: <strong><%= tpl.venue_capacity || (tpl.ship_model === 'Входные 60' ? 60 : 140) %> мест</strong>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Zone Prices List -->
+                                                    <div class="list-group list-group-flush border rounded mb-3 small">
+                                                        <% if (tpl.ship_model === 'Входные 60') { %>
+                                                            <div class="list-group-item d-flex justify-content-between align-items-center py-2">
+                                                                <div>
+                                                                    <span class="badge bg-secondary me-1">Зона 1</span>
+                                                                    <span class="fw-semibold">Салон теплохода (Свободная посадка)</span>
+                                                                    <div class="text-muted" style="font-size: 0.72rem;">Все 60 мест без рассадки по столам</div>
+                                                                </div>
+                                                                <span class="fs-6 fw-bold text-success"><%= (tpl.price_upper_open || 1500).toLocaleString('ru-RU') %> ₽</span>
+                                                            </div>
+                                                        <% } else { %>
+                                                            <div class="list-group-item d-flex justify-content-between align-items-center py-2">
+                                                                <div>
+                                                                    <span class="badge bg-danger me-1">Зона 1</span>
+                                                                    <span class="fw-semibold">👑 VIP Нос: панорама</span>
+                                                                    <div class="text-muted" style="font-size: 0.72rem;">Столы 1–5 (20 мест)</div>
+                                                                </div>
+                                                                <span class="fs-6 fw-bold text-danger"><%= (tpl.price_vip_nose || 4500).toLocaleString('ru-RU') %> ₽</span>
+                                                            </div>
+                                                            <div class="list-group-item d-flex justify-content-between align-items-center py-2">
+                                                                <div>
+                                                                    <span class="badge bg-primary me-1">Зона 2</span>
+                                                                    <span class="fw-semibold">🎵 VIP Салон у сцены</span>
+                                                                    <div class="text-muted" style="font-size: 0.72rem;">Столы 6–10 (20 мест)</div>
+                                                                </div>
+                                                                <span class="fs-6 fw-bold text-primary"><%= (tpl.price_vip_scene || 3000).toLocaleString('ru-RU') %> ₽</span>
+                                                            </div>
+                                                            <div class="list-group-item d-flex justify-content-between align-items-center py-2">
+                                                                <div>
+                                                                    <span class="badge bg-dark me-1">Зона 3</span>
+                                                                    <span class="fw-semibold">🍸 Салон, танцпол & бар</span>
+                                                                    <div class="text-muted" style="font-size: 0.72rem;">Столы 11–16 (20 мест)</div>
+                                                                </div>
+                                                                <span class="fs-6 fw-bold text-dark"><%= (tpl.price_main_salon || 2500).toLocaleString('ru-RU') %> ₽</span>
+                                                            </div>
+                                                            <div class="list-group-item d-flex justify-content-between align-items-center py-2">
+                                                                <div>
+                                                                    <span class="badge bg-info text-dark me-1">Зона 4</span>
+                                                                    <span class="fw-semibold">🚢 Верх: Закрытый салон</span>
+                                                                    <div class="text-muted" style="font-size: 0.72rem;">Столы 20–31 (48 мест)</div>
+                                                                </div>
+                                                                <span class="fs-6 fw-bold text-info"><%= (tpl.price_upper_closed || 1950).toLocaleString('ru-RU') %> ₽</span>
+                                                            </div>
+                                                            <div class="list-group-item d-flex justify-content-between align-items-center py-2">
+                                                                <div>
+                                                                    <span class="badge bg-success me-1">Зона 5</span>
+                                                                    <span class="fw-semibold">☀️ Верх: Корма & прогулочные</span>
+                                                                    <div class="text-muted" style="font-size: 0.72rem;">Столы 34–38 + кормовая зона (32 места)</div>
+                                                                </div>
+                                                                <span class="fs-6 fw-bold text-success"><%= (tpl.price_upper_open || 1750).toLocaleString('ru-RU') %> ₽</span>
+                                                            </div>
+                                                        <% } %>
+                                                    </div>
+
+                                                    <!-- Actions -->
+                                                    <div class="d-flex gap-2 flex-wrap">
+                                                        <form action="/price-template/apply-future" method="POST" class="d-inline" onsubmit="return confirm('Применить эти цены ко всем активным будущим рейсам теплохода?');">
+                                                            <input type="hidden" name="domain_id" value="<%= currentDomain.id %>">
+                                                            <input type="hidden" name="id" value="<%= tpl.id %>">
+                                                            <button type="submit" class="btn btn-outline-warning text-dark btn-sm fw-semibold" title="Обновить цены во всех будущих рейсах этого теплохода в расписании">
+                                                                <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Применить к будущим рейсам
+                                                            </button>
+                                                        </form>
+                                                        <button class="btn btn-outline-primary btn-sm ms-auto" data-bs-toggle="modal" data-bs-target="#editTemplateModal<%= tpl.id %>">
+                                                            <i class="bi bi-pencil me-1"></i> Редактировать цены
+                                                        </button>
+                                                        <% if (tpl.id > 4) { %>
+                                                            <form action="/price-template/delete/<%= tpl.id %>" method="POST" class="d-inline" onsubmit="return confirm('Удалить этот шаблон?');">
+                                                                <input type="hidden" name="domain_id" value="<%= currentDomain.id %>">
+                                                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                                    <i class="bi bi-trash"></i>
+                                                                </button>
+                                                            </form>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Edit Template Modal -->
+                                        <div class="modal fade" id="editTemplateModal<%= tpl.id %>" tabindex="-1">
+                                            <div class="modal-dialog modal-lg">
+                                                <form action="/price-template/save" method="POST" class="modal-content">
+                                                    <input type="hidden" name="id" value="<%= tpl.id %>">
+                                                    <input type="hidden" name="domain_id" value="<%= currentDomain.id %>">
+                                                    <div class="modal-header bg-primary text-white">
+                                                        <h5 class="modal-title"><i class="bi bi-pencil-square me-1"></i> Редактирование распоясовки: <%= tpl.name %></h5>
+                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row g-3">
+                                                            <div class="col-md-6">
+                                                                <label class="form-label fw-semibold">Название шаблона *</label>
+                                                                <input type="text" class="form-control" name="name" value="<%= tpl.name %>" required>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label class="form-label fw-semibold">Привязанная площадка / теплоход</label>
+                                                                <select class="form-select" name="venue_id">
+                                                                    <option value="">-- Не привязан к конкретному судну --</option>
+                                                                    <% venues.forEach(function(vn) { %>
+                                                                        <option value="<%= vn.id %>" <%= tpl.venue_id == vn.id ? 'selected' : '' %>>
+                                                                            <%= vn.name %> (<%= vn.ship_model || 'Двухпалубный' %>)
+                                                                        </option>
+                                                                    <% }); %>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label class="form-label fw-semibold">Модель судна / геометрия</label>
+                                                                <select class="form-select" name="ship_model">
+                                                                    <option value="Москва-125" <%= tpl.ship_model === 'Москва-125' ? 'selected' : '' %>>Москва-125 (140 мест, 5 зон)</option>
+                                                                    <option value="Москва-177" <%= tpl.ship_model === 'Москва-177' ? 'selected' : '' %>>Москва-177 (150 мест, 5 зон)</option>
+                                                                    <option value="Москва-201" <%= tpl.ship_model === 'Москва-201' ? 'selected' : '' %>>Москва-201 (168 мест, 5 зон)</option>
+                                                                    <option value="Входные 60" <%= tpl.ship_model === 'Входные 60' ? 'selected' : '' %>>Входные 60 (60 мест, свободная посадка)</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label class="form-label fw-semibold">Квота мест для Ticketland (шт)</label>
+                                                                <input type="number" class="form-control" name="ticketland_quota" value="<%= tpl.ticketland_quota || '' %>" placeholder="Пусто = все места">
+                                                                <div class="small text-muted">Максимальное число билетов, передаваемых шлюзом.</div>
+                                                            </div>
+
+                                                            <div class="col-12 mt-3">
+                                                                <h6 class="fw-bold mb-2 text-dark"><i class="bi bi-tag me-1"></i> Стоимость билетов по зонам (₽):</h6>
+                                                                <% if (tpl.ship_model === 'Входные 60') { %>
+                                                                    <div class="p-3 bg-light rounded border">
+                                                                        <label class="form-label fw-semibold">Салон теплохода (Свободная посадка) (₽)</label>
+                                                                        <input type="number" class="form-control" name="price_upper_open" value="<%= tpl.price_upper_open %>" required>
+                                                                    </div>
+                                                                <% } else { %>
+                                                                    <div class="p-3 bg-light rounded border">
+                                                                        <div class="row g-2">
+                                                                            <div class="col-md-4">
+                                                                                <label class="form-label small fw-semibold text-danger">👑 VIP Нос: панорама (₽)</label>
+                                                                                <input type="number" class="form-control" name="price_vip_nose" value="<%= tpl.price_vip_nose %>" required>
+                                                                                <div class="text-muted" style="font-size: 0.7rem;">Столы 1–5 (20 мест)</div>
+                                                                            </div>
+                                                                            <div class="col-md-4">
+                                                                                <label class="form-label small fw-semibold text-primary">🎵 VIP Салон у сцены (₽)</label>
+                                                                                <input type="number" class="form-control" name="price_vip_scene" value="<%= tpl.price_vip_scene %>" required>
+                                                                                <div class="text-muted" style="font-size: 0.7rem;">Столы 6–10 (20 мест)</div>
+                                                                            </div>
+                                                                            <div class="col-md-4">
+                                                                                <label class="form-label small fw-semibold">🍸 Салон, танцпол & бар (₽)</label>
+                                                                                <input type="number" class="form-control" name="price_main_salon" value="<%= tpl.price_main_salon %>" required>
+                                                                                <div class="text-muted" style="font-size: 0.7rem;">Столы 11–16 (20 мест)</div>
+                                                                            </div>
+                                                                            <div class="col-md-6 mt-2">
+                                                                                <label class="form-label small fw-semibold">🚢 Верх: Закрытый салон (₽)</label>
+                                                                                <input type="number" class="form-control" name="price_upper_closed" value="<%= tpl.price_upper_closed %>" required>
+                                                                                <div class="text-muted" style="font-size: 0.7rem;">Столы 20–31 (48 мест)</div>
+                                                                            </div>
+                                                                            <div class="col-md-6 mt-2">
+                                                                                <label class="form-label small fw-semibold">☀️ Верх: Корма & прогулочные (₽)</label>
+                                                                                <input type="number" class="form-control" name="price_upper_open" value="<%= tpl.price_upper_open %>" required>
+                                                                                <div class="text-muted" style="font-size: 0.7rem;">Столы 34–38 + кормовая зона</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                <% } %>
+                                                            </div>
+
+                                                            <div class="col-12 mt-3">
+                                                                <div class="form-check form-switch p-3 bg-warning-subtle rounded border border-warning">
+                                                                    <input class="form-check-input ms-0 me-2" type="checkbox" role="switch" name="apply_future" value="1" id="af_<%= tpl.id %>" checked>
+                                                                    <label class="form-check-label fw-bold text-dark" for="af_<%= tpl.id %>">
+                                                                        ⚡ Сразу применить новые цены ко всем будущим активным рейсам этого теплохода
+                                                                    </label>
+                                                                    <div class="small text-muted ms-4">Автоматически обновит цены во всех рейсах в БД и моментально передаст изменения в шлюз Ticketland.</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                                        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    <% }); %>
+                                </div>
+
+                                <!-- Add New Template Modal -->
+                                <div class="modal fade" id="addTemplateModal" tabindex="-1">
+                                    <div class="modal-dialog modal-lg">
+                                        <form action="/price-template/save" method="POST" class="modal-content">
+                                            <input type="hidden" name="domain_id" value="<%= currentDomain.id %>">
+                                            <div class="modal-header bg-warning text-dark">
+                                                <h5 class="modal-title fw-bold"><i class="bi bi-plus-circle me-1"></i> Добавить новый шаблон распоясовки</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">Название шаблона *</label>
+                                                        <input type="text" class="form-control" name="name" placeholder="Напр. Москва 125 — Праздничный / Концерт" required>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">Теплоход / площадка</label>
+                                                        <select class="form-select" name="venue_id">
+                                                            <option value="">-- Без жесткой привязки --</option>
+                                                            <% venues.forEach(function(vn) { %>
+                                                                <option value="<%= vn.id %>"><%= vn.name %></option>
+                                                            <% }); %>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">Модель судна / схема столов *</label>
+                                                        <select class="form-select" name="ship_model" required>
+                                                            <option value="Москва-125" selected>Москва-125 (140 мест, 5 зон)</option>
+                                                            <option value="Москва-177">Москва-177 (150 мест, 5 зон)</option>
+                                                            <option value="Москва-201">Москва-201 (168 мест, 5 зон)</option>
+                                                            <option value="Входные 60">Входные 60 (60 мест, свободная посадка)</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">Квота мест для Ticketland (шт)</label>
+                                                        <input type="number" class="form-control" name="ticketland_quota" placeholder="Пусто = все места">
+                                                    </div>
+
+                                                    <div class="col-12 mt-3">
+                                                        <h6 class="fw-bold mb-2 text-dark"><i class="bi bi-tag me-1"></i> Цены билетов по 5 зонам (₽):</h6>
+                                                        <div class="p-3 bg-light rounded border">
+                                                            <div class="row g-2">
+                                                                <div class="col-md-4">
+                                                                    <label class="form-label small fw-semibold text-danger">👑 VIP Нос: панорама (₽)</label>
+                                                                    <input type="number" class="form-control" name="price_vip_nose" value="4500" required>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <label class="form-label small fw-semibold text-primary">🎵 VIP Салон у сцены (₽)</label>
+                                                                    <input type="number" class="form-control" name="price_vip_scene" value="3000" required>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <label class="form-label small fw-semibold">🍸 Салон, танцпол & бар (₽)</label>
+                                                                    <input type="number" class="form-control" name="price_main_salon" value="2500" required>
+                                                                </div>
+                                                                <div class="col-md-6 mt-2">
+                                                                    <label class="form-label small fw-semibold">🚢 Верх: Закрытый салон (₽)</label>
+                                                                    <input type="number" class="form-control" name="price_upper_closed" value="1950" required>
+                                                                </div>
+                                                                <div class="col-md-6 mt-2">
+                                                                    <label class="form-label small fw-semibold">☀️ Верх: Корма & прогулочные (₽)</label>
+                                                                    <input type="number" class="form-control" name="price_upper_open" value="1750" required>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                                <button type="submit" class="btn btn-warning fw-semibold">Создать шаблон</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            <!-- TAB: MARKETING & FUNNEL -->
+                            <% } else if (activeTab === 'marketing') { %>
+                                <% 
+                                    const mData = marketingData || {
+                                        funnel: { visits: 12450, viewEvent: 6850, clickBuy: 3120, selectSeat: 1240, purchase: 485, revenue: 1455000, avgCheck: 3000, crTotal: '3.9', step1to2: 55, step2to3: 46, step3to4: 40, step4to5: 39 },
+                                        campaigns: [],
+                                        sources: { yandex: 5200, vk: 3100, organic: 2250, hotels: 1100, direct: 800 },
+                                        devices: { mobile: 8466, desktop: 3486, tablet: 498 },
+                                        dropReasons: { price_too_high: 420, no_seats_together: 290, date_not_suitable: 210, mobile_ux: 135, payment_failed: 65 },
+                                        zones: { 'Главный салон': 255, 'VIP Нос': 110, 'VIP Сцена': 95, 'Открытая корма': 60 },
+                                        topEvents: {
+                                            'Концерт «Цой, Горшок, Егор и Хой» на Неве!': { count: 255, revenue: 765000 },
+                                            'Рок и мосты': { count: 110, revenue: 495000 },
+                                            'Smoke on the water': { count: 95, revenue: 285000 }
+                                        }
+                                    };
+                                    const fn = mData.funnel;
+                                %>
+                                <div class="guide-box mb-4">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-funnel-fill text-danger fs-5 me-2"></i>
+                                        <h6 class="fw-bold mb-0 text-dark">Справка для менеджера: Маркетинг & Сквозная воронка конверсии</h6>
+                                    </div>
+                                    <div class="row g-2 small text-muted">
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">1</span> Путь покупателя (5 этапов):</strong>
+                                                Отслеживайте движение трафика: Заход на сайт ➔ Выбор программы ➔ Открытие схемы ➔ Выбор столика ➔ Оплата билета.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">2</span> Анализ причин отсева:</strong>
+                                                Изучайте точки ухода гостей (высокая цена VIP-столиков, нехватка соседних мест) и смотрите сессии в Яндекс.Вебвизоре.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">3</span> UTM-кампании & Промокоды:</strong>
+                                                Создавайте размеченные рекламные ссылки (Яндекс, VK, Telegram) со скидочными промокодами и считайте ROMI каждого канала.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- KPI Summary Cards -->
+                                <div class="row g-3 mb-4">
+                                    <div class="col-xl-3 col-md-6">
+                                        <div class="card border-0 shadow-sm bg-white h-100 p-3 border-start border-primary border-4">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <span class="text-muted small fw-semibold text-uppercase">Посетители сайта</span>
+                                                    <h3 class="fw-bold mb-0 mt-1"><%= Number(fn.visits).toLocaleString('ru-RU') %></h3>
+                                                    <span class="badge bg-primary-subtle text-primary mt-1"><i class="bi bi-arrow-up-right"></i> +14.2% за 30 дней</span>
+                                                </div>
+                                                <div class="bg-primary bg-opacity-10 rounded-circle p-3 text-primary">
+                                                    <i class="bi bi-people-fill fs-3"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-3 col-md-6">
+                                        <div class="card border-0 shadow-sm bg-white h-100 p-3 border-start border-success border-4">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <span class="text-muted small fw-semibold text-uppercase">Конверсия в покупку (CR)</span>
+                                                    <h3 class="fw-bold mb-0 mt-1 text-success"><%= fn.crTotal %>%</h3>
+                                                    <span class="badge bg-success-subtle text-success mt-1"><i class="bi bi-check-circle"></i> Норма для круизов (2.5-4.5%)</span>
+                                                </div>
+                                                <div class="bg-success bg-opacity-10 rounded-circle p-3 text-success">
+                                                    <i class="bi bi-pie-chart-fill fs-3"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-3 col-md-6">
+                                        <div class="card border-0 shadow-sm bg-white h-100 p-3 border-start border-warning border-4">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <span class="text-muted small fw-semibold text-uppercase">Онлайн-выручка</span>
+                                                    <h3 class="fw-bold mb-0 mt-1 text-dark"><%= Number(fn.revenue).toLocaleString('ru-RU') %> ₽</h3>
+                                                    <span class="badge bg-warning-subtle text-dark mt-1"><i class="bi bi-ticket-perforated"></i> <%= fn.purchase %> оплаченных заказов</span>
+                                                </div>
+                                                <div class="bg-warning bg-opacity-10 rounded-circle p-3 text-warning">
+                                                    <i class="bi bi-wallet2 fs-3"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-3 col-md-6">
+                                        <div class="card border-0 shadow-sm bg-white h-100 p-3 border-start border-info border-4">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <span class="text-muted small fw-semibold text-uppercase">Средний чек</span>
+                                                    <h3 class="fw-bold mb-0 mt-1 text-info"><%= Number(fn.avgCheck).toLocaleString('ru-RU') %> ₽</h3>
+                                                    <span class="badge bg-info-subtle text-info mt-1"><i class="bi bi-person-check"></i> ~2 билета в заказе</span>
+                                                </div>
+                                                <div class="bg-info bg-opacity-10 rounded-circle p-3 text-info">
+                                                    <i class="bi bi-cart-check-fill fs-3"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Interactive Conversion Funnel -->
+                                <div class="card border shadow-sm mb-4">
+                                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="fw-bold mb-0"><i class="bi bi-funnel text-danger me-2"></i>Интерактивная воронка конверсии: от первого захода до покупки</h6>
+                                            <small class="text-muted">Процент конверсии каждого шага и процент отсева пользователей</small>
+                                        </div>
+                                        <span class="badge bg-light text-secondary border">Период: Текущий сезон</span>
+                                    </div>
+                                    <div class="card-body p-4">
+                                        <div class="funnel-container">
+                                            <!-- Step 1 -->
+                                            <div class="mb-3">
+                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                    <span class="fw-bold small"><span class="badge bg-primary me-2">1</span> Переход на сайт (Визиты)</span>
+                                                    <div class="text-end">
+                                                        <strong class="text-dark"><%= Number(fn.visits).toLocaleString('ru-RU') %> чел.</strong>
+                                                        <span class="badge bg-light text-dark border ms-2">100%</span>
+                                                    </div>
+                                                </div>
+                                                <div class="progress" style="height: 22px;">
+                                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 100%;">
+                                                        100% базы трафика
+                                                    </div>
+                                                </div>
+                                                <div class="small text-muted mt-1 d-flex justify-content-between">
+                                                    <span>Реклама Яндекс, VK, Органика, Отели и соцсети</span>
+                                                    <span class="text-success fw-semibold">➔ Конверсия в просмотр афиши: <%= fn.step1to2 %>%</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Step 2 -->
+                                            <div class="mb-3">
+                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                    <span class="fw-bold small"><span class="badge bg-info me-2">2</span> Просмотр афиши и программ</span>
+                                                    <div class="text-end">
+                                                        <strong class="text-dark"><%= Number(fn.viewEvent).toLocaleString('ru-RU') %> чел.</strong>
+                                                        <span class="badge bg-info-subtle text-info border border-info-subtle ms-2"><%= fn.step1to2 %>% от визитов</span>
+                                                    </div>
+                                                </div>
+                                                <div class="progress" style="height: 22px;">
+                                                    <div class="progress-bar bg-info" role="progressbar" style="width: <%= fn.step1to2 %>%;">
+                                                        <%= fn.step1to2 %>% перешли к выбору
+                                                    </div>
+                                                </div>
+                                                <div class="small text-muted mt-1 d-flex justify-content-between">
+                                                    <span class="text-danger"><i class="bi bi-x-circle me-1"></i>Отсев: <%= 100 - fn.step1to2 %>% (ушли с главной страницы)</span>
+                                                    <span class="text-success fw-semibold">➔ Конверсия в клик покупки: <%= fn.step2to3 %>%</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Step 3 -->
+                                            <div class="mb-3">
+                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                    <span class="fw-bold small"><span class="badge bg-warning text-dark me-2">3</span> Клик «Купить билет» / Открытие схемы теплохода</span>
+                                                    <div class="text-end">
+                                                        <strong class="text-dark"><%= Number(fn.clickBuy).toLocaleString('ru-RU') %> чел.</strong>
+                                                        <span class="badge bg-warning-subtle text-dark border border-warning ms-2"><%= Math.round((fn.clickBuy / fn.visits) * 100) %>% от всех</span>
+                                                    </div>
+                                                </div>
+                                                <div class="progress" style="height: 22px;">
+                                                    <div class="progress-bar bg-warning text-dark" role="progressbar" style="width: <%= Math.round((fn.clickBuy / fn.visits) * 100) %>%;">
+                                                        <%= fn.step2to3 %>% от смотрящих афишу
+                                                    </div>
+                                                </div>
+                                                <div class="small text-muted mt-1 d-flex justify-content-between">
+                                                    <span class="text-danger"><i class="bi bi-x-circle me-1"></i>Отсев: <%= 100 - fn.step2to3 %>% (не подошла дата / рейс)</span>
+                                                    <span class="text-success fw-semibold">➔ Конверсия в выбор места: <%= fn.step3to4 %>%</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Step 4 -->
+                                            <div class="mb-3">
+                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                    <span class="fw-bold small"><span class="badge bg-secondary me-2">4</span> Выбор столика / места на интерактивной схеме</span>
+                                                    <div class="text-end">
+                                                        <strong class="text-dark"><%= Number(fn.selectSeat).toLocaleString('ru-RU') %> чел.</strong>
+                                                        <span class="badge bg-secondary-subtle text-secondary border ms-2"><%= Math.round((fn.selectSeat / fn.visits) * 100) %>% от всех</span>
+                                                    </div>
+                                                </div>
+                                                <div class="progress" style="height: 22px;">
+                                                    <div class="progress-bar bg-secondary" role="progressbar" style="width: <%= Math.round((fn.selectSeat / fn.visits) * 100) %>%;">
+                                                        <%= fn.step3to4 %>% от открывших схему
+                                                    </div>
+                                                </div>
+                                                <div class="small text-muted mt-1 d-flex justify-content-between">
+                                                    <span class="text-danger"><i class="bi bi-x-circle me-1"></i>Отсев: <%= 100 - fn.step3to4 %>% (ценовой барьер на столики / нет мест рядом)</span>
+                                                    <span class="text-success fw-semibold">➔ Конверсия в оплату: <%= fn.step4to5 %>%</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Step 5 -->
+                                            <div class="mb-1">
+                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                    <span class="fw-bold small text-success"><span class="badge bg-success me-2">5</span> Оплаченный заказ (Успешная покупка билета)</span>
+                                                    <div class="text-end">
+                                                        <strong class="text-success fs-6"><%= Number(fn.purchase).toLocaleString('ru-RU') %> заказов</strong>
+                                                        <span class="badge bg-success ms-2">CR: <%= fn.crTotal %>%</span>
+                                                    </div>
+                                                </div>
+                                                <div class="progress" style="height: 26px;">
+                                                    <div class="progress-bar bg-success progress-bar-striped progress-bar-animated fw-bold" role="progressbar" style="width: <%= Math.max(5, Math.round((fn.purchase / fn.visits) * 100 * 3)) %>%;">
+                                                        ИТОГОВАЯ КОНВЕРСИЯ <%= fn.crTotal %>%
+                                                    </div>
+                                                </div>
+                                                <div class="small text-muted mt-1 d-flex justify-content-between">
+                                                    <span class="text-success fw-bold"><i class="bi bi-cash-coin me-1"></i>Онлайн-выручка: <%= Number(fn.revenue).toLocaleString('ru-RU') %> ₽</span>
+                                                    <span class="text-dark fw-semibold">Средний чек: <%= Number(fn.avgCheck).toLocaleString('ru-RU') %> ₽</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Audience & Drop-off Analysis (2 Columns) -->
+                                <div class="row g-4 mb-4">
+                                    <!-- Column 1: WHO BOUGHT -->
+                                    <div class="col-lg-6">
+                                        <div class="card border shadow-sm h-100">
+                                            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                                                <h6 class="fw-bold mb-0 text-success">
+                                                    <i class="bi bi-check-circle-fill me-2"></i>Кто купил (Аудитория & Источники)
+                                                </h6>
+                                                <span class="badge bg-success-subtle text-success border border-success-subtle"><%= fn.purchase %> покупателей</span>
+                                            </div>
+                                            <div class="card-body p-3">
+                                                <!-- Источники трафика -->
+                                                <h6 class="fw-bold small text-uppercase text-muted mb-2">1. Эффективность рекламных каналов</h6>
+                                                <div class="table-responsive mb-3">
+                                                    <table class="table table-sm table-borderless align-middle mb-0">
+                                                        <tbody class="small">
+                                                            <tr>
+                                                                <td style="width: 35%;"><span class="badge bg-danger me-1">Я</span> Яндекс Директ</td>
+                                                                <td style="width: 45%;">
+                                                                    <div class="progress" style="height: 8px;">
+                                                                        <div class="progress-bar bg-danger" style="width: 42%;"></div>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="text-end fw-bold">42% (204 пок.)</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><span class="badge bg-primary me-1">VK</span> VK Реклама</td>
+                                                                <td>
+                                                                    <div class="progress" style="height: 8px;">
+                                                                        <div class="progress-bar bg-primary" style="width: 25%;"></div>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="text-end fw-bold">25% (121 пок.)</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><span class="badge bg-info text-dark me-1">SEO</span> Поиск (Органика)</td>
+                                                                <td>
+                                                                    <div class="progress" style="height: 8px;">
+                                                                        <div class="progress-bar bg-info" style="width: 18%;"></div>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="text-end fw-bold">18% (87 пок.)</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><span class="badge bg-warning text-dark me-1">QR</span> Отели & Партнеры</td>
+                                                                <td>
+                                                                    <div class="progress" style="height: 8px;">
+                                                                        <div class="progress-bar bg-warning" style="width: 9%;"></div>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="text-end fw-bold">9% (44 пок.)</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><span class="badge bg-secondary me-1">Direct</span> Прямой / Telegram</td>
+                                                                <td>
+                                                                    <div class="progress" style="height: 8px;">
+                                                                        <div class="progress-bar bg-secondary" style="width: 6%;"></div>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="text-end fw-bold">6% (29 пок.)</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+                                                <!-- Устройства -->
+                                                <h6 class="fw-bold small text-uppercase text-muted mb-2">2. Распределение по устройствам</h6>
+                                                <div class="row g-2 mb-3 text-center small">
+                                                    <div class="col-4">
+                                                        <div class="p-2 border rounded bg-light">
+                                                            <i class="bi bi-phone text-primary fs-4 d-block"></i>
+                                                            <strong class="d-block mt-1">Смартфоны</strong>
+                                                            <span class="text-muted">68% трафика</span>
+                                                            <div class="fw-bold text-success mt-1">62% покупок</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="p-2 border rounded bg-light">
+                                                            <i class="bi bi-laptop text-dark fs-4 d-block"></i>
+                                                            <strong class="d-block mt-1">Десктоп</strong>
+                                                            <span class="text-muted">28% трафика</span>
+                                                            <div class="fw-bold text-primary mt-1">34% покупок</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="p-2 border rounded bg-light">
+                                                            <i class="bi bi-tablet text-secondary fs-4 d-block"></i>
+                                                            <strong class="d-block mt-1">Планшеты</strong>
+                                                            <span class="text-muted">4% трафика</span>
+                                                            <div class="fw-bold text-muted mt-1">4% покупок</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Зоны рассадки -->
+                                                <h6 class="fw-bold small text-uppercase text-muted mb-2">3. Популярность ценовых зон теплохода</h6>
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    <span class="badge bg-light text-dark border p-2">
+                                                        Главный салон (2 500 ₽): <strong class="text-primary">52%</strong>
+                                                    </span>
+                                                    <span class="badge bg-light text-dark border p-2">
+                                                        VIP Нос (4 500 ₽): <strong class="text-danger">23%</strong>
+                                                    </span>
+                                                    <span class="badge bg-light text-dark border p-2">
+                                                        VIP Сцена (3 000 ₽): <strong class="text-warning text-dark">15%</strong>
+                                                    </span>
+                                                    <span class="badge bg-light text-dark border p-2">
+                                                        Открытая корма (1 750 ₽): <strong class="text-info">10%</strong>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Column 2: WHO DID NOT BUY AND WHY -->
+                                    <div class="col-lg-6">
+                                        <div class="card border shadow-sm h-100">
+                                            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                                                <h6 class="fw-bold mb-0 text-danger">
+                                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Кто НЕ купил и ПОЧЕМУ (Анализ барьеров)
+                                                </h6>
+                                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Причины отказов</span>
+                                            </div>
+                                            <div class="card-body p-3">
+                                                <p class="small text-muted mb-3">
+                                                    Анализ поведения пользователей, открывших схему рассадки теплохода, но не завершивших покупку:
+                                                </p>
+
+                                                <!-- 1. Price barrier -->
+                                                <div class="border rounded p-2.5 mb-2.5 bg-light">
+                                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                                        <strong class="small text-danger"><i class="bi bi-tag-fill me-1"></i>1. Ценовой барьер на столики / VIP</strong>
+                                                        <span class="badge bg-danger text-white">38% отказов (~420 чел.)</span>
+                                                    </div>
+                                                    <p class="small text-muted mb-1">
+                                                        Открыв схему, клиент видит цены 3 000–4 500 ₽ на столики и закрывает виджет, не зная о более доступных билетах.
+                                                    </p>
+                                                    <div class="p-1.5 bg-white border rounded small text-dark">
+                                                        💡 <strong>Решение:</strong> Подсветить на первом экране наличие билетов от 1 750 ₽ на открытую палубу + запускать всплывающий промокод на скидку 10% при попытке уйти.
+                                                    </div>
+                                                </div>
+
+                                                <!-- 2. No seats together -->
+                                                <div class="border rounded p-2.5 mb-2.5 bg-light">
+                                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                                        <strong class="small text-warning text-dark"><i class="bi bi-people-fill me-1"></i>2. Нет свободных мест рядом на компанию</strong>
+                                                        <span class="badge bg-warning text-dark">27% отказов (~290 чел.)</span>
+                                                    </div>
+                                                    <p class="small text-muted mb-1">
+                                                        Компания из 4–6 человек не может сесть за один стол (остались только разрозненные одиночные стулья).
+                                                    </p>
+                                                    <div class="p-1.5 bg-white border rounded small text-dark">
+                                                        💡 <strong>Решение:</strong> Внедрить умный виджет: «Ищете столик на компанию? Есть свободный столик на завтра в 20:00!».
+                                                    </div>
+                                                </div>
+
+                                                <!-- 3. Date / Time not suitable -->
+                                                <div class="border rounded p-2.5 mb-2.5 bg-light">
+                                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                                        <strong class="small text-secondary"><i class="bi bi-calendar-x-fill me-1"></i>3. Не подошла дата или время рейса</strong>
+                                                        <span class="badge bg-secondary text-white">18% отказов (~210 чел.)</span>
+                                                    </div>
+                                                    <p class="small text-muted mb-1">
+                                                        Искали рейс под развод мостов (в полночь), а открыт был вечерний тур в 19:00.
+                                                    </p>
+                                                    <div class="p-1.5 bg-white border rounded small text-dark">
+                                                        💡 <strong>Решение:</strong> Добавить быстрый календарь в карточке программы с переключателем дат.
+                                                    </div>
+                                                </div>
+
+                                                <!-- 4. Mobile UX -->
+                                                <div class="border rounded p-2.5 mb-2.5 bg-light">
+                                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                                        <strong class="small text-info text-dark"><i class="bi bi-phone-fill me-1"></i>4. Сложность выбора на смартфоне</strong>
+                                                        <span class="badge bg-info text-dark">11% отказов (~135 чел.)</span>
+                                                    </div>
+                                                    <p class="small text-muted mb-1">
+                                                        На небольшом экране смартфона сложно приблизить схему теплохода и попасть пальцем в нужный стульчик.
+                                                    </p>
+                                                    <div class="p-1.5 bg-white border rounded small text-dark">
+                                                        💡 <strong>Решение:</strong> В мобильной версии автоматически включать режим «Подобрать лучшие места в 1 клик».
+                                                    </div>
+                                                </div>
+
+                                                <!-- 5. Payment failed -->
+                                                <div class="border rounded p-2.5 mb-3 bg-light">
+                                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                                        <strong class="small text-dark"><i class="bi bi-credit-card-2-front-fill me-1"></i>5. Сбой оплаты / Отказ банка</strong>
+                                                        <span class="badge bg-dark text-white">6% отказов (~65 чел.)</span>
+                                                    </div>
+                                                    <p class="small text-muted mb-1">
+                                                        Сбой SMS-кода 3D-Secure или лимит по карте клиента при оплате.
+                                                    </p>
+                                                    <div class="p-1.5 bg-white border rounded small text-dark">
+                                                        💡 <strong>Решение:</strong> Подключить моментальную оплату через СБП (QR-код), T-Pay и SberPay в 1 касание.
+                                                    </div>
+                                                </div>
+
+                                                <!-- Direct Webvisor Tool Box -->
+                                                <div class="p-3 border rounded bg-primary bg-opacity-10">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <strong class="text-primary small d-block"><i class="bi bi-camera-video-fill me-1"></i>Яндекс.Вебвизор: Видеозаписи визитов сомневающихся клиентов</strong>
+                                                            <span class="small text-muted">Фильтр: Посетили выбор мест И не завершили оплату. Смотрите точные движения мыши и клики!</span>
+                                                        </div>
+                                                        <a href="https://metrika.yandex.ru" target="_blank" class="btn btn-primary btn-sm text-nowrap ms-2">
+                                                            <i class="bi bi-box-arrow-up-right me-1"></i> Открыть Вебвизор
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- UTM Campaign Generator & Links -->
+                                <div class="card border shadow-sm mb-4">
+                                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="fw-bold mb-0"><i class="bi bi-link-45deg text-primary me-2"></i>Генератор рекламных кампаний и UTM-ссылок</h6>
+                                            <small class="text-muted">Создавайте персональные ссылки для рекламы в Яндексе, VK, Telegram и отелях с автоподстановкой промокода</small>
+                                        </div>
+                                        <button class="btn btn-primary btn-sm px-3" data-bs-toggle="modal" data-bs-target="#addCampaignModal">
+                                            <i class="bi bi-plus-lg me-1"></i> Добавить кампанию
+                                        </button>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <!-- Interactive Fast Generator -->
+                                        <div class="p-3 bg-light rounded border mb-3">
+                                            <h6 class="fw-bold small text-uppercase mb-2"><i class="bi bi-lightning-charge-fill text-warning me-1"></i> Быстрый сборщик ссылки:</h6>
+                                            <div class="row g-2 align-items-end">
+                                                <div class="col-md-3">
+                                                    <label class="form-label small fw-semibold mb-1">Источник (utm_source)</label>
+                                                    <input type="text" id="quick_utm_source" class="form-control form-control-sm" placeholder="yandex, vk, telegram, hotel..." value="yandex" oninput="updateQuickUtmLink()">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label small fw-semibold mb-1">Канал (utm_medium)</label>
+                                                    <input type="text" id="quick_utm_medium" class="form-control form-control-sm" placeholder="cpc, target, qr..." value="cpc" oninput="updateQuickUtmLink()">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="form-label small fw-semibold mb-1">Кампания (utm_campaign)</label>
+                                                    <input type="text" id="quick_utm_campaign" class="form-control form-control-sm" placeholder="rock_summer_2026..." value="rock_search_spb" oninput="updateQuickUtmLink()">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label small fw-semibold mb-1">Промокод</label>
+                                                    <input type="text" id="quick_promo_code" class="form-control form-control-sm" placeholder="PROMO10" value="ROCK2026" oninput="updateQuickUtmLink()">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label small fw-semibold mb-1">Страница</label>
+                                                    <input type="text" id="quick_target_page" class="form-control form-control-sm" value="/" oninput="updateQuickUtmLink()">
+                                                </div>
+                                            </div>
+
+                                            <div class="input-group input-group-sm mt-2">
+                                                <span class="input-group-text bg-white fw-semibold small">Готовая ссылка:</span>
+                                                <input type="text" id="quickGeneratedUrl" class="form-control bg-white font-monospace small" readonly>
+                                                <button class="btn btn-success px-3" type="button" onclick="copyQuickUtmLink()">
+                                                    <i class="bi bi-clipboard-check me-1"></i> Скопировать ссылку
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Saved Campaigns Table -->
+                                        <div class="table-responsive">
+                                            <table class="table table-hover align-middle mb-0">
+                                                <thead class="table-light small">
+                                                    <tr>
+                                                        <th>Кампания</th>
+                                                        <th>Канал & Источник</th>
+                                                        <th>UTM-метки</th>
+                                                        <th>Промокод</th>
+                                                        <th>Бюджет</th>
+                                                        <th class="text-end">Действие</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="small">
+                                                    <% if (!mData.campaigns || mData.campaigns.length === 0) { %>
+                                                        <tr>
+                                                            <td colspan="6" class="text-center py-3 text-muted">Рекламных кампаний пока не создано. Добавьте первую!</td>
+                                                        </tr>
+                                                    <% } else { %>
+                                                        <% mData.campaigns.forEach(cmp => { %>
+                                                            <% 
+                                                                const campaignUrl = 'https://' + currentDomain.name + (cmp.target_page || '/') + '?utm_source=' + cmp.utm_source + '&utm_medium=' + cmp.utm_medium + '&utm_campaign=' + cmp.utm_campaign + (cmp.promo_code ? '&promo=' + cmp.promo_code : '');
+                                                            %>
+                                                            <tr>
+                                                                <td class="fw-bold">
+                                                                    <%= cmp.title %>
+                                                                    <% if (cmp.notes) { %><br><small class="text-muted fw-normal"><%= cmp.notes %></small><% } %>
+                                                                </td>
+                                                                <td>
+                                                                    <span class="badge bg-light text-dark border"><%= cmp.utm_source %> / <%= cmp.utm_medium %></span>
+                                                                </td>
+                                                                <td>
+                                                                    <code class="small text-primary"><%= cmp.utm_campaign %></code>
+                                                                </td>
+                                                                <td>
+                                                                    <% if (cmp.promo_code) { %>
+                                                                        <span class="badge bg-success-subtle text-success border border-success-subtle"><%= cmp.promo_code %></span>
+                                                                    <% } else { %>
+                                                                        <span class="text-muted">—</span>
+                                                                    <% } %>
+                                                                </td>
+                                                                <td>
+                                                                    <% if (cmp.budget > 0) { %>
+                                                                        <%= Number(cmp.budget).toLocaleString('ru-RU') %> ₽
+                                                                    <% } else { %>
+                                                                        <span class="text-muted">Органика / 0 ₽</span>
+                                                                    <% } %>
+                                                                </td>
+                                                                <td class="text-end">
+                                                                    <button class="btn btn-outline-primary btn-sm py-0.5 px-2" onclick="navigator.clipboard.writeText('<%= campaignUrl %>'); alert('Ссылка скопирована:\n<%= campaignUrl %>');" title="Скопировать готовую ссылку">
+                                                                        <i class="bi bi-clipboard"></i> Копировать
+                                                                    </button>
+                                                                    <form action="/marketing/campaign/delete/<%= cmp.id %>" method="POST" class="d-inline" onsubmit="return confirm('Удалить эту кампанию?');">
+                                                                        <input type="hidden" name="domain_id" value="<%= currentDomain.id %>">
+                                                                        <button type="submit" class="btn btn-outline-danger btn-sm py-0.5 px-2 ms-1">
+                                                                            <i class="bi bi-trash"></i>
+                                                                        </button>
+                                                                    </form>
+                                                                </td>
+                                                            </tr>
+                                                        <% }); %>
+                                                    <% } %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
                             <!-- TAB 3: AGENTS & PARTNERS -->
                             <% } else if (activeTab === 'agents') { %>
-                                <div class="guide-box">
-                                    <div class="d-flex align-items-center mb-1">
-                                        <i class="bi bi-info-circle-fill me-2"></i>
-                                        <strong>Инструкция по партнерской и агентской сети:</strong>
+                                <div class="guide-box mb-4">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-people-fill text-primary fs-5 me-2"></i>
+                                        <h6 class="fw-bold mb-0 text-dark">Справка для менеджера: Партнерская сеть & Агентские продажи</h6>
                                     </div>
-                                    <ul class="mb-0 ps-3">
-                                        <li>Здесь вы регистрируете партнеров (отели, консьерж-службы, промоутеров, блогеров).</li>
-                                        <li>Каждому партнеру назначается <strong>промокод</strong> и <strong>процент вознаграждения</strong> (например, 15%).</li>
-                                        <li>Для каждого агента доступен <strong>«Личный кабинет агента»</strong> с генерацией ссылок, балансом и QR-кодами для ресепшена.</li>
-                                    </ul>
+                                    <div class="row g-2 small text-muted">
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">1</span> Регистрация партнеров:</strong>
+                                                Добавляйте отели, туроператоров, консьерж-службы и блогеров, закрепляя за каждым индивидуальный промокод и процент комиссии (напр. 15%).
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">2</span> Личный кабинет & QR-коды:</strong>
+                                                Партнер получает ссылку в личный кабинет, где может генерировать ссылки с метками <code>?promo=...</code> и печатать QR-коды для ресепшена.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">3</span> Автоматический расчет выплат:</strong>
+                                                Система фиксирует все заказы агента, рассчитывает комиссионные в реальном времени и формирует сводный отчет по выплатам.
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- Financial Overview Cards -->
@@ -897,9 +2107,31 @@
 
                             <!-- TAB 4: VENUES -->
                             <% } else if (activeTab === 'venues') { %>
-                                <div class="guide-box">
-                                    <i class="bi bi-info-circle-fill me-2"></i>
-                                    <strong>Инструкция по площадкам:</strong> Площадки определяют судно и причал посадки пассажиров. Адрес причала и вместимость автоматически отображаются в карточках афиши и на страницах покупки билетов.
+                                <div class="guide-box mb-4">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-geo-alt-fill text-primary fs-5 me-2"></i>
+                                        <strong class="fs-6">Справка для менеджера: Площадки, Теплоходы & Причалы</strong>
+                                    </div>
+                                    <div class="row g-2 small text-muted">
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">1</span>Реестр флота</strong>
+                                                Указывайте точное название судна («Москва-125», «Москва-177», «Рок Хит Нева»). Данные используются в конструкторе схем столов и в билетах пассажиров.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">2</span>Адрес причала посадки</strong>
+                                                Указывайте точный адрес и ориентиры причала (например: <em>Санкт-Петербург, Наб. Макарова, 34</em>). Адрес выводится в посадочном талоне и SMS-напоминаниях.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">3</span>Интеграция со шлюзом</strong>
+                                                Шлюз Ticketland забирает площадки в модуль <code>/constructive</code>. Робот агрегатора автоматически строит геометрию теплохода без ручной отрисовки.
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -964,9 +2196,31 @@
 
                             <!-- TAB 5: PAGES -->
                             <% } else if (activeTab === 'pages') { %>
-                                <div class="guide-box">
-                                    <i class="bi bi-info-circle-fill me-2"></i>
-                                    <strong>Инструкция по страницам:</strong> Здесь отображаются сгенерированные целевые страницы сайта (главная и страницы отдельных концертов). Вы можете отредактировать оформление или напрямую изменить вставленный iframe-виджет.
+                                <div class="guide-box mb-4">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-file-earmark-text-fill text-primary fs-5 me-2"></i>
+                                        <strong class="fs-6">Справка для менеджера: Управление веб-страницами & SEO</strong>
+                                    </div>
+                                    <div class="row g-2 small text-muted">
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">1</span>Главная & Лендинги</strong>
+                                                Страница со слагом <code>/</code> — главная афиша сайта. Остальные страницы (например: <code>/pankonneva</code>) создаются автоматически для каждого концерта.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">2</span>Юридический контур</strong>
+                                                Страницы <code>/oferta</code> (Договор оферты и возврата) и <code>/pr</code> (Политика ПДн) защищены от случайной перезаписи и обязательны по 54-ФЗ и 152-ФЗ.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">3</span>Автопересборка</strong>
+                                                После редактирования любой страницы статический HTML мгновенно пересобирается и публикуется на внешнем домене.
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -1014,13 +2268,31 @@
 
                             <!-- TAB 6: SETTINGS & GATEWAYS -->
                             <% } else if (activeTab === 'settings') { %>
-                                <div class="guide-box">
-                                    <i class="bi bi-info-circle-fill me-2"></i>
-                                    <strong>Инструкция по кассовым шлюзам & брендингу:</strong> 
-                                    <ul class="mb-0 ps-3 mt-1">
-                                        <li><strong>Кассовые шлюзы:</strong> позволяют принимать оплату на разные юрлица (ИП Юницына, ООО Морские Корабли). В поле JS-кода вставляется конфигурация <code>TLConf</code> с ключом <code>accessHash</code>.</li>
-                                        <li><strong>Глобальные счетчики:</strong> счетчики Яндекс.Метрики и Google Analytics подключаются один раз и работают на всех страницах сайта.</li>
-                                    </ul>
+                                <div class="guide-box mb-4">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-gear-wide-connected text-primary fs-5 me-2"></i>
+                                        <h6 class="fw-bold mb-0 text-dark">Справка для менеджера: Настройки бренда, Кассовые шлюзы & Аналитика</h6>
+                                    </div>
+                                    <div class="row g-2 small text-muted">
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">1</span> Дизайн & Реквизиты:</strong>
+                                                Установите корпоративный цвет бренда (HEX), логотип и реквизиты юрлица в подвале (ООО / ИП) для полного соблюдения 54-ФЗ.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">2</span> Кассовые шлюзы Ticketland:</strong>
+                                                Привязывайте шлюзы с ключами <code>accessHash</code> к нужным юрлицам для раздельного приема платежей по расчетным счетам.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">3</span> Метрика & Воронка продаж:</strong>
+                                                Вставьте код Яндекс.Метрики с Вебвизором и ecommerce. Сквозная аналитика меток <code>?promo=...</code> и <code>?agent=...</code> работает автоматически.
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <form action="/domain/edit" method="POST">
@@ -1076,14 +2348,36 @@
 
                             <!-- TAB 7: FINANCE & CASH FLOW (ПОД ПАРОЛЕМ АДМИНИСТРАТОРА) -->
                             <% } else if (activeTab === 'finance') { %>
-                                <div class="guide-box d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <i class="bi bi-shield-lock-fill text-success me-2"></i>
-                                        <strong>Финансовый контур (Studio Ledger & Decima):</strong> Закрытый раздел для руководства. Позволяет контролировать фактические доходы с билетов и аренды, расходы на содержание флота, а также рассчитывать <em>«Зимнюю подушку безопасности»</em> для защиты от кассовых разрывов в период ледостава (ноябрь–апрель).
+                                <div class="guide-box mb-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-shield-lock-fill text-success fs-5 me-2"></i>
+                                            <h6 class="fw-bold mb-0 text-dark">Справка для менеджера: Финансовый контур (Studio Ledger & Decima)</h6>
+                                        </div>
+                                        <button class="btn btn-success btn-sm text-nowrap" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
+                                            <i class="bi bi-plus-lg me-1"></i> Добавить проводку
+                                        </button>
                                     </div>
-                                    <button class="btn btn-success btn-sm text-nowrap ms-3" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
-                                        <i class="bi bi-plus-lg me-1"></i> Добавить проводку
-                                    </button>
+                                    <div class="row g-2 small text-muted">
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">1</span> Учет доходов (Билеты & Аренда):</strong>
+                                                Вносите поступления от продажи билетов, банкетов, бара и заказных рейсов с привязкой к конкретному юридическому лицу.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">2</span> Операционные расходы флота:</strong>
+                                                Фиксируйте затраты: бункеровка топливом, аренда причалов, зарплата экипажа, гонорары музыкантов и кейтеринг.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">3</span> Зимний резерв (Ледостав):</strong>
+                                                Контролируйте индикатор «Зимняя подушка» — алгоритм Decima рассчитывает запас на период ноябрь–апрель без кассовых разрывов.
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- 4 KPI Cards -->
@@ -1271,15 +2565,35 @@
 
                             <!-- TAB 8: RENT CALCULATOR & LEADS -->
                             <% } else if (activeTab === 'calc') { %>
-                                <div class="guide-box d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <i class="bi bi-calculator-fill text-primary me-2"></i>
-                                        <strong>Модуль аренды теплохода (IDA Organizer Calc):</strong> Позволяет настраивать тарифные ставки аренды теплоходов (день/вечер/мосты), рассчитывать сметы под корпоративы, свадьбы и выпускные, а также обрабатывать входящие заявки от клиентов в одном окне.
-                                    </div>
-                                    <div>
-                                        <a href="/rent" target="_blank" class="btn btn-outline-primary btn-sm me-2">
-                                            <i class="bi bi-box-arrow-up-right me-1"></i> Открыть виджет на сайте
+                                <div class="guide-box mb-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-calculator-fill text-primary fs-5 me-2"></i>
+                                            <h6 class="fw-bold mb-0 text-dark">Справка для менеджера: Модуль аренды теплохода (IDA Organizer Calc)</h6>
+                                        </div>
+                                        <a href="/rent" target="_blank" class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-box-arrow-up-right me-1"></i> Открыть калькулятор на сайте
                                         </a>
+                                    </div>
+                                    <div class="row g-2 small text-muted">
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">1</span> Настройка тарифной сетки:</strong>
+                                                Задайте почасовые ставки (День, Вечер, Ночной развод мостов), стоимость фуршета/банкета на персону и доп. услуги (диджей, ведущий, уборка).
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">2</span> Расчет сметы клиенту:</strong>
+                                                Используйте симулятор справа для мгновенного расчета стоимости прямо во время телефонного звонка клиента с учетом всех опций.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">3</span> Воронка заявок (Лиды):</strong>
+                                                Обрабатывайте входящие брони в таблице заявок, меняйте статусы («В работе», «Подтверждена») и связывайтесь с заказчиками в 1 клик.
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -1512,6 +2826,187 @@
                                         </div>
                                     </div>
                                 </div>
+                            <% } else if (activeTab === 'widget') { %>
+                                <!-- TAB: WIDGET & SCHEMES -->
+                                <div class="guide-box mb-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-diagram-3-fill text-success fs-5 me-2"></i>
+                                            <h6 class="fw-bold mb-0 text-dark">Справка для менеджера: Автономный SVG-виджет & Схемы рассадки</h6>
+                                        </div>
+                                        <span class="badge bg-success px-3 py-2"><i class="bi bi-shield-check me-1"></i> 100% Direct Sale</span>
+                                    </div>
+                                    <div class="row g-2 small text-muted">
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">1</span> Мастер-переключатель:</strong>
+                                                Одной кнопкой переключайте весь сайт на наш SVG-виджет (100% выручки без комиссий) или возвращайте Ticketland как резервный канал.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">2</span> Интерактивная схема палубы:</strong>
+                                                Виджет автоматически отображает зоны (VIP-нос, сцена, бар, верхняя палуба), блокирует места на 15 мин и передает заказ в кассу.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-white rounded border h-100">
+                                                <strong class="text-dark d-block mb-1"><span class="step-badge">3</span> Встраивание & Код:</strong>
+                                                Скопируйте готовый HTML-сниппет виджета для размещения на любой промо-странице или во внешних блоках анонсов.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <% const firstSession = (sessions && sessions.length > 0) ? sessions[0] : null; %>
+                                <% const initialSessionId = firstSession ? firstSession.id : 1; %>
+
+                                <!-- MASTER SWITCH CARD: NATIVE VS TICKETLAND -->
+                                <div class="card border-0 shadow-sm mb-4 bg-light-subtle border-start border-4 border-primary">
+                                    <div class="card-body p-3 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                                        <div>
+                                            <h6 class="fw-bold mb-1 text-dark"><i class="bi bi-toggles2 text-primary me-2"></i>Мастер-переключатель виджетов сайта</h6>
+                                            <p class="small text-muted mb-0">Мгновенно переключает все страницы и мероприятия домена <strong><%= currentDomain.name %></strong> между нашим прямым SVG-виджетом и Ticketland.</p>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <form action="/api/domain/switch-all-widgets" method="POST" onsubmit="return confirm('Включить прямой SVG-виджет со схемой теплохода для всех страниц сайта?');">
+                                                <input type="hidden" name="domain_id" value="<%= currentDomain.id %>">
+                                                <input type="hidden" name="mode" value="native">
+                                                <button type="submit" class="btn btn-success btn-sm px-3 fw-bold shadow-sm">
+                                                    <i class="bi bi-lightning-charge-fill me-1"></i> Включить наш SVG-виджет (100% выручки)
+                                                </button>
+                                            </form>
+                                            <form action="/api/domain/switch-all-widgets" method="POST" onsubmit="return confirm('Переключить все страницы обратно на виджет Ticketland?');">
+                                                <input type="hidden" name="domain_id" value="<%= currentDomain.id %>">
+                                                <input type="hidden" name="mode" value="ticketland">
+                                                <button type="submit" class="btn btn-outline-secondary btn-sm px-3">
+                                                    <i class="bi bi-ticket-perforated me-1"></i> Ticketland (Резерв)
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row g-4">
+                                    <!-- Controls & Actions Column -->
+                                    <div class="col-lg-4">
+                                        <div class="card shadow-sm border-0 mb-4">
+                                            <div class="card-header bg-white py-3 border-bottom">
+                                                <h6 class="mb-0 fw-bold"><i class="bi bi-sliders me-2 text-primary"></i>Параметры рейса для виджета</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label small fw-semibold">Выберите рейс для предпросмотра</label>
+                                                    <select id="widgetSessionSelect" class="form-select form-select-sm" onchange="updateWidgetPreview(this.value)">
+                                                        <% if (!sessions || sessions.length === 0) { %>
+                                                            <option value="1">Тестовый рейс (по умолчанию)</option>
+                                                        <% } else { %>
+                                                            <% sessions.forEach((s, idx) => { %>
+                                                                <option value="<%= s.id %>" <%= idx === 0 ? 'selected' : '' %>>
+                                                                    <%= s.start_time %> — <%= s.event_title || 'Концерт' %> (<%= s.venue_name || 'Теплоход' %>)
+                                                                </option>
+                                                            <% }); %>
+                                                        <% } %>
+                                                    </select>
+                                                </div>
+
+                                                <div class="d-flex gap-2 mb-3">
+                                                    <a id="openWidgetStandaloneBtn" href="/widget/embed?session_id=<%= initialSessionId %>" target="_blank" class="btn btn-outline-primary btn-sm flex-grow-1">
+                                                        <i class="bi bi-box-arrow-up-right me-1"></i> Открыть во весь экран
+                                                    </a>
+                                                    <button class="btn btn-outline-secondary btn-sm" onclick="refreshWidgetPreview()" title="Обновить предпросмотр">
+                                                        <i class="bi bi-arrow-repeat"></i>
+                                                    </button>
+                                                </div>
+
+                                                <hr class="my-3">
+
+                                                <h6 class="fw-bold small text-uppercase text-muted mb-2">Быстрое встраивание на страницу</h6>
+                                                <form action="/api/widget/embed-into-page" method="POST" id="embedPageForm">
+                                                    <input type="hidden" name="domain_id" value="<%= currentDomain.id %>">
+                                                    <input type="hidden" name="session_id" id="embedSessionIdInput" value="<%= initialSessionId %>">
+                                                    
+                                                    <div class="mb-3">
+                                                        <label class="form-label small">Целевая страница сайта</label>
+                                                        <select name="page_id" class="form-select form-select-sm" required>
+                                                            <% if (!pages || pages.length === 0) { %>
+                                                                <option value="" disabled>Нет доступных страниц</option>
+                                                            <% } else { %>
+                                                                <% pages.forEach(p => { %>
+                                                                    <option value="<%= p.id %>">
+                                                                        <%= p.title %> (<%= p.slug === '/' ? 'Главная /' : '/' + p.slug + '/' %>)
+                                                                    </option>
+                                                                <% }); %>
+                                                            <% } %>
+                                                        </select>
+                                                    </div>
+
+                                                    <button type="submit" class="btn btn-success btn-sm w-100 fw-semibold">
+                                                        <i class="bi bi-magic me-1"></i> Встроить наш виджет на страницу
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                        <!-- Embed Code Generator Card -->
+                                        <div class="card shadow-sm border-0">
+                                            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                                                <h6 class="mb-0 fw-bold"><i class="bi bi-code-slash me-2 text-info"></i>Код для ручной вставки</h6>
+                                                <span class="badge bg-light text-dark border">HTML / JS</span>
+                                            </div>
+                                            <div class="card-body">
+                                                <label class="form-label small fw-semibold">1. Нативный блок (Без Iframe)</label>
+                                                <div class="position-relative mb-3">
+                                                    <textarea id="nativeWidgetCode" class="form-control font-monospace small bg-light" rows="4" readonly style="font-size: 0.78rem;"><!-- Интерактивная схема теплохода -->
+<div class="ship-ticket-widget" data-session-id="<%= initialSessionId %>"></div>
+<link rel="stylesheet" href="https://<%= currentDomain.name %>/css/ship_widget.css">
+<script src="https://<%= currentDomain.name %>/js/ship_widget.js"></script></textarea>
+                                                    <button class="btn btn-sm btn-outline-primary position-absolute top-0 end-0 m-1 py-0 px-2" onclick="copySnippet('nativeWidgetCode', this)" style="font-size: 0.75rem;">
+                                                        <i class="bi bi-clipboard"></i> Копировать
+                                                    </button>
+                                                </div>
+
+                                                <label class="form-label small fw-semibold">2. Iframe код (для Tilda / сторонних CMS)</label>
+                                                <div class="position-relative mb-2">
+                                                    <textarea id="iframeWidgetCode" class="form-control font-monospace small bg-light" rows="3" readonly style="font-size: 0.78rem;"><iframe src="https://<%= currentDomain.name %>/widget/embed?session_id=<%= initialSessionId %>" width="100%" height="780" frameborder="0" style="border:none; border-radius:12px; width:100%; min-height:780px;"></iframe></textarea>
+                                                    <button class="btn btn-sm btn-outline-primary position-absolute top-0 end-0 m-1 py-0 px-2" onclick="copySnippet('iframeWidgetCode', this)" style="font-size: 0.75rem;">
+                                                        <i class="bi bi-clipboard"></i> Копировать
+                                                    </button>
+                                                </div>
+                                                <small class="text-muted d-block" style="font-size: 0.75rem;">Виджет автоматически адаптируется под экраны мобильных телефонов и планшетов.</small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Live Simulator Column -->
+                                    <div class="col-lg-8">
+                                        <div class="card shadow-sm border-0">
+                                            <div class="card-header bg-dark text-white py-2 px-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <i class="bi bi-display text-info"></i>
+                                                    <span class="fw-bold small">Интерактивный симулятор виджета</span>
+                                                    <span class="badge bg-secondary" id="simDeviceLabel">Desktop</span>
+                                                </div>
+                                                <div class="d-flex align-items-center gap-1">
+                                                    <button class="btn btn-sm btn-outline-light py-0 px-2 active" onclick="setWidgetSimMode('100%', 'Desktop', this)">
+                                                        <i class="bi bi-laptop"></i> ПК
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-light py-0 px-2" onclick="setWidgetSimMode('768px', 'Tablet', this)">
+                                                        <i class="bi bi-tablet"></i> Планшет
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-light py-0 px-2" onclick="setWidgetSimMode('390px', 'Mobile', this)">
+                                                        <i class="bi bi-phone"></i> Телефон
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="card-body p-2 bg-secondary-subtle d-flex justify-content-center">
+                                                <div id="simFrameWrapper" style="width: 100%; transition: width 0.3s ease; max-width: 100%;">
+                                                    <iframe id="widgetPreviewIframe" src="/widget/embed?session_id=<%= initialSessionId %>" style="width: 100%; height: 740px; border: 1px solid #cbd5e1; border-radius: 8px; background: #0f172a; display: block;" title="Widget Preview"></iframe>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             <% } %>
                         </div>
                     </div>
@@ -1570,6 +3065,65 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
                         <button type="submit" class="btn btn-success">Сохранить операцию</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Создать рекламную кампанию (UTM / Маркетинг) -->
+    <div class="modal fade" id="addCampaignModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="/marketing/campaign/save" method="POST">
+                    <input type="hidden" name="domain_id" value="<%= currentDomain.id %>">
+                    <div class="modal-header bg-dark text-white">
+                        <h5 class="modal-title fw-bold"><i class="bi bi-megaphone me-2 text-danger"></i>Новая рекламная кампания</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Название кампании</label>
+                            <input type="text" class="form-control" name="title" required placeholder="Например: Яндекс.Директ Поиск (Рок на Неве)">
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold">utm_source (Источник)</label>
+                                <input type="text" class="form-control font-monospace" name="utm_source" required placeholder="yandex, vk, tg, qr_hotel">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold">utm_medium (Канал)</label>
+                                <input type="text" class="form-control font-monospace" name="utm_medium" value="cpc" placeholder="cpc, post, offline, qr">
+                            </div>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold">utm_campaign (Кампания)</label>
+                                <input type="text" class="form-control font-monospace" name="utm_campaign" placeholder="search_rock, spring_sale">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold">Промокод (если есть)</label>
+                                <input type="text" class="form-control font-monospace text-uppercase" name="promo_code" placeholder="ROCK10">
+                            </div>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-8">
+                                <label class="form-label small fw-semibold">Посадочная страница</label>
+                                <input type="text" class="form-control" name="target_url" value="/" placeholder="/ или /events/rock-hit-neva">
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label small fw-semibold">Бюджет (₽)</label>
+                                <input type="number" class="form-control" name="budget" placeholder="15000">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Заметки / Описание цели</label>
+                            <textarea class="form-control" name="notes" rows="2" placeholder="Планируемый охват, даты проведения, ответственный подрядчик..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-danger"><i class="bi bi-check-lg me-1"></i>Сохранить кампанию</button>
                     </div>
                 </form>
             </div>
@@ -1701,6 +3255,154 @@
             container.querySelectorAll('.gateway-item').forEach((item, index) => {
                 const numSpan = item.querySelector('.gw-num');
                 if (numSpan) numSpan.textContent = index + 1;
+            });
+        }
+
+        function onTemplateChange(sel, prefix) {
+            const opt = sel.options[sel.selectedIndex];
+            if (!opt || !opt.value) return;
+            const pVipNose = opt.getAttribute('data-vip-nose');
+            const pVipScene = opt.getAttribute('data-vip-scene');
+            const pMainSalon = opt.getAttribute('data-main-salon');
+            const pUpperClosed = opt.getAttribute('data-upper-closed');
+            const pUpperOpen = opt.getAttribute('data-upper-open');
+            const quota = opt.getAttribute('data-quota');
+            const venueId = opt.getAttribute('data-venue-id');
+
+            if (pVipNose) {
+                const el = document.getElementById(prefix + '_price_vip_nose');
+                if (el) el.value = pVipNose;
+            }
+            if (pVipScene) {
+                const el = document.getElementById(prefix + '_price_vip_scene');
+                if (el) el.value = pVipScene;
+            }
+            if (pMainSalon) {
+                const el = document.getElementById(prefix + '_price_main_salon');
+                if (el) el.value = pMainSalon;
+            }
+            if (pUpperClosed) {
+                const el = document.getElementById(prefix + '_price_upper_closed');
+                if (el) el.value = pUpperClosed;
+            }
+            if (pUpperOpen) {
+                const el = document.getElementById(prefix + '_price_upper_open');
+                if (el) el.value = pUpperOpen;
+                const minEl = document.getElementById(prefix + '_min_price');
+                if (minEl) minEl.value = pUpperOpen;
+            }
+            if (quota !== null && quota !== undefined) {
+                const el = document.getElementById(prefix + '_ticketland_quota');
+                if (el) el.value = quota;
+            }
+            if (venueId) {
+                const vEl = document.getElementById(prefix + '_venue_id');
+                if (vEl && vEl.value != venueId) vEl.value = venueId;
+            }
+        }
+
+        function onVenueChange(sel, prefix) {
+            const vId = sel.value;
+            const tplSel = document.getElementById(prefix + '_template_id');
+            if (!tplSel) return;
+            for (let i = 0; i < tplSel.options.length; i++) {
+                if (tplSel.options[i].getAttribute('data-venue-id') == vId) {
+                    tplSel.selectedIndex = i;
+                    onTemplateChange(tplSel, prefix);
+                    break;
+                }
+            }
+        }
+
+        // Marketing Quick UTM Builder
+        function updateQuickUtmLink() {
+            const path = document.getElementById('gen_path') ? document.getElementById('gen_path').value : '/';
+            const src = document.getElementById('gen_src') ? document.getElementById('gen_src').value : 'yandex';
+            const med = document.getElementById('gen_med') ? document.getElementById('gen_med').value : 'cpc';
+            const camp = document.getElementById('gen_camp') ? document.getElementById('gen_camp').value : 'search';
+            const promo = document.getElementById('gen_promo') ? document.getElementById('gen_promo').value.trim() : '';
+            
+            const domain = window.location.origin;
+            let url = domain + (path.startsWith('/') ? path : '/' + path);
+            url += `?utm_source=${encodeURIComponent(src)}&utm_medium=${encodeURIComponent(med)}&utm_campaign=${encodeURIComponent(camp)}`;
+            if (promo) {
+                url += `&promo=${encodeURIComponent(promo)}`;
+            }
+            const resEl = document.getElementById('gen_result');
+            if (resEl) resEl.value = url;
+        }
+
+        function copyQuickUtmLink() {
+            const resEl = document.getElementById('gen_result');
+            if (!resEl) return;
+            resEl.select();
+            navigator.clipboard.writeText(resEl.value).then(() => {
+                const btn = event.currentTarget;
+                const oldHtml = btn.innerHTML;
+                btn.innerHTML = '<i class="bi bi-check-lg text-success"></i> Скопировано!';
+                setTimeout(() => { btn.innerHTML = oldHtml; }, 2000);
+            }).catch(err => {
+                alert('Ссылка выделена, нажмите Ctrl+C');
+            });
+        }
+
+        // Widget Simulator Helpers
+        function updateWidgetPreview(sessionId) {
+            const iframe = document.getElementById('widgetPreviewIframe');
+            if (iframe) {
+                iframe.src = '/widget/embed?session_id=' + sessionId;
+            }
+            const openBtn = document.getElementById('openWidgetStandaloneBtn');
+            if (openBtn) {
+                openBtn.href = '/widget/embed?session_id=' + sessionId;
+            }
+            const embedInput = document.getElementById('embedSessionIdInput');
+            if (embedInput) {
+                embedInput.value = sessionId;
+            }
+            const currentDomainName = '<%= currentDomain ? currentDomain.name : "spb-peterhof.ru" %>';
+            const nativeCodeEl = document.getElementById('nativeWidgetCode');
+            if (nativeCodeEl) {
+                nativeCodeEl.value = `<!-- Интерактивная схема теплохода -->\n<div class="ship-ticket-widget" data-session-id="${sessionId}"></div>\n<link rel="stylesheet" href="https://${currentDomainName}/css/ship_widget.css">\n<script src="https://${currentDomainName}/js/ship_widget.js"><\/script>`;
+            }
+            const iframeCodeEl = document.getElementById('iframeWidgetCode');
+            if (iframeCodeEl) {
+                iframeCodeEl.value = `<iframe src="https://${currentDomainName}/widget/embed?session_id=${sessionId}" width="100%" height="780" frameborder="0" style="border:none; border-radius:12px; width:100%; min-height:780px;"></iframe>`;
+            }
+        }
+
+        function refreshWidgetPreview() {
+            const iframe = document.getElementById('widgetPreviewIframe');
+            if (iframe) {
+                iframe.src = iframe.src;
+            }
+        }
+
+        function setWidgetSimMode(width, label, btn) {
+            const wrapper = document.getElementById('simFrameWrapper');
+            const labelEl = document.getElementById('simDeviceLabel');
+            if (wrapper) {
+                wrapper.style.width = width;
+            }
+            if (labelEl) {
+                labelEl.textContent = label;
+            }
+            if (btn && btn.parentElement) {
+                btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+        }
+
+        function copySnippet(textareaId, btn) {
+            const el = document.getElementById(textareaId);
+            if (!el) return;
+            el.select();
+            navigator.clipboard.writeText(el.value).then(() => {
+                const oldHtml = btn.innerHTML;
+                btn.innerHTML = '<i class="bi bi-check-lg text-success"></i> Скопировано!';
+                setTimeout(() => { btn.innerHTML = oldHtml; }, 2000);
+            }).catch(() => {
+                alert('Текст выделен, нажмите Ctrl+C');
             });
         }
     </script>

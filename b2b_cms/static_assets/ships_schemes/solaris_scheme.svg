@@ -1,0 +1,975 @@
+<svg width="456" height="908" viewBox="0 0 456 908" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  <style>
+    .vessel-seat:hover path { filter: brightness(0.92); stroke: #2563eb !important; stroke-width: 1.5 !important; }
+    .vessel-seat.is-selected path { fill: #10b981 !important; stroke: #047857 !important; stroke-width: 1.5 !important; }
+    .vessel-seat.is-selected rect { fill: #059669 !important; }
+    .vessel-seat.is-selected text { fill: #ffffff !important; font-weight: bold; }
+  </style>
+
+  <!-- Title & Headers -->
+  <g id="header">
+    <text x="228" y="42" font-family="'Gotham Pro', system-ui, -apple-system, sans-serif" font-size="16" font-weight="800" fill="#0F172A" text-anchor="middle" letter-spacing="0.05em">«Солярис»</text>
+    <text x="228" y="60" font-family="'Gotham Pro', system-ui, -apple-system, sans-serif" font-size="10" font-weight="500" fill="#64748B" text-anchor="middle">премиум-класс · капитанский VIP партер</text>
+    <!-- Deck labels -->
+    <rect x="55" y="80" width="125" height="24" rx="12" fill="#F1F5F9" stroke="#CBD5E1"/>
+    <text x="117.5" y="96" font-family="system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#1E293B" text-anchor="middle">Нижняя палуба</text>
+
+    <rect x="275" y="80" width="125" height="24" rx="12" fill="#F1F5F9" stroke="#CBD5E1"/>
+    <text x="337.5" y="96" font-family="system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#1E293B" text-anchor="middle">Верхняя палуба</text>
+  </g>
+
+  <!-- Lower Deck Group (Left) -->
+  <g id="bottom">
+    
+  <path d="M117.8 128.5C108.5 128.5 73.2 135.2 55.4 171.1C44.6 193 42.8 221.4 42.8 250.2V730.5C42.8 775 52.4 805 78.5 818.5C92.2 825.5 111.5 827.5 117.8 827.5C124.1 827.5 143.4 825.5 157.1 818.5C183.2 805 192.8 775 192.8 730.5V250.2C192.8 221.4 191 193 180.2 171.1C162.4 135.2 127.1 128.5 117.8 128.5Z" fill="#F8FAFC" stroke="#0F172A" stroke-width="2.5" stroke-miterlimit="10"/>
+  <!-- Teak lines on lower deck -->
+  <g opacity="0.35" stroke="#94A3B8" stroke-width="0.5">
+    <line x1="60" y1="200" x2="60" y2="780" stroke-dasharray="8 6"/>
+    <line x1="80" y1="180" x2="80" y2="800" stroke-dasharray="8 6"/>
+    <line x1="100" y1="160" x2="100" y2="810" stroke-dasharray="8 6"/>
+    <line x1="120" y1="145" x2="120" y2="815" stroke-dasharray="8 6"/>
+    <line x1="140" y1="160" x2="140" y2="810" stroke-dasharray="8 6"/>
+    <line x1="160" y1="180" x2="160" y2="800" stroke-dasharray="8 6"/>
+    <line x1="175" y1="200" x2="175" y2="780" stroke-dasharray="8 6"/>
+  </g>
+  <!-- Outer window rails -->
+  <path d="M47 240V720M188 240V720" stroke="#38BDF8" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+
+    <text x="118" y="160" font-size="8" font-weight="bold" fill="#b45309" text-anchor="middle">КАПИТАНСКИЙ VIP ПАРТЕР</text>
+    <g>
+      <rect x="102.0" y="176.0" width="32" height="18" rx="3" fill="#ffffff" stroke="#334155" stroke-width="1.2" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.06))"/>
+      <text x="118" y="188" font-family="system-ui, sans-serif" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">VIP 1</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="1" data-table-label="Стол №1" data-category-id="vip_front" data-category-name="Капитанский партер" data-price="2500" style="cursor:pointer;">
+      <g transform="translate(108, 171) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#fef3c7" stroke="#b45309" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="108" y="173.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">1</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="2" data-table-label="Стол №1" data-category-id="vip_front" data-category-name="Капитанский партер" data-price="2500" style="cursor:pointer;">
+      <g transform="translate(128, 171) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#fef3c7" stroke="#b45309" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="128" y="173.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">2</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="3" data-table-label="Стол №1" data-category-id="vip_front" data-category-name="Капитанский партер" data-price="2500" style="cursor:pointer;">
+      <g transform="translate(108, 199) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#fef3c7" stroke="#b45309" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="108" y="201.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">3</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="4" data-table-label="Стол №1" data-category-id="vip_front" data-category-name="Капитанский партер" data-price="2500" style="cursor:pointer;">
+      <g transform="translate(128, 199) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#fef3c7" stroke="#b45309" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="128" y="201.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">4</text>
+    </g>
+    <g>
+      <rect x="59.0" y="221.0" width="32" height="18" rx="3" fill="#ffffff" stroke="#334155" stroke-width="1.2" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.06))"/>
+      <text x="75" y="233" font-family="system-ui, sans-serif" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">VIP 2</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="5" data-table-label="Стол №2" data-category-id="vip_front" data-category-name="Капитанский партер" data-price="2500" style="cursor:pointer;">
+      <g transform="translate(65, 216) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#fef3c7" stroke="#b45309" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="65" y="218.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">5</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="6" data-table-label="Стол №2" data-category-id="vip_front" data-category-name="Капитанский партер" data-price="2500" style="cursor:pointer;">
+      <g transform="translate(85, 216) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#fef3c7" stroke="#b45309" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="85" y="218.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">6</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="7" data-table-label="Стол №2" data-category-id="vip_front" data-category-name="Капитанский партер" data-price="2500" style="cursor:pointer;">
+      <g transform="translate(65, 244) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#fef3c7" stroke="#b45309" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="65" y="246.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">7</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="8" data-table-label="Стол №2" data-category-id="vip_front" data-category-name="Капитанский партер" data-price="2500" style="cursor:pointer;">
+      <g transform="translate(85, 244) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#fef3c7" stroke="#b45309" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="85" y="246.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">8</text>
+    </g>
+    <g>
+      <rect x="144.0" y="221.0" width="32" height="18" rx="3" fill="#ffffff" stroke="#334155" stroke-width="1.2" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.06))"/>
+      <text x="160" y="233" font-family="system-ui, sans-serif" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">VIP 3</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="9" data-table-label="Стол №3" data-category-id="vip_front" data-category-name="Капитанский партер" data-price="2500" style="cursor:pointer;">
+      <g transform="translate(150, 216) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#fef3c7" stroke="#b45309" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="150" y="218.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">9</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="10" data-table-label="Стол №3" data-category-id="vip_front" data-category-name="Капитанский партер" data-price="2500" style="cursor:pointer;">
+      <g transform="translate(170, 216) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#fef3c7" stroke="#b45309" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="170" y="218.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">10</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="11" data-table-label="Стол №3" data-category-id="vip_front" data-category-name="Капитанский партер" data-price="2500" style="cursor:pointer;">
+      <g transform="translate(150, 244) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#fef3c7" stroke="#b45309" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="150" y="246.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">11</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="12" data-table-label="Стол №3" data-category-id="vip_front" data-category-name="Капитанский партер" data-price="2500" style="cursor:pointer;">
+      <g transform="translate(170, 244) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#fef3c7" stroke="#b45309" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="170" y="246.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">12</text>
+    </g>
+    <g>
+      <rect x="59.0" y="266.0" width="32" height="18" rx="3" fill="#ffffff" stroke="#334155" stroke-width="1.2" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.06))"/>
+      <text x="75" y="278" font-family="system-ui, sans-serif" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">VIP 4</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="13" data-table-label="Стол №4" data-category-id="vip_front" data-category-name="Капитанский партер" data-price="2500" style="cursor:pointer;">
+      <g transform="translate(65, 261) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#fef3c7" stroke="#b45309" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="65" y="263.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">13</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="14" data-table-label="Стол №4" data-category-id="vip_front" data-category-name="Капитанский партер" data-price="2500" style="cursor:pointer;">
+      <g transform="translate(85, 261) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#fef3c7" stroke="#b45309" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="85" y="263.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">14</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="15" data-table-label="Стол №4" data-category-id="vip_front" data-category-name="Капитанский партер" data-price="2500" style="cursor:pointer;">
+      <g transform="translate(65, 289) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#fef3c7" stroke="#b45309" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="65" y="291.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">15</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="16" data-table-label="Стол №4" data-category-id="vip_front" data-category-name="Капитанский партер" data-price="2500" style="cursor:pointer;">
+      <g transform="translate(85, 289) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#fef3c7" stroke="#b45309" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="85" y="291.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">16</text>
+    </g>
+    <g>
+      <rect x="144.0" y="266.0" width="32" height="18" rx="3" fill="#ffffff" stroke="#334155" stroke-width="1.2" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.06))"/>
+      <text x="160" y="278" font-family="system-ui, sans-serif" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">VIP 5</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="17" data-table-label="Стол №5" data-category-id="vip_front" data-category-name="Капитанский партер" data-price="2500" style="cursor:pointer;">
+      <g transform="translate(150, 261) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#fef3c7" stroke="#b45309" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="150" y="263.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">17</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="18" data-table-label="Стол №5" data-category-id="vip_front" data-category-name="Капитанский партер" data-price="2500" style="cursor:pointer;">
+      <g transform="translate(170, 261) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#fef3c7" stroke="#b45309" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="170" y="263.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">18</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="19" data-table-label="Стол №5" data-category-id="vip_front" data-category-name="Капитанский партер" data-price="2500" style="cursor:pointer;">
+      <g transform="translate(150, 289) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#fef3c7" stroke="#b45309" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="150" y="291.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">19</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="20" data-table-label="Стол №5" data-category-id="vip_front" data-category-name="Капитанский партер" data-price="2500" style="cursor:pointer;">
+      <g transform="translate(170, 289) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#fef3c7" stroke="#b45309" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="170" y="291.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">20</text>
+    </g>
+      <rect x="70" y="315" width="95" height="35" rx="4" fill="#f0fdfa" stroke="#0d9488" stroke-width="1.2"/>
+      <text x="118" y="332" font-size="8" font-weight="bold" fill="#0f766e" text-anchor="middle">🎹 АКУСТИЧЕСКАЯ СЦЕНА</text>
+      <text x="118" y="344" font-size="7" fill="#14b8a6" text-anchor="middle">Рояль / Вокал</text>
+    
+    <g>
+      <rect x="60.0" y="371.0" width="30" height="18" rx="3" fill="#ffffff" stroke="#334155" stroke-width="1.2" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.06))"/>
+      <text x="75" y="383" font-family="system-ui, sans-serif" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">№6</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="21" data-table-label="Стол №6" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(66, 367) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="66" y="369.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">21</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="22" data-table-label="Стол №6" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(84, 367) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="84" y="369.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">22</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="23" data-table-label="Стол №6" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(66, 393) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="66" y="395.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">23</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="24" data-table-label="Стол №6" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(84, 393) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="84" y="395.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">24</text>
+    </g>
+    <g>
+      <rect x="145.0" y="371.0" width="30" height="18" rx="3" fill="#ffffff" stroke="#334155" stroke-width="1.2" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.06))"/>
+      <text x="160" y="383" font-family="system-ui, sans-serif" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">№7</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="25" data-table-label="Стол №7" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(151, 367) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="151" y="369.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">25</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="26" data-table-label="Стол №7" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(169, 367) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="169" y="369.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">26</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="27" data-table-label="Стол №7" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(151, 393) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="151" y="395.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">27</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="28" data-table-label="Стол №7" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(169, 393) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="169" y="395.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">28</text>
+    </g>
+    <g>
+      <rect x="60.0" y="421.0" width="30" height="18" rx="3" fill="#ffffff" stroke="#334155" stroke-width="1.2" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.06))"/>
+      <text x="75" y="433" font-family="system-ui, sans-serif" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">№8</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="29" data-table-label="Стол №8" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(66, 417) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="66" y="419.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">29</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="30" data-table-label="Стол №8" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(84, 417) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="84" y="419.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">30</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="31" data-table-label="Стол №8" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(66, 443) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="66" y="445.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">31</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="32" data-table-label="Стол №8" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(84, 443) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="84" y="445.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">32</text>
+    </g>
+    <g>
+      <rect x="145.0" y="421.0" width="30" height="18" rx="3" fill="#ffffff" stroke="#334155" stroke-width="1.2" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.06))"/>
+      <text x="160" y="433" font-family="system-ui, sans-serif" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">№9</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="33" data-table-label="Стол №9" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(151, 417) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="151" y="419.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">33</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="34" data-table-label="Стол №9" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(169, 417) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="169" y="419.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">34</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="35" data-table-label="Стол №9" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(151, 443) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="151" y="445.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">35</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="36" data-table-label="Стол №9" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(169, 443) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="169" y="445.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">36</text>
+    </g>
+    <g>
+      <rect x="60.0" y="471.0" width="30" height="18" rx="3" fill="#ffffff" stroke="#334155" stroke-width="1.2" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.06))"/>
+      <text x="75" y="483" font-family="system-ui, sans-serif" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">№10</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="37" data-table-label="Стол №10" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(66, 467) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="66" y="469.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">37</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="38" data-table-label="Стол №10" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(84, 467) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="84" y="469.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">38</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="39" data-table-label="Стол №10" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(66, 493) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="66" y="495.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">39</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="40" data-table-label="Стол №10" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(84, 493) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="84" y="495.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">40</text>
+    </g>
+    <g>
+      <rect x="145.0" y="471.0" width="30" height="18" rx="3" fill="#ffffff" stroke="#334155" stroke-width="1.2" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.06))"/>
+      <text x="160" y="483" font-family="system-ui, sans-serif" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">№11</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="41" data-table-label="Стол №11" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(151, 467) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="151" y="469.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">41</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="42" data-table-label="Стол №11" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(169, 467) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="169" y="469.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">42</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="43" data-table-label="Стол №11" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(151, 493) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="151" y="495.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">43</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="44" data-table-label="Стол №11" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(169, 493) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="169" y="495.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">44</text>
+    </g>
+    <g>
+      <rect x="60.0" y="521.0" width="30" height="18" rx="3" fill="#ffffff" stroke="#334155" stroke-width="1.2" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.06))"/>
+      <text x="75" y="533" font-family="system-ui, sans-serif" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">№12</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="45" data-table-label="Стол №12" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(66, 517) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="66" y="519.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">45</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="46" data-table-label="Стол №12" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(84, 517) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="84" y="519.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">46</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="47" data-table-label="Стол №12" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(66, 543) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="66" y="545.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">47</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="48" data-table-label="Стол №12" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(84, 543) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="84" y="545.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">48</text>
+    </g>
+    <g>
+      <rect x="145.0" y="521.0" width="30" height="18" rx="3" fill="#ffffff" stroke="#334155" stroke-width="1.2" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.06))"/>
+      <text x="160" y="533" font-family="system-ui, sans-serif" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">№13</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="49" data-table-label="Стол №13" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(151, 517) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="151" y="519.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">49</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="50" data-table-label="Стол №13" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(169, 517) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="169" y="519.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">50</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="51" data-table-label="Стол №13" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(151, 543) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="151" y="545.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">51</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="52" data-table-label="Стол №13" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(169, 543) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="169" y="545.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">52</text>
+    </g>
+    <g>
+      <rect x="103.0" y="571.0" width="30" height="18" rx="3" fill="#ffffff" stroke="#334155" stroke-width="1.2" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.06))"/>
+      <text x="118" y="583" font-family="system-ui, sans-serif" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">№15</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="53" data-table-label="Стол №15" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(109, 567) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="109" y="569.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">53</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="54" data-table-label="Стол №15" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(127, 567) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="127" y="569.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">54</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="55" data-table-label="Стол №15" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(109, 593) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="109" y="595.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">55</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="56" data-table-label="Стол №15" data-category-id="standard" data-category-name="Салон Солярис" data-price="1700" style="cursor:pointer;">
+      <g transform="translate(127, 593) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="127" y="595.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">56</text>
+    </g>
+      <rect x="52" y="620" width="132" height="38" rx="4" fill="#f8fafc" stroke="#475569" stroke-width="1.2"/>
+      <text x="118" y="643" font-size="8.5" font-weight="bold" fill="#334155" text-anchor="middle">БАРНАЯ ЛИНИЯ СОЛЯРИС</text>
+    
+      <circle cx="160" cy="690" r="16" fill="#f1f5f9" stroke="#0284c7" stroke-width="1.5"/>
+      <path d="M148 690 A12 12 0 1 1 172 690 A12 12 0 1 1 148 690" fill="none" stroke="#0284c7" stroke-width="1" stroke-dasharray="2 2"/>
+      <text x="160" y="693" font-size="6" font-weight="bold" fill="#0369a1" text-anchor="middle">ЛЕСТНИЦА</text>
+    
+      <rect x="55" y="680" width="85" height="60" rx="4" fill="#fff7ed" stroke="#ea580c" stroke-width="1.2"/>
+      <text x="97" y="700" font-size="7.5" font-weight="bold" fill="#c2410c" text-anchor="middle">МАНГАЛ</text>
+      <text x="97" y="715" font-size="6.5" fill="#ea580c" text-anchor="middle">Столы 20-23</text>
+    
+    <g class="vessel-seat" data-seat-number="57" data-table-label="Стол №20" data-category-id="open_deck" data-category-name="Мангальная зона" data-price="1500" style="cursor:pointer;">
+      <g transform="translate(75, 730) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="75" y="732.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">57</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="58" data-table-label="Стол №21" data-category-id="open_deck" data-category-name="Мангальная зона" data-price="1500" style="cursor:pointer;">
+      <g transform="translate(95, 730) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="95" y="732.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">58</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="59" data-table-label="Стол №22" data-category-id="open_deck" data-category-name="Мангальная зона" data-price="1500" style="cursor:pointer;">
+      <g transform="translate(115, 730) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="115" y="732.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">59</text>
+    </g>
+  </g>
+
+  <!-- Upper Deck Group (Right) -->
+  <g id="top">
+    
+  <path d="M338.2 142.5C330.5 142.5 301.2 148.2 286.4 178.1C277.6 196 275.8 220 275.8 245.2V720.5C275.8 760 283.4 788 305.5 800.5C317.2 807 333.5 808.5 338.2 808.5C342.9 808.5 359.2 807 370.9 800.5C393 788 400.6 760 400.6 720.5V245.2C400.6 220 398.8 196 390 178.1C375.2 148.2 345.9 142.5 338.2 142.5Z" fill="#F8FAFC" stroke="#0F172A" stroke-width="2.5" stroke-miterlimit="10"/>
+  <!-- Teak lines on upper deck -->
+  <g opacity="0.35" stroke="#94A3B8" stroke-width="0.5">
+    <line x1="290" y1="200" x2="290" y2="770" stroke-dasharray="8 6"/>
+    <line x1="308" y1="180" x2="308" y2="790" stroke-dasharray="8 6"/>
+    <line x1="324" y1="160" x2="324" y2="800" stroke-dasharray="8 6"/>
+    <line x1="338" y1="150" x2="338" y2="802" stroke-dasharray="8 6"/>
+    <line x1="352" y1="160" x2="352" y2="800" stroke-dasharray="8 6"/>
+    <line x1="368" y1="180" x2="368" y2="790" stroke-dasharray="8 6"/>
+    <line x1="386" y1="200" x2="386" y2="770" stroke-dasharray="8 6"/>
+  </g>
+  <!-- Panoramic canopy / railings -->
+  <path d="M280 230V710M396 230V710" stroke="#38BDF8" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+
+    
+      <path d="M305 160 Q338 145 371 160 L365 190 L311 190 Z" fill="#0284c7" stroke="#0369a1" stroke-width="1.2"/>
+      <text x="338" y="178" font-size="8" font-weight="bold" fill="#ffffff" text-anchor="middle">РУБКА СОЛЯРИС</text>
+    <text x="338" y="215" font-size="8" font-weight="bold" fill="#0369a1" text-anchor="middle">ОТКРЫТАЯ ВИДОВАЯ ПАЛУБА</text>
+    <g>
+      <circle cx="305" cy="260" r="16" fill="#ffffff" stroke="#334155" stroke-width="1.2"/>
+      <text x="305" y="262.5" font-family="system-ui, sans-serif" font-size="6.5" font-weight="bold" fill="#475569" text-anchor="middle">№21</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="60" data-table-label="Стол №21" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(305, 242) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="305" y="244.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">60</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="61" data-table-label="Стол №21" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(323, 260) rotate(90)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="323" y="262.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">61</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="62" data-table-label="Стол №21" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(305, 278) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="305" y="280.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">62</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="63" data-table-label="Стол №21" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(287, 260) rotate(-90)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="287" y="262.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">63</text>
+    </g>
+    <g>
+      <circle cx="370" cy="260" r="16" fill="#ffffff" stroke="#334155" stroke-width="1.2"/>
+      <text x="370" y="262.5" font-family="system-ui, sans-serif" font-size="6.5" font-weight="bold" fill="#475569" text-anchor="middle">№22</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="64" data-table-label="Стол №22" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(370, 242) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="370" y="244.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">64</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="65" data-table-label="Стол №22" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(388, 260) rotate(90)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="388" y="262.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">65</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="66" data-table-label="Стол №22" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(370, 278) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="370" y="280.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">66</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="67" data-table-label="Стол №22" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(352, 260) rotate(-90)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="352" y="262.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">67</text>
+    </g>
+    <g>
+      <circle cx="305" cy="330" r="16" fill="#ffffff" stroke="#334155" stroke-width="1.2"/>
+      <text x="305" y="332.5" font-family="system-ui, sans-serif" font-size="6.5" font-weight="bold" fill="#475569" text-anchor="middle">№23</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="68" data-table-label="Стол №23" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(305, 312) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="305" y="314.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">68</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="69" data-table-label="Стол №23" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(323, 330) rotate(90)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="323" y="332.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">69</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="70" data-table-label="Стол №23" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(305, 348) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="305" y="350.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">70</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="71" data-table-label="Стол №23" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(287, 330) rotate(-90)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="287" y="332.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">71</text>
+    </g>
+    <g>
+      <circle cx="370" cy="330" r="16" fill="#ffffff" stroke="#334155" stroke-width="1.2"/>
+      <text x="370" y="332.5" font-family="system-ui, sans-serif" font-size="6.5" font-weight="bold" fill="#475569" text-anchor="middle">№24</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="72" data-table-label="Стол №24" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(370, 312) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="370" y="314.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">72</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="73" data-table-label="Стол №24" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(388, 330) rotate(90)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="388" y="332.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">73</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="74" data-table-label="Стол №24" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(370, 348) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="370" y="350.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">74</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="75" data-table-label="Стол №24" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(352, 330) rotate(-90)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="352" y="332.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">75</text>
+    </g>
+    <g>
+      <circle cx="338" cy="400" r="16" fill="#ffffff" stroke="#334155" stroke-width="1.2"/>
+      <text x="338" y="402.5" font-family="system-ui, sans-serif" font-size="6.5" font-weight="bold" fill="#475569" text-anchor="middle">№25</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="76" data-table-label="Стол №25" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(338, 382) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="338" y="384.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">76</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="77" data-table-label="Стол №25" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(356, 400) rotate(90)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="356" y="402.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">77</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="78" data-table-label="Стол №25" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(338, 418) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="338" y="420.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">78</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="79" data-table-label="Стол №25" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(320, 400) rotate(-90)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="320" y="402.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">79</text>
+    </g>
+    <g>
+      <circle cx="305" cy="470" r="16" fill="#ffffff" stroke="#334155" stroke-width="1.2"/>
+      <text x="305" y="472.5" font-family="system-ui, sans-serif" font-size="6.5" font-weight="bold" fill="#475569" text-anchor="middle">№26</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="80" data-table-label="Стол №26" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(305, 452) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="305" y="454.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">80</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="81" data-table-label="Стол №26" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(323, 470) rotate(90)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="323" y="472.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">81</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="82" data-table-label="Стол №26" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(305, 488) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="305" y="490.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">82</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="83" data-table-label="Стол №26" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(287, 470) rotate(-90)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="287" y="472.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">83</text>
+    </g>
+    <g>
+      <circle cx="370" cy="470" r="16" fill="#ffffff" stroke="#334155" stroke-width="1.2"/>
+      <text x="370" y="472.5" font-family="system-ui, sans-serif" font-size="6.5" font-weight="bold" fill="#475569" text-anchor="middle">№27</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="84" data-table-label="Стол №27" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(370, 452) rotate(0)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="370" y="454.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">84</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="85" data-table-label="Стол №27" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(388, 470) rotate(90)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="388" y="472.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">85</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="86" data-table-label="Стол №27" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(370, 488) rotate(180)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="370" y="490.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">86</text>
+    </g>
+    <g class="vessel-seat" data-seat-number="87" data-table-label="Стол №27" data-category-id="open_deck" data-category-name="Верхняя терраса" data-price="1800" style="cursor:pointer;">
+      <g transform="translate(352, 470) rotate(-90)">
+        <path d="M-3.5 -5.5 C-3.5 -7.5 3.5 -7.5 3.5 -5.5 L5.5 -1.5 L5.5 3.5 C5.5 5.5 3.5 5.5 1.5 5.5 L1.5 1.5 L-1.5 1.5 L-1.5 5.5 C-3.5 5.5 -5.5 5.5 -5.5 3.5 L-5.5 -1.5 Z" fill="#e0e7ff" stroke="#3730a3" stroke-width="0.8" stroke-linejoin="round"/>
+        <!-- Armrests -->
+        <rect x="-5.5" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+        <rect x="3.0" y="-2.5" width="2.5" height="5" rx="1" fill="#94a3b8"/>
+      </g>
+      <text x="352" y="472.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle" pointer-events="none">87</text>
+    </g>
+      <circle cx="370" cy="550" r="16" fill="#f1f5f9" stroke="#0284c7" stroke-width="1.5"/>
+      <path d="M358 550 A12 12 0 1 1 382 550 A12 12 0 1 1 358 550" fill="none" stroke="#0284c7" stroke-width="1" stroke-dasharray="2 2"/>
+      <text x="370" y="553" font-size="6" font-weight="bold" fill="#0369a1" text-anchor="middle">ВИНТОВАЯ</text>
+      
+      <rect x="290" y="600" width="96" height="110" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.2"/>
+      <text x="338" y="630" font-size="8.5" font-weight="bold" fill="#15803d" text-anchor="middle">ЛАУНДЖ-ЗОНА</text>
+      <text x="338" y="648" font-size="7" fill="#166534" text-anchor="middle">Шезлонги &amp; Коктейли</text>
+      <text x="338" y="665" font-size="6.5" fill="#64748b" text-anchor="middle">Панорама ночного Петербурга</text>
+    
+  </g>
+
+  <!-- Legend at Bottom -->
+  <g id="legend" transform="translate(35, 848)">
+    <rect x="0" y="0" width="386" height="42" rx="8" fill="#F8FAFC" stroke="#E2E8F0"/>
+    <circle cx="25" cy="21" r="7" fill="#dbeafe" stroke="#1e3a8a" stroke-width="0.8"/>
+    <text x="38" y="25" font-family="system-ui, sans-serif" font-size="8" fill="#334155">Стандарт</text>
+    
+    <circle cx="110" cy="21" r="7" fill="#fef3c7" stroke="#b45309" stroke-width="0.8"/>
+    <text x="123" y="25" font-family="system-ui, sans-serif" font-size="8" fill="#334155">VIP / Панорама</text>
+    
+    <circle cx="215" cy="21" r="7" fill="#10b981" stroke="#047857" stroke-width="0.8"/>
+    <text x="228" y="25" font-family="system-ui, sans-serif" font-size="8" fill="#334155">Выбранное место</text>
+    
+    <circle cx="320" cy="21" r="7" fill="#94a3b8" stroke="#475569" stroke-width="0.8"/>
+    <text x="333" y="25" font-family="system-ui, sans-serif" font-size="8" fill="#334155">Занято</text>
+  </g>
+</svg>

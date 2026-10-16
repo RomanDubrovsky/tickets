@@ -1,0 +1,411 @@
+/* =========================================================================
+   NATIVE SHIP SEATING WIDGET - B2B CMS STYLES
+   ========================================================================= */
+
+.ship-widget-root {
+    font-family: 'Lato', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #0f172a;
+    width: 100%;
+    max-width: 1140px;
+    margin: 0 auto;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.ship-widget-root * {
+    box-sizing: border-box;
+}
+
+.ship-widget-card {
+    background: #0f172a;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+    position: relative;
+}
+
+/* Header & Flight Selector */
+.ship-widget-header {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    padding: 22px 28px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.ship-widget-title-box h3 {
+    margin: 0 0 6px;
+    color: #f8fafc;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+}
+
+.ship-widget-title-box .ship-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+.ship-widget-title-box .ship-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.ship-session-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ship-session-selector select {
+    background: #1e293b;
+    color: #f8fafc;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 9px 14px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.ship-session-selector select:focus {
+    border-color: #38bdf8;
+}
+
+/* Legend & Zone Badges */
+.ship-widget-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    padding: 14px 20px;
+    background: rgba(15, 23, 42, 0.7);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: #cbd5e1;
+    font-weight: 500;
+}
+
+.legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.legend-dot.vip-nose { background: #f59e0b; border: 1px solid #d97706; }
+.legend-dot.vip-stage { background: #ec4899; border: 1px solid #db2777; }
+.legend-dot.saloon { background: #3b82f6; border: 1px solid #2563eb; }
+.legend-dot.upper-closed { background: #8b5cf6; border: 1px solid #7c3aed; }
+.legend-dot.upper-open { background: #10b981; border: 1px solid #059669; }
+.legend-dot.occupied { background: #475569; border: 1px solid #334155; }
+.legend-dot.selected { background: #22c55e; border: 2px solid #ffffff; box-shadow: 0 0 8px rgba(34, 197, 94, 0.8); }
+
+/* SVG Vessel Viewport */
+.ship-vessel-viewport {
+    background: #090d16;
+    padding: 25px 15px;
+    min-height: 420px;
+    position: relative;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ship-vessel-viewport svg {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.5));
+}
+
+/* SVG Interactive Seat Styling */
+.ship-vessel-viewport g[data-seat-number] {
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.ship-vessel-viewport g[data-seat-number] path,
+.ship-vessel-viewport g[data-seat-number] rect,
+.ship-vessel-viewport g[data-seat-number] circle {
+    transition: transform 0.12s ease, filter 0.12s ease, stroke 0.12s ease;
+}
+
+.ship-vessel-viewport g[data-seat-number]:hover path,
+.ship-vessel-viewport g[data-seat-number]:hover rect,
+.ship-vessel-viewport g[data-seat-number]:hover circle {
+    filter: brightness(1.25);
+    stroke: #ffffff !important;
+    stroke-width: 2px !important;
+}
+
+.ship-vessel-viewport g[data-seat-number].is-selected path,
+.ship-vessel-viewport g[data-seat-number].is-selected rect,
+.ship-vessel-viewport g[data-seat-number].is-selected circle {
+    fill: #22c55e !important;
+    stroke: #ffffff !important;
+    stroke-width: 2.5px !important;
+    filter: drop-shadow(0 0 6px #22c55e);
+}
+
+.ship-vessel-viewport g[data-seat-number].is-occupied {
+    cursor: not-allowed;
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+.ship-vessel-viewport g[data-seat-number].is-occupied path,
+.ship-vessel-viewport g[data-seat-number].is-occupied rect {
+    fill: #475569 !important;
+    stroke: #334155 !important;
+}
+
+/* Floating Hover Tooltip */
+.ship-seat-tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    display: none;
+    transform: translate(-50%, -120%);
+    white-space: nowrap;
+}
+
+.ship-seat-tooltip .tt-title {
+    font-weight: 700;
+    color: #38bdf8;
+    margin-bottom: 2px;
+}
+
+.ship-seat-tooltip .tt-price {
+    font-weight: 800;
+    color: #4ade80;
+}
+
+/* Bottom Action Bar (Dock) */
+.ship-widget-dock {
+    background: #1e293b;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+}
+
+.ship-selected-summary {
+    color: #f8fafc;
+    font-size: 0.95rem;
+}
+
+.ship-selected-summary .count-badge {
+    background: #0284c7;
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-right: 6px;
+}
+
+.ship-total-price {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #38bdf8;
+    margin-left: 10px;
+}
+
+.ship-btn-checkout {
+    background: linear-gradient(135deg, #e55f2e 0%, #ea580c 100%);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 28px;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(229, 95, 46, 0.4);
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ship-btn-checkout:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(229, 95, 46, 0.6);
+}
+
+.ship-btn-checkout:disabled {
+    background: #475569;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+    opacity: 0.6;
+}
+
+/* Modal Popup */
+.ship-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(5px);
+    z-index: 99999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.ship-modal-overlay.is-active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.ship-modal-box {
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 520px;
+    color: #f8fafc;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform 0.25s ease;
+}
+
+.ship-modal-overlay.is-active .ship-modal-box {
+    transform: scale(1);
+}
+
+.ship-modal-header {
+    background: #0f172a;
+    padding: 18px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ship-modal-header h4 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.ship-modal-close {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+}
+
+.ship-modal-body {
+    padding: 24px;
+}
+
+.ship-form-group {
+    margin-bottom: 16px;
+}
+
+.ship-form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    font-weight: 600;
+}
+
+.ship-form-control {
+    width: 100%;
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: #fff;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.ship-form-control:focus {
+    border-color: #38bdf8;
+}
+
+.ship-order-summary-box {
+    background: rgba(15, 23, 42, 0.6);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 20px;
+    font-size: 0.85rem;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ship-order-summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    color: #94a3b8;
+}
+
+.ship-order-summary-row.total {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 8px;
+    margin-top: 8px;
+    color: #f8fafc;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.ship-btn-submit {
+    width: 100%;
+    background: #10b981;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+    transition: all 0.2s;
+}
+
+.ship-btn-submit:hover {
+    background: #059669;
+}

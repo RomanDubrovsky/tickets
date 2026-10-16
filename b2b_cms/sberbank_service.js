@@ -105,6 +105,8 @@ async function getOrderStatus(orderId, merchantKey = 'rockhitneva') {
         password: merchant.password,
         orderId: orderId
     });
+}
+
 /**
  * Возврат заказа/билета (refund.do)
  */

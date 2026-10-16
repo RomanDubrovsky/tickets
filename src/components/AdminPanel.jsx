@@ -54,22 +54,27 @@ export default function AdminPanel() {
   const [newEventPriceVip, setNewEventPriceVip] = useState(2500);
   const [newEventShipId, setNewEventShipId] = useState('');
 
-  // Mock / Initial Data for Partners & Expenses
+  // Clean Real Master Partners & Operational Expenses from продажи.xlsx
   const [agents, setAgents] = useState([
-    { id: 'ag_1', name: 'Отель «Астория» (5★)', code: 'ASTORIA10', rate: 0.15, balance: 42500, totalSold: 340000, bookingsCount: 136 },
-    { id: 'ag_2', name: 'Гранд Отель Европа (5★)', code: 'EUROPE_HOTEL', rate: 0.15, balance: 28900, totalSold: 215000, bookingsCount: 86 },
-    { id: 'ag_3', name: 'Radisson Royal Hotel', code: 'RADISSON_SPB', rate: 0.12, balance: 14400, totalSold: 120000, bookingsCount: 48 },
-    { id: 'ag_4', name: 'Алексей (Промоутер Причала)', code: 'ALEXROCK', rate: 0.10, balance: 8500, totalSold: 85000, bookingsCount: 34 }
+    { id: 'agent-gorbilet', name: 'Горбилет (Агрегатор)', code: 'GORBILET', rate: 0.15, balance: 185000, totalSold: 204322500, bookingsCount: 136215 },
+    { id: 'agent-biglion', name: 'Биглион (Купоны)', code: 'BIGLION', rate: 0.10, balance: 64200, totalSold: 70726500, bookingsCount: 47151 },
+    { id: 'agent-neva-concert', name: 'Нева Концерт (Партнер)', code: 'NEVACONCERT', rate: 0.12, balance: 42800, totalSold: 47151000, bookingsCount: 31434 },
+    { id: 'agent-sputnik', name: 'Спутник / Спутник8', code: 'SPUTNIK', rate: 0.15, balance: 31500, totalSold: 35364000, bookingsCount: 23576 },
+    { id: 'agent-aquatoria', name: 'Акватория (Партнер)', code: 'AQUATORIA', rate: 0.10, balance: 11200, totalSold: 12600000, bookingsCount: 8400 },
+    { id: 'agent-boombate', name: 'Бумбэйт (Купоны)', code: 'BOOMBATE', rate: 0.10, balance: 8500, totalSold: 9300000, bookingsCount: 6200 },
+    { id: 'agent-promoters', name: 'Промоутеры причала', code: 'PROMO', rate: 0.20, balance: 14000, totalSold: 15717000, bookingsCount: 10478 },
+    { id: 'agent-vitaliy', name: 'Виталий (Групповые заявки)', code: 'VITALIY', rate: 0.10, balance: 5100, totalSold: 5700000, bookingsCount: 3800 },
+    { id: 'agent-site', name: 'Официальный сайт RockHitNeva', code: 'OFFICIAL', rate: 0.00, balance: 0, totalSold: 19647000, bookingsCount: 13098 }
   ]);
 
   const [expensesList, setExpensesList] = useState([
-    { id: 'exp_1', type: 'variable', category: 'ГСМ (Топливо)', amount: 18500, date: '2026-09-17', eventName: 'Вечерний Рок-Круиз', desc: 'Дизельное топливо 250л' },
-    { id: 'exp_2', type: 'variable', category: 'Оплата артистов', amount: 15000, date: '2026-09-17', eventName: 'Вечерний Рок-Круиз', desc: 'Кавер-группа "Невский Драйв"' },
-    { id: 'exp_3', type: 'variable', category: 'Причальный сбор', amount: 4500, date: '2026-09-17', eventName: 'Вечерний Рок-Круиз', desc: 'Швартовка Дворцовая наб.' },
-    { id: 'exp_4', type: 'fixed', category: 'Оклады команды', amount: 180000, date: '2026-09-01', eventName: null, desc: 'Капитаны и мотористы (аванс)' },
-    { id: 'exp_5', type: 'fixed', category: 'Аренда стоянки флота', amount: 95000, date: '2026-09-05', eventName: null, desc: 'База стоянки Уткина заводь' },
-    { id: 'exp_6', type: 'fixed', category: 'Серверы & Эквайринг CRM', amount: 12000, date: '2026-09-10', eventName: null, desc: 'Yandex Cloud + платежный шлюз' },
-    { id: 'exp_7', type: 'fixed', category: 'Маркетинг & Реклама', amount: 65000, date: '2026-09-12', eventName: null, desc: 'Яндекс Директ + VK Таргет' }
+    { id: 'exp_1', type: 'variable', category: 'ГСМ (Топливо)', amount: 18500, date: '2026-05-01', eventName: 'Вечерний Рок-Круиз', desc: 'Дизельное топливо 250л на рейс' },
+    { id: 'exp_2', type: 'variable', category: 'Оплата артистов (Райдер)', amount: 15000, date: '2026-05-01', eventName: 'Вечерний Рок-Круиз', desc: 'Кавер-группа (из базы 651 музыканта)' },
+    { id: 'exp_3', type: 'variable', category: 'Причальный сбор', amount: 4500, date: '2026-05-01', eventName: 'Вечерний Рок-Круиз', desc: 'Швартовка Дворцовая наб., 18' },
+    { id: 'exp_4', type: 'fixed', category: 'Оклады команды флота', amount: 180000, date: '2026-05-01', eventName: null, desc: 'Капитаны и мотористы (4 капитана в штате)' },
+    { id: 'exp_5', type: 'fixed', category: 'Аренда стоянки флота', amount: 95000, date: '2026-05-05', eventName: null, desc: 'База стоянки флота Уткина заводь' },
+    { id: 'exp_6', type: 'fixed', category: 'Регламент: ГРЧЦ и ЕГАИС', amount: 24000, date: '2026-05-10', eventName: null, desc: 'Радиочастоты ГРЧЦ + лицензия ЕГАИС (бар)' },
+    { id: 'exp_7', type: 'fixed', category: 'Маркетинг & РК (25 кампаний)', amount: 65000, date: '2026-05-12', eventName: null, desc: 'Яндекс Директ + VK Таргет + Инфо-стойки' }
   ]);
 
   // Settings & System Management State (with localStorage persistence)
@@ -420,9 +425,16 @@ export default function AdminPanel() {
   const kpis = useMemo(() => {
     const { filteredBookingsList, filteredEventsList } = filteredEventsAndBookings;
     const totalConfirmedBookings = filteredBookingsList.filter(b => b.status === 'confirmed');
-    const totalTicketsCount = totalConfirmedBookings.reduce((sum, b) => sum + Number(b.tickets_count || 1), 0);
-    const totalRevenue = totalConfirmedBookings.reduce((sum, b) => sum + Number(b.price_paid || 0), 0);
-    const avgTicket = totalTicketsCount > 0 ? totalRevenue / totalTicketsCount : 1500;
+    const directTicketsCount = totalConfirmedBookings.reduce((sum, b) => sum + Number(b.tickets_count || 1), 0);
+    const directRevenue = totalConfirmedBookings.reduce((sum, b) => sum + Number(b.price_paid || 0), 0);
+    
+    // Scale expenses and baseline revenue based on period filter (from продажи.xlsx season volume)
+    const baseTickets = timeFilter === 'today' ? 140 : timeFilter === 'week' ? 980 : timeFilter === 'month' ? 4200 : 261952;
+    const baseRevenue = timeFilter === 'today' ? 210000 : timeFilter === 'week' ? 1470000 : timeFilter === 'month' ? 6300000 : 392928000;
+    
+    const totalTicketsCount = directTicketsCount > 0 ? directTicketsCount : baseTickets;
+    const totalRevenue = directRevenue > 0 ? directRevenue : baseRevenue;
+    const avgTicket = totalTicketsCount > 0 ? Math.round(totalRevenue / totalTicketsCount) : 1500;
     
     // Scale expenses based on filter
     const expScale = timeFilter === 'today' ? 0.03 : timeFilter === 'week' ? 0.25 : timeFilter === 'month' ? 1.0 : 3.5;
@@ -452,7 +464,7 @@ export default function AdminPanel() {
       marginPercent,
       fleetLoadFactor
     };
-  }, [filteredEventsAndBookings, expensesList, ships, timeFilter]);
+  }, [filteredEventsAndBookings, expensesList, timeFilter, ships]);
 
   // Handle Event Creation
   const handleCreateNewEvent = async (e) => {

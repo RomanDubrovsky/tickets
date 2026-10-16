@@ -3,7 +3,8 @@ import {
   Music, Calendar, Anchor, Plus, Edit3, Trash2, X, 
   Check, Sparkles, Filter, Clock, MapPin, Tag, Layers,
   Users, Mic, Radio, CheckSquare, Square, ChevronRight, Layout, Copy, List, Grid, Globe, Target, Ship,
-  Brain, History, Wand2, RefreshCw, Eye, MessageSquare, AlertCircle, FileText, ChevronDown, ChevronUp
+  Brain, History, Wand2, RefreshCw, Eye, MessageSquare, AlertCircle, FileText, ChevronDown, ChevronUp,
+  DollarSign, TrendingUp, BarChart3, Megaphone
 } from 'lucide-react';
 import DeckBuilder from './DeckBuilder';
 import FleetSchemesCatalog from './FleetSchemesCatalog';
@@ -11,10 +12,21 @@ import Afisha from './Afisha';
 import SitesAdmin, { DEFAULT_DOMAINS } from './SitesAdmin';
 import ShipOccupancyMonitor from './ShipOccupancyMonitor';
 import VkMarketingAgent from './VkMarketingAgent';
+import SalesMatrixManager from './SalesMatrixManager';
+import OperationsAndTasksManager from './OperationsAndTasksManager';
 import { SHIP_BLUEPRINTS, PRESET_SHIP_DECKS } from '../data/ship_blueprints';
-import { API_BASE } from '../db';
+import { API_BASE, REAL_PROGRAMS, REAL_MUSICIANS, REAL_AGENTS, REAL_SALES_MATRIX, DB_CLUSTER_INFO } from '../db';
 
-const INITIAL_MUSICIANS = [
+const INITIAL_MUSICIANS = REAL_MUSICIANS && REAL_MUSICIANS.length > 0 
+  ? REAL_MUSICIANS.map((m, idx) => ({
+      id: idx + 1,
+      name: m.name,
+      role: m.role || 'Музыкант / Артист',
+      genre: m.details || 'Живой рок / Джаз / Классика',
+      description: m.details || m.rider_url || 'Реестр артистов продажи.xlsx',
+      phone: m.phone || ''
+    }))
+  : [
   {
     id: 1,
     name: 'Рок-группа «Кинохроника»',
@@ -22,46 +34,6 @@ const INITIAL_MUSICIANS = [
     genre: 'Русский рок / КИНО',
     description: 'Официальный трибьют-коллектив песен Виктора Цоя и группы Кино с аутентичным живым звуком.',
     phone: '+7 (921) 111-22-33'
-  },
-  {
-    id: 2,
-    name: 'Рок-бэнд «Brotherhood»',
-    role: 'Кавер-бэнд',
-    genre: 'Русский рок 90-х / Брат',
-    description: 'Исполнители культовых саундтреков к фильмам «Брат» и «Брат 2» (Наутилус, Би-2, Агата Кристи, Смысловые Галлюцинации).',
-    phone: '+7 (921) 222-33-44'
-  },
-  {
-    id: 3,
-    name: 'Cocker Band SPb',
-    role: 'Блюз-рок оркестр',
-    genre: 'Блюз-рок / Soul',
-    description: 'Энергичный трибьют Джо Кокеру с мощным вокалом и живой духовой секцией.',
-    phone: '+7 (921) 333-44-55'
-  },
-  {
-    id: 4,
-    name: 'Zeppelin Moon',
-    role: 'Хард-рок трибьют',
-    genre: 'Классический рок / Led Zeppelin',
-    description: 'Драйвовое хард-рок шоу с виртуозными гитарными соло на Неве.',
-    phone: '+7 (921) 444-55-66'
-  },
-  {
-    id: 5,
-    name: 'Михаил Лебедев (Саксофон)',
-    role: 'Соло-исполнитель',
-    genre: 'Джаз / Лаунж / Саксофон',
-    description: 'Лауреат международных конкурсов, романтический саксофон на закате и под разводными мостами.',
-    phone: '+7 (921) 555-66-77'
-  },
-  {
-    id: 6,
-    name: 'Квартет «Aqua Jazz»',
-    role: 'Джаз-ансамбль',
-    genre: 'Джаз / Свинг / Поп-джаз',
-    description: 'Атмосферный живой аккомпанемент для панорамных вечерних круизов по Неве.',
-    phone: '+7 (921) 666-77-88'
   }
 ];
 
@@ -119,126 +91,276 @@ const INITIAL_PIERS = [
 const INITIAL_EVENTS = [
   {
     id: 1,
-    title: 'Брат (Саундтреки к фильму)',
-    slug: 'brother',
-    short_desc: 'Культовые рок-хиты 90-х и саундтреки из легендарных фильмов Алексея Балабанова.',
-    full_description: 'Погрузитесь в атмосферу культового кино 90-х на борту двухпалубного рок-теплохода! Живое исполнение главных саундтреков к фильмам Алексея Балабанова «Брат» и «Брат 2»: Наутилус Помпилиус, Би-2, Агата Кристи, Смысловые Галлюцинации, Океан Ельзи и Сплин. Мощный рок-звук, панорамные виды вечернего Санкт-Петербурга, комфортный теплый салон и бар.',
+    title: 'Русский рок на Неве',
+    slug: 'russian-rock-neva',
+    short_desc: 'Главные рок-хиты: ДДТ, Кино, Алиса, Сплин, Наутилус, Би-2 на борту двухпалубного теплохода.',
+    full_description: 'Легендарные рок-композиции в живом концертном исполнении. Двухпалубный рок-теплоход М-177, великолепный звук, панорамные виды на Неву, ресторан и бар.',
     duration_minutes: 120,
-    age_restriction: '18+',
-    min_price: 1800,
+    age_restriction: '16+',
+    min_price: 1400,
     is_featured: true,
-    event_type: 'Трибьют-концерт',
-    default_ship_id: 1,
+    event_type: 'Рок-концерт',
+    default_ship_id: 2,
     default_pier_id: 1,
-    default_musician_ids: [2],
-    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/brother/"></div>',
+    default_musician_ids: [1],
+    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/russian-rock/"></div>',
     text_history: [
       {
         id: 'hist_1_init',
         timestamp: '2026-05-01 12:00',
-        author: 'Редактор (Исходный)',
-        short_desc: 'Культовые рок-хиты 90-х и саундтреки из легендарных фильмов Алексея Балабанова.',
-        full_description: 'Погрузитесь в атмосферу культового кино 90-х на борту двухпалубного рок-теплохода! Живое исполнение главных саундтреков к фильмам Алексея Балабанова «Брат» и «Брат 2»: Наутилус Помпилиус, Би-2, Агата Кристи, Смысловые Галлюцинации, Океан Ельзи и Сплин. Мощный рок-звук, панорамные виды вечернего Санкт-Петербурга, комфортный теплый салон и бар.'
+        author: 'Редактор (продажи.xlsx)',
+        short_desc: 'Главные рок-хиты: ДДТ, Кино, Алиса, Сплин, Наутилус, Би-2 на борту двухпалубного теплохода.',
+        full_description: 'Легендарные рок-композиции в живом концертном исполнении. Двухпалубный рок-теплоход М-177, великолепный звук, панорамные виды на Неву, ресторан и бар.'
       }
     ]
   },
   {
     id: 2,
-    title: 'Виктор Цой & Кино',
-    slug: 'viktortsoy',
-    short_desc: 'Живое исполнение бессмертных песен группы КИНО на волнах ночной Невы.',
-    full_description: '«Перемен!», «Группа крови», «Звезда по имени Солнце», «Пачка сигарет» — бессмертные хиты группы КИНО в живом аутентичном исполнении трибьют-коллектива на борту теплохода. Петербург Виктора Цоя раскрывается с воды в лучах заката и огней ночного мегаполиса. Уютная атмосфера, теплый салон, ресторанное меню и драйв настоящего ленинградского рока.',
+    title: 'Рок-ностальгия. Хиты советского рока',
+    slug: 'rock-nostalgia',
+    short_desc: 'Золотая эпоха Ленинградского рок-клуба: Аквариум, Кино, Зоопарк, Алиса, Секрет.',
+    full_description: 'Атмосферный вечер воспоминаний и золотых рок-баллад советской эпохи. Теплая кают-компания, живой звук и волшебные виды вечернего Петербурга.',
     duration_minutes: 120,
     age_restriction: '16+',
-    min_price: 1700,
+    min_price: 1400,
     is_featured: true,
-    event_type: 'Трибьют-концерт',
+    event_type: 'Ретро-рок',
     default_ship_id: 1,
     default_pier_id: 1,
     default_musician_ids: [1],
-    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/viktortsoy/"></div>',
+    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/rock-nostalgia/"></div>',
     text_history: [
       {
         id: 'hist_2_init',
         timestamp: '2026-05-01 12:00',
-        author: 'Редактор (Исходный)',
-        short_desc: 'Живое исполнение бессмертных песен группы КИНО на волнах ночной Невы.',
-        full_description: '«Перемен!», «Группа крови», «Звезда по имени Солнце», «Пачка сигарет» — бессмертные хиты группы КИНО в живом аутентичном исполнении трибьют-коллектива на борту теплохода. Петербург Виктора Цоя раскрывается с воды в лучах заката и огней ночного мегаполиса. Уютная атмосфера, теплый салон, ресторанное меню и драйв настоящего ленинградского рока.'
+        author: 'Редактор (продажи.xlsx)',
+        short_desc: 'Золотая эпоха Ленинградского рок-клуба: Аквариум, Кино, Зоопарк, Алиса, Секрет.',
+        full_description: 'Атмосферный вечер воспоминаний и золотых рок-баллад советской эпохи. Теплая кают-компания, живой звук и волшебные виды вечернего Петербурга.'
       }
     ]
   },
   {
     id: 3,
-    title: 'Рок под разводными мостами',
-    slug: 'rock-bridges',
-    short_desc: 'Ночной круиз под разводку Дворцового и Троицкого мостов в сопровождении рок-бэнда.',
-    full_description: 'Главное музыкальное событие петербургской ночи! Ночной рейс навстречу разводным мостам под аккомпанемент живой рок-группы. Теплоход проходит в считанных метрах от взмывающих крыльев Дворцового и Троицкого мостов. На борту: панорамный остекленный салон с баром и столиками, а также открытая верхняя палуба для невероятных фото на фоне ночного Эрмитажа и Петропавловской крепости.',
-    duration_minutes: 150,
-    age_restriction: '18+',
-    min_price: 2200,
-    is_featured: true,
-    event_type: 'Музыкальный круиз',
-    default_ship_id: 1,
+    title: 'Ретро – хит – волна на Неве',
+    slug: 'retro-hit-wave',
+    short_desc: 'Любимые эстрадные и поп-рок хиты 70-80-90х в зажигательном живом исполнении.',
+    full_description: 'Танцевально-музыкальный круиз по парадной Неве. Золотые шлягеры, романтическая обстановка и отличное настроение для всей семьи.',
+    duration_minutes: 120,
+    age_restriction: '12+',
+    min_price: 1400,
+    is_featured: false,
+    event_type: 'Ретро-концерт',
+    default_ship_id: 2,
     default_pier_id: 1,
-    default_musician_ids: [1, 2],
-    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/rock-bridges/"></div>',
+    default_musician_ids: [2],
+    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/retro-wave/"></div>',
     text_history: [
       {
         id: 'hist_3_init',
         timestamp: '2026-05-01 12:00',
-        author: 'Редактор (Исходный)',
-        short_desc: 'Ночной круиз под разводку Дворцового и Троицкого мостов в сопровождении рок-бэнда.',
-        full_description: 'Главное музыкальное событие петербургской ночи! Ночной рейс навстречу разводным мостам под аккомпанемент живой рок-группы. Теплоход проходит в считанных метрах от взмывающих крыльев Дворцового и Троицкого мостов. На борту: панорамный остекленный салон с баром и столиками, а также открытая верхняя палуба для невероятных фото на фоне ночного Эрмитажа и Петропавловской крепости.'
+        author: 'Редактор (продажи.xlsx)',
+        short_desc: 'Любимые эстрадные и поп-рок хиты 70-80-90х в зажигательном живом исполнении.',
+        full_description: 'Танцевально-музыкальный круиз по парадной Неве. Золотые шлягеры, романтическая обстановка и отличное настроение для всей семьи.'
       }
     ]
   },
   {
     id: 4,
-    title: 'JOE COCKER Tribute',
-    slug: 'joe-cocker',
-    short_desc: 'Блюз-рок программа и лучшие баллады Джо Кокера с живой духовой секцией.',
-    full_description: '«You Can Leave Your Hat On», «Unchain My Heart», «Up Where We Belong» — золотая классика блюз-рока и соула на невских волнах. Мощный хрипловатый вокал, живая духовая секция, экспрессия и изысканный вечерний круиз по парадной акватории Невы. Идеально для романтического свидания и ценителей фирменного мирового звука.',
+    title: 'Дискоход (Дискотека 80-90х)',
+    slug: 'discohod',
+    short_desc: 'Танцевальный драйв на теплоходе: суперхиты 80-90-х, живой вокал и DJ-сет.',
+    full_description: 'Взрывная дискотека на воде! Яркий свет, мощный танцпол, бар с коктейлями и лучшие танцевальные треки двух десятилетий под открытым небом.',
     duration_minutes: 120,
     age_restriction: '18+',
-    min_price: 1600,
-    is_featured: false,
-    event_type: 'Трибьют-концерт',
-    default_ship_id: 1,
+    min_price: 1400,
+    is_featured: true,
+    event_type: 'Дискотека на воде',
+    default_ship_id: 5,
     default_pier_id: 1,
-    default_musician_ids: [3],
-    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/joe-cocker/"></div>',
+    default_musician_ids: [2],
+    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/discohod/"></div>',
     text_history: [
       {
         id: 'hist_4_init',
         timestamp: '2026-05-01 12:00',
-        author: 'Редактор (Исходный)',
-        short_desc: 'Блюз-рок программа и лучшие баллады Джо Кокера с живой духовой секцией.',
-        full_description: '«You Can Leave Your Hat On», «Unchain My Heart», «Up Where We Belong» — золотая классика блюз-рока и соула на невских волнах. Мощный хрипловатый вокал, живая духовая секция, экспрессия и изысканный вечерний круиз по парадной акватории Невы. Идеально для романтического свидания и ценителей фирменного мирового звука.'
+        author: 'Редактор (продажи.xlsx)',
+        short_desc: 'Танцевальный драйв на теплоходе: суперхиты 80-90-х, живой вокал и DJ-сет.',
+        full_description: 'Взрывная дискотека на воде! Яркий свет, мощный танцпол, бар с коктейлями и лучшие танцевальные треки двух десятилетий под открытым небом.'
       }
     ]
   },
   {
     id: 5,
-    title: 'Led Zeppelin Tribute',
-    slug: 'led-zeppelin-tribute',
-    short_desc: 'Мощный хард-рок трибьют легендам мировой рок-сцены.',
-    full_description: 'Культовые гитарные риффы Джимми Пейджа и экспрессивный вокал в стиле Роберта Планта. «Stairway to Heaven», «Whole Lotta Love», «Kashmir» в живом электрическом звучании посреди гранитных набережных Невы. Мощнейший заряд энергии, профессиональный концертный свет и звук на флагманском теплоходе.',
+    title: 'Хит за хитом (Поп-рок & Эстрада)',
+    slug: 'hit-za-hitom',
+    short_desc: 'Нон-стоп марафон самых узнаваемых хитов отечественной и мировой сцены.',
+    full_description: 'Программа, где каждая песня знакома с первых аккордов. Профессиональный кавер-бэнд, интерактив с гостями и незабываемый круиз по Финскому заливу и Неве.',
     duration_minutes: 120,
-    age_restriction: '18+',
-    min_price: 1800,
+    age_restriction: '12+',
+    min_price: 1400,
     is_featured: false,
-    event_type: 'Трибьют-концерт',
+    event_type: 'Кавер-шоу',
     default_ship_id: 2,
-    default_pier_id: 4,
-    default_musician_ids: [4],
-    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/led-zeppelin/"></div>',
+    default_pier_id: 1,
+    default_musician_ids: [3],
+    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/hit-za-hitom/"></div>',
     text_history: [
       {
         id: 'hist_5_init',
         timestamp: '2026-05-01 12:00',
-        author: 'Редактор (Исходный)',
-        short_desc: 'Мощный хард-рок трибьют легендам мировой рок-сцены.',
-        full_description: 'Культовые гитарные риффы Джимми Пейджа и экспрессивный вокал в стиле Роберта Планта. «Stairway to Heaven», «Whole Lotta Love», «Kashmir» в живом электрическом звучании посреди гранитных набережных Невы. Мощнейший заряд энергии, профессиональный концертный свет и звук на флагманском теплоходе.'
+        author: 'Редактор (продажи.xlsx)',
+        short_desc: 'Нон-стоп марафон самых узнаваемых хитов отечественной и мировой сцены.',
+        full_description: 'Программа, где каждая песня знакома с первых аккордов. Профессиональный кавер-бэнд, интерактив с гостями и незабываемый круиз по Финскому заливу и Неве.'
+      }
+    ]
+  },
+  {
+    id: 6,
+    title: 'Фирменный концерт «Рок Хит Нева»',
+    slug: 'rock-hit-neva-flagship',
+    short_desc: 'Флагманская шоу-программа: мощный живой звук, рок-энергия и панорама Петербурга.',
+    full_description: 'Главное событие сезона на борту М-177. Виртуозные музыканты, специальный сет-лист авторских аранжировок и праздничная атмосфера.',
+    duration_minutes: 120,
+    age_restriction: '16+',
+    min_price: 1500,
+    is_featured: true,
+    event_type: 'Фирменное шоу',
+    default_ship_id: 2,
+    default_pier_id: 1,
+    default_musician_ids: [1],
+    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/flagship/"></div>',
+    text_history: [
+      {
+        id: 'hist_6_init',
+        timestamp: '2026-05-01 12:00',
+        author: 'Редактор (продажи.xlsx)',
+        short_desc: 'Флагманская шоу-программа: мощный живой звук, рок-энергия и панорама Петербурга.',
+        full_description: 'Главное событие сезона на борту М-177. Виртуозные музыканты, специальный сет-лист авторских аранжировок и праздничная атмосфера.'
+      }
+    ]
+  },
+  {
+    id: 7,
+    title: 'Концерт на закате – золотые часы на Неве',
+    slug: 'sunset-concert',
+    short_desc: 'Романтический закатный круиз под акустический рок и джазовые импровизации.',
+    full_description: 'Самое красивое время суток на Неве: золотой закат над Финским заливом под завораживающий живой аккомпанемент. Идеально для романтических встреч.',
+    duration_minutes: 120,
+    age_restriction: '12+',
+    min_price: 1600,
+    is_featured: true,
+    event_type: 'Акустический круиз',
+    default_ship_id: 4,
+    default_pier_id: 3,
+    default_musician_ids: [3],
+    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/sunset/"></div>',
+    text_history: [
+      {
+        id: 'hist_7_init',
+        timestamp: '2026-05-01 12:00',
+        author: 'Редактор (продажи.xlsx)',
+        short_desc: 'Романтический закатный круиз под акустический рок и джазовые импровизации.',
+        full_description: 'Самое красивое время суток на Неве: золотой закат над Финским заливом под завораживающий живой аккомпанемент. Идеально для романтических встреч.'
+      }
+    ]
+  },
+  {
+    id: 8,
+    title: 'Рок-н-ролл на невских волнах',
+    slug: 'rock-and-roll',
+    short_desc: 'Зажигательный рок-н-ролл, буги-вуги, твист и рок 50-60-х годов.',
+    full_description: 'Танцуют все! Энергичные ритмы Чака Берри, Элвиса Пресли и The Beatles в исполнении драйвового рок-н-ролл бэнда.',
+    duration_minutes: 120,
+    age_restriction: '16+',
+    min_price: 1400,
+    is_featured: false,
+    event_type: 'Рок-н-ролл',
+    default_ship_id: 1,
+    default_pier_id: 1,
+    default_musician_ids: [2],
+    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/rock-n-roll/"></div>',
+    text_history: [
+      {
+        id: 'hist_8_init',
+        timestamp: '2026-05-01 12:00',
+        author: 'Редактор (продажи.xlsx)',
+        short_desc: 'Зажигательный рок-н-ролл, буги-вуги, твист и рок 50-60-х годов.',
+        full_description: 'Танцуют все! Энергичные ритмы Чака Берри, Элвиса Пресли и The Beatles в исполнении драйвового рок-н-ролл бэнда.'
+      }
+    ]
+  },
+  {
+    id: 9,
+    title: 'ROCK-N-DANCE (Шоу Марии Наумовой)',
+    slug: 'rock-n-dance',
+    short_desc: 'Эксклюзивное шоу вокалистки Марии Наумовой: взрывной микс рока и танцевальной музыки.',
+    full_description: 'Харизматичный женский рок-вокал, хореография, яркие костюмы и известные мировые хиты в современных танцевальных рок-аранжировках.',
+    duration_minutes: 120,
+    age_restriction: '18+',
+    min_price: 1600,
+    is_featured: true,
+    event_type: 'Шоу-программа',
+    default_ship_id: 2,
+    default_pier_id: 1,
+    default_musician_ids: [2],
+    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/rock-n-dance/"></div>',
+    text_history: [
+      {
+        id: 'hist_9_init',
+        timestamp: '2026-05-01 12:00',
+        author: 'Редактор (продажи.xlsx)',
+        short_desc: 'Эксклюзивное шоу вокалистки Марии Наумовой: взрывной микс рока и танцевальной музыки.',
+        full_description: 'Харизматичный женский рок-вокал, хореография, яркие костюмы и известные мировые хиты в современных танцевальных рок-аранжировках.'
+      }
+    ]
+  },
+  {
+    id: 10,
+    title: 'Уикенд Брас Бенд (Brass Band Show)',
+    slug: 'weekend-brass-band',
+    short_desc: 'Мощный духовой рок-оркестр: каверы на мировые рок-гимны на трубах, тромбонах и барабанах.',
+    full_description: 'Ураганный медный звук! Brass-каверы на Queen, Nirvana, Rammstein, AC/DC, Ленинград и русский рок. Невероятный драйв и танцы.',
+    duration_minutes: 120,
+    age_restriction: '12+',
+    min_price: 1500,
+    is_featured: true,
+    event_type: 'Духовой рок-бэнд',
+    default_ship_id: 2,
+    default_pier_id: 1,
+    default_musician_ids: [4],
+    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/brass-band/"></div>',
+    text_history: [
+      {
+        id: 'hist_10_init',
+        timestamp: '2026-05-01 12:00',
+        author: 'Редактор (продажи.xlsx)',
+        short_desc: 'Мощный духовой рок-оркестр: каверы на мировые рок-гимны на трубах, тромбонах и барабанах.',
+        full_description: 'Ураганный медный звук! Brass-каверы на Queen, Nirvana, Rammstein, AC/DC, Ленинград и русский рок. Невероятный драйв и танцы.'
+      }
+    ]
+  },
+  {
+    id: 11,
+    title: 'Рок под разводными мостами',
+    slug: 'rock-bridges',
+    short_desc: 'Ночной спецрейс навстречу разводным мостам под аккомпанемент живого рок-бэнда.',
+    full_description: 'Главное событие ночного Петербурга! Проход теплохода под разводящимися Дворцовым и Троицким мостами под культовые рок-хиты в живом исполнении.',
+    duration_minutes: 150,
+    age_restriction: '18+',
+    min_price: 2200,
+    is_featured: true,
+    event_type: 'Ночной спецрейс',
+    default_ship_id: 2,
+    default_pier_id: 1,
+    default_musician_ids: [1],
+    iframe_code: '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/rock-bridges/"></div>',
+    text_history: [
+      {
+        id: 'hist_11_init',
+        timestamp: '2026-05-01 12:00',
+        author: 'Редактор (продажи.xlsx)',
+        short_desc: 'Ночной спецрейс навстречу разводным мостам под аккомпанемент живого рок-бэнда.',
+        full_description: 'Главное событие ночного Петербурга! Проход теплохода под разводящимися Дворцовым и Троицким мостами под культовые рок-хиты в живом исполнении.'
       }
     ]
   }
@@ -317,13 +439,25 @@ const INITIAL_VENUES = [
   }
 ];
 
-const INITIAL_SESSIONS = [
+const INITIAL_SESSIONS = REAL_SALES_MATRIX && REAL_SALES_MATRIX.length > 0
+  ? REAL_SALES_MATRIX.map((s, idx) => ({
+      id: idx + 101,
+      event_id: (idx % 11) + 1,
+      event_title: s.program || 'Русский рок на Неве',
+      venue_id: s.vessel?.includes('177') ? 2 : (s.vessel?.includes('Солярис') ? 4 : 1),
+      venue_name: s.vessel ? `Теплоход «${s.vessel}»` : 'Теплоход «Москва 177» (Флагман)',
+      pier_address: 'Санкт-Петербург, ст. м. Спортивная, причал Набережная Макарова, 34',
+      start_time: `2026-05-${String((idx % 28) + 1).padStart(2, '0')} ${s.time_slot || '20:30'}`,
+      min_price: 1400,
+      musician_names: ['Рок-группа «Кинохроника»']
+    }))
+  : [
   {
     id: 101,
-    event_id: 3,
+    event_id: 11,
     event_title: 'Рок под разводными мостами',
-    venue_id: 1,
-    venue_name: 'Теплоход «Рок Хит Нева»',
+    venue_id: 2,
+    venue_name: 'Теплоход «Москва 177» (Флагман)',
     pier_address: 'Причал Наб. Макарова, 34',
     start_time: '2026-05-01 23:55',
     min_price: 2200,
@@ -332,35 +466,13 @@ const INITIAL_SESSIONS = [
   {
     id: 102,
     event_id: 1,
-    event_title: 'Брат (Саундтреки к фильму)',
-    venue_id: 1,
-    venue_name: 'Теплоход «Рок Хит Нева»',
+    event_title: 'Русский рок на Неве',
+    venue_id: 2,
+    venue_name: 'Теплоход «Москва 177» (Флагман)',
     pier_address: 'Причал Наб. Макарова, 34',
-    start_time: '2026-05-02 19:30',
-    min_price: 1800,
+    start_time: '2026-05-02 20:30',
+    min_price: 1400,
     musician_names: ['Рок-бэнд «Brotherhood»']
-  },
-  {
-    id: 103,
-    event_id: 2,
-    event_title: 'Виктор Цой & Кино',
-    venue_id: 1,
-    venue_name: 'Теплоход «Рок Хит Нева»',
-    pier_address: 'Причал Наб. Макарова, 34',
-    start_time: '2026-05-02 22:00',
-    min_price: 1700,
-    musician_names: ['Рок-группа «Кинохроника»']
-  },
-  {
-    id: 104,
-    event_id: 4,
-    event_title: 'JOE COCKER Tribute',
-    venue_id: 1,
-    venue_name: 'Теплоход «Рок Хит Нева»',
-    pier_address: 'Причал Наб. Макарова, 34',
-    start_time: '2026-05-03 19:30',
-    min_price: 1600,
-    musician_names: ['Cocker Band SPb']
   }
 ];
 
@@ -590,10 +702,12 @@ export const getTicketlandStatus = (iframeCode) => {
   return { status: 'custom', label: 'Сторонний билетер/iframe', color: '#2563eb', bg: '#eff6ff' };
 };
 
-export default function ProgramsManager({ defaultSection = 'events', onSelectEvent, navigateTo }) {
+export default function ProgramsManager({ defaultSection = 'sales', onSelectEvent, navigateTo }) {
   const [currentSection, setCurrentSection] = useState(() => {
     if (typeof window !== 'undefined') {
       const h = window.location.hash.split('?')[0];
+      if (h === '#sales' || h === '#matrix') return 'sales';
+      if (h === '#operations' || h === '#tasks') return 'operations';
       if (h === '#programs' || h === '#events') return 'events';
       if (h === '#sessions') return 'sessions';
       if (h === '#musicians') return 'musicians';
@@ -603,7 +717,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
       if (h === '#occupancy') return 'occupancy';
       if (h === '#marketing') return 'marketing';
     }
-    return defaultSection || 'events';
+    return defaultSection || 'sales';
   });
   const [notification, setNotification] = useState('');
 
@@ -618,7 +732,11 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
   useEffect(() => {
     const handleHash = () => {
       const h = window.location.hash.split('?')[0];
-      if (h === '#programs' || h === '#events') {
+      if (h === '#sales' || h === '#matrix') {
+        setCurrentSection('sales');
+      } else if (h === '#operations' || h === '#tasks') {
+        setCurrentSection('operations');
+      } else if (h === '#programs' || h === '#events') {
         setCurrentSection('events');
       } else if (h === '#sessions') {
         setCurrentSection('sessions');
@@ -648,6 +766,8 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
       setSelectedVenueForDeck(null);
     }
     const hashMap = {
+      sales: '#sales',
+      operations: '#operations',
       events: '#programs',
       sessions: '#sessions',
       musicians: '#musicians',
@@ -666,53 +786,53 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
 
   // LocalStorage Persistence
   const [events, setEvents] = useState(() => {
-    const saved = localStorage.getItem('pm_events_v4');
+    const saved = localStorage.getItem('pm_events_v2026_excel');
     return saved ? JSON.parse(saved) : INITIAL_EVENTS;
   });
 
   const [venues, setVenues] = useState(() => {
-    const saved = localStorage.getItem('pm_venues_v8');
+    const saved = localStorage.getItem('pm_venues_v2026_excel');
     return saved ? JSON.parse(saved) : INITIAL_VENUES;
   });
 
   const [piers, setPiers] = useState(() => {
-    const saved = localStorage.getItem('pm_piers_v1');
+    const saved = localStorage.getItem('pm_piers_v2026_excel');
     return saved ? JSON.parse(saved) : INITIAL_PIERS;
   });
 
   const [sessions, setSessions] = useState(() => {
-    const saved = localStorage.getItem('pm_sessions_v7');
+    const saved = localStorage.getItem('pm_sessions_v2026_excel');
     return saved ? JSON.parse(saved) : INITIAL_SESSIONS;
   });
 
   const [musicians, setMusicians] = useState(() => {
-    const saved = localStorage.getItem('pm_musicians_v4');
+    const saved = localStorage.getItem('pm_musicians_v2026_excel');
     return saved ? JSON.parse(saved) : INITIAL_MUSICIANS;
   });
 
   const saveEvents = (data) => {
     setEvents(data);
-    localStorage.setItem('pm_events_v4', JSON.stringify(data));
+    localStorage.setItem('pm_events_v2026_excel', JSON.stringify(data));
   };
 
   const saveVenues = (data) => {
     setVenues(data);
-    localStorage.setItem('pm_venues_v8', JSON.stringify(data));
+    localStorage.setItem('pm_venues_v2026_excel', JSON.stringify(data));
   };
 
   const savePiers = (data) => {
     setPiers(data);
-    localStorage.setItem('pm_piers_v1', JSON.stringify(data));
+    localStorage.setItem('pm_piers_v2026_excel', JSON.stringify(data));
   };
 
   const saveSessions = (data) => {
     setSessions(data);
-    localStorage.setItem('pm_sessions_v7', JSON.stringify(data));
+    localStorage.setItem('pm_sessions_v2026_excel', JSON.stringify(data));
   };
 
   const saveMusicians = (data) => {
     setMusicians(data);
-    localStorage.setItem('pm_musicians_v4', JSON.stringify(data));
+    localStorage.setItem('pm_musicians_v2026_excel', JSON.stringify(data));
   };
 
   const showNotification = (msg) => {
@@ -732,7 +852,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
       return;
     }
 
-    const savedCms = localStorage.getItem('cms_domains_v6');
+    const savedCms = localStorage.getItem('cms_domains_v12');
     const cmsDomains = savedCms ? JSON.parse(savedCms) : DEFAULT_DOMAINS;
     const targetDomain = cmsDomains.find((d) => d.id === Number(widgetSiteId)) || cmsDomains[0];
 
@@ -784,7 +904,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
       return d;
     });
 
-    localStorage.setItem('cms_domains_v6', JSON.stringify(updatedDomains));
+    localStorage.setItem('cms_domains_v12', JSON.stringify(updatedDomains));
     setSitesInitialDomainId(targetDomain.id);
     setCurrentSection('sites');
     showNotification(`Страница «${pageTitle}» с виджетом успешно создана на сайте ${targetDomain.name}!`);
@@ -1617,6 +1737,72 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
         </h4>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {/* Section: Продажи по агентам (2026) */}
+          <div
+            onClick={() => switchSection('sales')}
+            style={{
+              padding: '14px 16px',
+              borderRadius: '10px',
+              background: currentSection === 'sales' ? 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)' : '#f8fafc',
+              border: currentSection === 'sales' ? '1.5px solid #10b981' : '1px solid #e2e8f0',
+              cursor: 'pointer',
+              transition: 'all 0.15s',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <BarChart3 size={18} color={currentSection === 'sales' ? '#059669' : '#64748b'} />
+              <span style={{ fontWeight: currentSection === 'sales' ? 'bold' : '600', color: currentSection === 'sales' ? '#065f46' : '#334155', fontSize: '14px' }}>
+                📊 Продажи по агентам
+              </span>
+            </div>
+            <span style={{
+              fontSize: '11px',
+              background: currentSection === 'sales' ? '#059669' : '#10b981',
+              color: '#ffffff',
+              padding: '2px 8px',
+              borderRadius: '10px',
+              fontWeight: 'bold'
+            }}>
+              2026
+            </span>
+          </div>
+
+          {/* Section: Персонал, Задачи & РК */}
+          <div
+            onClick={() => switchSection('operations')}
+            style={{
+              padding: '14px 16px',
+              borderRadius: '10px',
+              background: currentSection === 'operations' ? 'linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%)' : '#f8fafc',
+              border: currentSection === 'operations' ? '1.5px solid #6366f1' : '1px solid #e2e8f0',
+              cursor: 'pointer',
+              transition: 'all 0.15s',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Layers size={18} color={currentSection === 'operations' ? '#4f46e5' : '#64748b'} />
+              <span style={{ fontWeight: currentSection === 'operations' ? 'bold' : '600', color: currentSection === 'operations' ? '#3730a3' : '#334155', fontSize: '14px' }}>
+                📋 Персонал, Задачи & РК
+              </span>
+            </div>
+            <span style={{
+              fontSize: '11px',
+              background: currentSection === 'operations' ? '#4f46e5' : '#6366f1',
+              color: '#ffffff',
+              padding: '2px 8px',
+              borderRadius: '10px',
+              fontWeight: 'bold'
+            }}>
+              650+
+            </span>
+          </div>
+
           {/* Section 1: Программы */}
           <div
             onClick={() => switchSection('events')}
@@ -1922,6 +2108,20 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
             fontWeight: '600'
           }}>
             <Check size={18} color="#059669" /> {notification}
+          </div>
+        )}
+
+        {/* 0. ПРОДАЖИ ПО АГЕНТАМ (SALES MATRIX MANAGER) */}
+        {currentSection === 'sales' && (
+          <div>
+            <SalesMatrixManager />
+          </div>
+        )}
+
+        {/* 0.1. ОПЕРАЦИОНКА, ПЕРСОНАЛ, ЗАДАЧИ И РЕКЛАМНЫЕ КАМПАНИИ */}
+        {currentSection === 'operations' && (
+          <div>
+            <OperationsAndTasksManager />
           </div>
         )}
 
@@ -2603,7 +2803,7 @@ export default function ProgramsManager({ defaultSection = 'events', onSelectEve
                   >
                     <option value="">-- Выберите сайт (Обязательно) --</option>
                     {(() => {
-                      const savedCms = localStorage.getItem('cms_domains_v6');
+                      const savedCms = localStorage.getItem('cms_domains_v12');
                       const list = savedCms ? JSON.parse(savedCms) : DEFAULT_DOMAINS;
                       return list.map((d) => (
                         <option key={d.id} value={d.id}>

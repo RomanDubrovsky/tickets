@@ -97,8 +97,50 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label fw-semibold">Код билетов (Iframe сторонней системы) *</label>
-                        <textarea name="iframe_code" class="form-control font-monospace" rows="7" required placeholder='<div id="tlFrameContainer" data-start="https://www.ticketland.ru/iframe-direct-sale/..."></div>'><%= page ? page.iframe_code : '' %></textarea>
+                        <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                            <label class="form-label fw-semibold mb-0">Код билетов (Виджет или Iframe) *</label>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button type="button" class="btn btn-outline-primary active" id="btnModeNative" onclick="setWidgetMode('native')">
+                                    <i class="bi bi-ship me-1"></i> Наш виджет (SVG)
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" id="btnModeTl" onclick="setWidgetMode('ticketland')">
+                                    <i class="bi bi-ticket-perforated me-1"></i> Ticketland
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" id="btnModeCustom" onclick="setWidgetMode('custom')">
+                                    <i class="bi bi-code-slash me-1"></i> Свой HTML
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Native Widget Session Selector Helper -->
+                        <div id="nativeSessionHelper" class="p-2 mb-2 bg-light border rounded">
+                            <div class="row g-2 align-items-center">
+                                <div class="col-md-8">
+                                    <label class="form-label small text-muted mb-1 fw-semibold">Рейс для схемы теплохода:</label>
+                                    <select id="nativeSessionSelect" class="form-select form-select-sm" onchange="applyNativeWidgetSnippet()">
+                                        <% if (typeof sessions !== 'undefined' && sessions && sessions.length > 0) { %>
+                                            <% sessions.forEach(s => { %>
+                                                <option value="<%= s.id %>">
+                                                    <%= s.start_time %> — <%= s.event_title %> (<%= s.venue_name %>)
+                                                </option>
+                                            <% }); %>
+                                        <% } else { %>
+                                            <option value="1">Тестовый рейс (по умолчанию)</option>
+                                        <% } %>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 text-end pt-3">
+                                    <button type="button" class="btn btn-primary btn-sm w-100" onclick="applyNativeWidgetSnippet()">
+                                        <i class="bi bi-arrow-down-circle me-1"></i> Вставить код
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <textarea id="iframeCodeTextarea" name="iframe_code" class="form-control font-monospace" rows="7" required placeholder='<div class="ship-ticket-widget" data-session-id="1"></div>'><%= page ? page.iframe_code : '' %></textarea>
+                        <div class="form-text mt-1" id="widgetCodeHint">
+                            Наш нативный виджет отображает интерактивную схему судна, столики и места, рассчитывает цену зон и принимает оплату напрямую.
+                        </div>
                     </div>
 
                     <div class="d-flex justify-content-end gap-2">
@@ -162,6 +204,59 @@
         
         domainSelect.addEventListener('change', updateScripts);
         updateScripts();
+
+        // Widget Mode Helpers
+        function setWidgetMode(mode) {
+            const btnNative = document.getElementById('btnModeNative');
+            const btnTl = document.getElementById('btnModeTl');
+            const btnCustom = document.getElementById('btnModeCustom');
+            const helper = document.getElementById('nativeSessionHelper');
+            const textarea = document.getElementById('iframeCodeTextarea');
+            const hint = document.getElementById('widgetCodeHint');
+
+            btnNative.className = 'btn btn-outline-secondary';
+            btnTl.className = 'btn btn-outline-secondary';
+            btnCustom.className = 'btn btn-outline-secondary';
+
+            if (mode === 'native') {
+                btnNative.className = 'btn btn-outline-primary active';
+                helper.style.display = 'block';
+                hint.textContent = 'Наш нативный виджет отображает интерактивную схему судна, столики и места, рассчитывает цену зон и принимает оплату напрямую.';
+                applyNativeWidgetSnippet();
+            } else if (mode === 'ticketland') {
+                btnTl.className = 'btn btn-outline-primary active';
+                helper.style.display = 'none';
+                hint.textContent = 'Виджет Ticketland: вставьте полученный в Ticketland контейнер <div id="tlFrameContainer" data-start="..."></div>';
+                if (!textarea.value.includes('tlFrameContainer')) {
+                    textarea.value = '<div id="tlFrameContainer" data-start="https://spb.ticketland.ru/iframe-direct-sale/..."></div>';
+                }
+            } else {
+                btnCustom.className = 'btn btn-outline-primary active';
+                helper.style.display = 'none';
+                hint.textContent = 'Произвольный HTML-код или iframe сторонней билетной системы.';
+            }
+        }
+
+        function applyNativeWidgetSnippet() {
+            const sel = document.getElementById('nativeSessionSelect');
+            const sessId = sel ? sel.value : '1';
+            const textarea = document.getElementById('iframeCodeTextarea');
+            if (textarea) {
+                textarea.value = `<!-- Интерактивная схема теплохода -->\n<div class="ship-ticket-widget" data-session-id="${sessId}"></div>\n<link rel="stylesheet" href="/css/ship_widget.css">\n<script src="/js/ship_widget.js"><\/script>`;
+            }
+        }
+
+        // Initialize state based on existing content
+        const initialCode = document.getElementById('iframeCodeTextarea').value;
+        if (initialCode.includes('tlFrameContainer')) {
+            setWidgetMode('ticketland');
+        } else if (initialCode.includes('ship-ticket-widget')) {
+            setWidgetMode('native');
+        } else if (initialCode.trim().length > 0) {
+            setWidgetMode('custom');
+        } else {
+            setWidgetMode('native');
+        }
     </script>
 </body>
 </html>
