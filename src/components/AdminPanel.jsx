@@ -69,7 +69,7 @@ export default function AdminPanel() {
 
   const [expensesList, setExpensesList] = useState([
     { id: 'exp_1', type: 'variable', category: 'ГСМ (Топливо)', amount: 18500, date: '2026-05-01', eventName: 'Вечерний Рок-Круиз', desc: 'Дизельное топливо 250л на рейс' },
-    { id: 'exp_2', type: 'variable', category: 'Оплата артистов (Райдер)', amount: 15000, date: '2026-05-01', eventName: 'Вечерний Рок-Круиз', desc: 'Кавер-группа (из базы 651 музыканта)' },
+    { id: 'exp_2', type: 'variable', category: 'Оплата артистов (Райдер)', amount: 15000, date: '2026-05-01', eventName: 'Вечерний Рок-Круиз', desc: 'Кавер-группа (из реестра 22 артистов)' },
     { id: 'exp_3', type: 'variable', category: 'Причальный сбор', amount: 4500, date: '2026-05-01', eventName: 'Вечерний Рок-Круиз', desc: 'Швартовка Дворцовая наб., 18' },
     { id: 'exp_4', type: 'fixed', category: 'Оклады команды флота', amount: 180000, date: '2026-05-01', eventName: null, desc: 'Капитаны и мотористы (4 капитана в штате)' },
     { id: 'exp_5', type: 'fixed', category: 'Аренда стоянки флота', amount: 95000, date: '2026-05-05', eventName: null, desc: 'База стоянки флота Уткина заводь' },

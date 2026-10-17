@@ -11,7 +11,7 @@ export default function OperationsAndTasksManager() {
 
   // Local storage states
   const [musicians, setMusicians] = useState(() => {
-    const s = localStorage.getItem('pm_real_musicians_v1');
+    const s = localStorage.getItem('pm_real_musicians_v2');
     return s ? JSON.parse(s) : REAL_MUSICIANS;
   });
 
@@ -37,11 +37,12 @@ export default function OperationsAndTasksManager() {
 
   // Filtered musicians
   const filteredMusicians = useMemo(() => {
-    if (!searchQuery.trim()) return musicians.slice(0, 100); // paginate first 100
+    if (!searchQuery.trim()) return musicians;
     const q = searchQuery.toLowerCase();
     return musicians.filter(m => 
       m.name?.toLowerCase().includes(q) || 
       m.phone?.toLowerCase().includes(q) || 
+      m.role?.toLowerCase().includes(q) ||
       m.details?.toLowerCase().includes(q)
     );
   }, [musicians, searchQuery]);
